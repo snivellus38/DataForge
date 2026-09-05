@@ -10,6 +10,7 @@
 <nav id="rail" aria-label="Sections">
   <a href="#hook" data-act="hook"><span></span>Open</a>
   <a href="#state" data-act="state"><span></span>The state</a>
+  <a href="#machine" data-act="machine"><span></span>Step through</a>
   <a href="#real" data-act="real"><span></span>Is it real</a>
   <a href="#forget" data-act="forget"><span></span>Forgetting</a>
   <a href="#bdh" data-act="bdh"><span></span>In BDH-CQ</a>
@@ -67,7 +68,7 @@
 </section>
 
 <!-- ─────────────────────────── ACT 1 ─────────────────────────── -->
-<section id="state" class="act">
+<section id="state" class="act alt">
   <div class="wrap prose">
     <p class="act-no">One</p>
     <h2>So where did the rule go?</h2>
@@ -111,6 +112,32 @@
       &mdash; one row pattern times one column pattern. The accumulated state is dense, so the
       structure lives in the writes and the differences, not in the raw matrix.</figcaption>
   </figure>
+</section>
+
+
+<!-- ─────────────────────────── ACT 1b ─────────────────────────── -->
+<section id="machine" class="act">
+  <div class="wrap prose">
+    <p class="act-no">One &frac12;</p>
+    <h2>Watch it happen, one token at a time</h2>
+    <p>Press play. Each token fires a sparse set of neurons, scores itself against everything
+      before it, and adds exactly one rank-one write into <span class="sym">&sigma;</span>.
+      Hover any cell in the attention panel to read the score; click any token to jump there.</p>
+  </div>
+  <figure class="fig fig-wide">
+    <div class="fig-body"><div id="machine-room"></div></div>
+    <figcaption><b>Live.</b> Every panel is the real forward pass of layer&nbsp;0, head&nbsp;0 —
+      the same arrays the model computes to answer, not a redrawing of them. Verified to match
+      the forward pass exactly.</figcaption>
+  </figure>
+  <div class="wrap prose">
+    <p>Two things are worth noticing while it runs. The neuron panel is mostly dark: only a
+      fraction of the 256 neurons fire for any token, and <em>how many</em> changes with what
+      kind of token it is. And the attention panel has <strong>negative</strong> cells &mdash;
+      which should be impossible, since the activations are all non-negative. RoPE rotates the
+      keys before they meet, and rotation does not preserve sign. That is BDH&rsquo;s decay
+      mechanism: not a forgetting term, but interference between rotated phases.</p>
+  </div>
 </section>
 
 <!-- ─────────────────────────── ACT 2 ─────────────────────────── -->

@@ -3,11 +3,13 @@
 // Everything on the page except the boxed table in Act Four is computed live from a
 // 131,072-parameter BDH we trained (architecture: vendored, unmodified pathwaycom/bdh).
 // No step is animated or scripted.
-import { BDHModel, equivalenceCheck } from "./bdh.js";
+import { BDHModel, equivalenceCheck, trace } from "./bdh.js";
 import { makeTokenMap, chip } from "./tokens.js";
 import { drawMatrix, drawDiff, drawRowEnergy } from "./sigma-view.js";
 import { capacityCurve, capacityTrial, meanCosine } from "./capacity.js";
 import { drawCapacity, capacityTable } from "./chart.js";
+import { MachineRoom } from "./machine.js";
+import { tgtHue } from "./tokens.js";
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -91,6 +93,7 @@ async function boot() {
   $("#ledger").innerHTML = LEDGER.map(([tier, html]) =>
     `<li><span class="tier tier-${tier}">${tier}</span><span>${html}</span></li>`).join("");
 
+  S.machine = new MachineRoom($("#machine-room"));
   spy();
   render();
   renderCapacity();
@@ -217,6 +220,13 @@ function render() {
 
   renderSigma(out);
   renderEquiv();
+  if (S.machine) {
+    const tr = trace(S.model, tokens);
+    S.machine.load(tr, tokens.map((b) => {
+      const k = S.tok.get(b);
+      return { ...k, hue: k.kind === "tgt" ? tgtHue(k.i) : null };
+    }));
+  }
   verifyWeightsUnchanged();
 }
 

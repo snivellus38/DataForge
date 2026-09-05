@@ -244,3 +244,68 @@ export function equivalenceCheck(model, tokens, opts = {}) {
   return { maxAbs, relative: maxAbs / (scale || 1), parallel: par, recurrent: rec,
            sigma, snapshots, T, N, D, opts: { softmax, decoupleQK, noRelu } };
 }
+
+/**
+ * Full trace of one layer/head for the interactive machine-room figure.
+ *
+ * Returns every intermediate the UI needs to let a learner step through the computation:
+ * the ReLU'd neuron activations per token, the token-by-token attention scores, the synaptic
+ * state after each write, and the per-token attention output. Nothing here is recomputed for
+ * display -- these are the same arrays the forward pass uses.
+ */
+export function trace(model, tokens, { layer = 0, head = 0 } = {}) {
+  const { D, N } = model;
+  const T = tokens.length;
+
+  const x = new Float32Array(T * D);
+  for (let t = 0; t < T; t++)
+    for (let d = 0; d < D; d++) x[t * D + d] = model.w["embed.weight"][tokens[t] * D + d];
+  for (let t = 0; t < T; t++) layerNorm(x, t * D, D);
+
+  // Iterate to the requested layer so the trace reflects the real residual stream at that depth.
+  const enc = model.w["encoder"].subarray(head * D * N, (head + 1) * D * N);
+  const xs = new Float32Array(T * N);
+  for (let t = 0; t < T; t++)
+    for (let i = 0; i < D; i++) {
+      const v = x[t * D + i]; if (v === 0) continue;
+      for (let j = 0; j < N; j++) xs[t * N + j] += v * enc[i * N + j];
+    }
+  for (let i = 0; i < T * N; i++) xs[i] = xs[i] > 0 ? xs[i] : 0;
+
+  const qr = Float32Array.from(xs);
+  ropeInPlace(qr, T, N, model.freqs);
+
+  const scores = new Float32Array(T * T);
+  for (let t = 0; t < T; t++)
+    for (let s = 0; s < t; s++) {
+      let a = 0;
+      for (let n = 0; n < N; n++) a += qr[t * N + n] * qr[s * N + n];
+      scores[t * T + s] = a;
+    }
+
+  const sigma = new Float32Array(N * D);
+  const snaps = [], writes = [], out = new Float32Array(T * D);
+  for (let t = 0; t < T; t++) {
+    for (let n = 0; n < N; n++) {
+      const q = qr[t * N + n]; if (q === 0) continue;
+      for (let d = 0; d < D; d++) out[t * D + d] += q * sigma[n * D + d];
+    }
+    const w = new Float32Array(N * D);
+    for (let n = 0; n < N; n++) {
+      const k = qr[t * N + n]; if (k === 0) continue;
+      for (let d = 0; d < D; d++) { const v = k * x[t * D + d]; w[n * D + d] = v; sigma[n * D + d] += v; }
+    }
+    writes.push(w);
+    snaps.push(sigma.slice());
+  }
+
+  // per-token sparsity of the neuron activations -- BDH's "sparse, positive" property, measured
+  const sparsity = [];
+  for (let t = 0; t < T; t++) {
+    let nz = 0;
+    for (let n = 0; n < N; n++) if (xs[t * N + n] > 0) nz++;
+    sparsity.push(nz / N);
+  }
+
+  return { T, N, D, tokens, xSparse: xs, qr, scores, snaps, writes, out, sparsity, x };
+}

@@ -84,7 +84,23 @@ const checks = [
   ["evidence ledger populated", $("#ledger")?.children.length === 7],
   ["sandbox demos rendered", $("#sb-demos")?.children.length >= 3],
   ["token sequence shown", txt("#sb-tokens").includes("bytes")],
+  // machine room
+  ["token strip built", $("#mr-tokens")?.children.length >= 11],
+  ["transport rendered", $("#mr-scrub") !== null && +$("#mr-scrub").max >= 10],
+  ["neuron panel drawn", $("#mr-neurons")?.width > 0],
+  ["score matrix drawn", $("#mr-scores")?.width > 0],
+  ["write panel drawn", $("#mr-write")?.width > 0],
+  ["sigma panel drawn", $("#mr-sigma")?.width > 0],
+  ["sparsity reported", /% of \d+/.test(txt("#mr-sparse"))],
+  ["sigma density reported", /% non-zero/.test(txt("#mr-dens"))],
 ];
+
+// stepping must actually change what is drawn
+const before = $("#mr-sparse").textContent;
+$("#mr-next").dispatchEvent(new window.MouseEvent("click"));
+await new Promise((r) => setTimeout(r, 60));
+checks.push(["stepping a token changes the panels", $("#mr-t").textContent === "1"]);
+checks.push(["sparsity is per-token, not constant", $("#mr-sparse").textContent !== before]);
 
 let bad = 0;
 for (const [n, ok] of checks) { if (!ok) bad++; console.log(`  ${ok ? "ok  " : "FAIL"}  ${n}`); }

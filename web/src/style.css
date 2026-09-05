@@ -278,3 +278,36 @@ footer{border-top:1px solid var(--rule);padding:52px 0 72px;background:var(--pap
 .foot-grid p{font-size:13px;line-height:1.6;color:var(--ink3);margin:0}
 .foot-grid a{color:var(--ink2)}
 a{color:var(--accent)}
+
+/* ── machine room ──────────────────────────────────────────────────────── */
+#machine-room{position:relative}
+.mr-strip{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:14px}
+.mr-tok{font:600 12px/1 var(--mono);min-width:26px;height:28px;padding:0 7px;border-radius:7px;
+  border:1px solid var(--rule2);background:var(--paper);color:var(--ink);cursor:pointer;
+  transition:transform .12s,opacity .18s,box-shadow .12s}
+.mr-tok.dim{opacity:.32}
+.mr-tok.on{background:var(--ink);border-color:var(--ink);color:var(--paper);transform:translateY(-2px)}
+.mr-tok.peek{box-shadow:0 0 0 2px var(--accent)}
+.mr-tok-tgt{background:var(--chip-hue);border-color:transparent;color:#fff}
+.mr-tok-sep,.mr-tok-qry{color:var(--ink3);background:none}
+.mr-transport{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:16px;
+  border-bottom:1px solid var(--rule)}
+.mr-btn{width:32px;height:30px;border:1px solid var(--rule2);background:var(--paper);
+  color:var(--ink);border-radius:7px;cursor:pointer;font-size:11px;line-height:1}
+.mr-btn:hover{border-color:var(--accent);color:var(--accent)}
+#mr-scrub{flex:1;accent-color:var(--accent);max-width:340px}
+.mr-pos{font-size:12px;color:var(--ink3)}
+.mr-pos b{font-family:var(--mono);color:var(--ink)}
+.mr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+.mr-cell h4{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px}
+.mr-hint{font-size:10.5px;letter-spacing:0;text-transform:none;color:var(--ink3);font-weight:400;
+  font-family:var(--mono)}
+.mr-cell canvas{width:100%;image-rendering:pixelated;border-radius:7px;display:block;
+  background:var(--sunk);max-height:230px;object-fit:contain}
+#mr-scores{cursor:crosshair}
+.mr-cap{font-size:11.5px;line-height:1.5;color:var(--ink3);margin:8px 0 0}
+.mr-cap b{font-family:var(--mono);color:var(--ink2)}
+.mr-tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--paper);
+  font-size:11.5px;padding:6px 9px;border-radius:6px;white-space:nowrap;z-index:5;
+  box-shadow:0 4px 14px -4px rgba(0,0,0,.4)}
+.mr-tip .mr-num{font-family:var(--mono);margin-left:6px;opacity:.85}
