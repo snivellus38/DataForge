@@ -1,281 +1,338 @@
-// The sixty-second moment: remove one demonstration, with the query byte-identical, and watch
-// the answer break while `parameter updates` never moves.
+// Demonstrations Are Weights — orchestration.
 //
-// Everything here is live. The model is a 131,072-parameter BDH we trained (vendored, unmodified
-// pathwaycom/bdh architecture) running in the browser at ~20-85ms per forward pass.
+// Everything on the page except the boxed table in Act Four is computed live from a
+// 131,072-parameter BDH we trained (architecture: vendored, unmodified pathwaycom/bdh).
+// No step is animated or scripted.
 import { BDHModel, equivalenceCheck } from "./bdh.js";
 import { makeTokenMap, chip } from "./tokens.js";
-import { drawMatrix, drawDiff, drawRowEnergy, scaleOf } from "./sigma-view.js";
-import { capacityCurve, capacityTrial, meanCosine, ANALYTIC_COSINE } from "./capacity.js";
+import { drawMatrix, drawDiff, drawRowEnergy } from "./sigma-view.js";
+import { capacityCurve, capacityTrial, meanCosine } from "./capacity.js";
 import { drawCapacity, capacityTable } from "./chart.js";
 
 const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 
-const state = {
-  model: null, manifest: null, tokMap: null,
-  pairs: [],            // [{src, tgt}] byte pairs, the bijection defined in-prompt
-  removed: new Set(),   // indices removed by the learner
-  queryIdx: 1,          // which pair is being queried
-  view: "state",
-  prevSigma: null,      // sigma from the previous run, for the difference map
+const S = {
+  model: null, manifest: null, tok: null, presets: null,
+  pairs: [], removed: new Set(), queryIdx: 1,
+  view: "write", nLayer: 4, prevSigma: null, capCurves: null,
 };
 
+/* Every BDH-CQ number, labelled by what KIND of claim it is. This is the evidence-discipline
+   beat: a computed cost is not a price, a developer-reported score is not a verified one. */
+const LEDGER = [
+  ["computed", "<b>$0.00070 per task</b> is not a price. It is 0.85 H200-GPU-seconds costed at an assumed $3/GPU-hour. Change the assumption and the headline moves proportionally. §5, p.4."],
+  ["unverified", "The report gives <b>two different costs for the same 118/400 result</b> — $0.00070 in §5 and $0.00265246 in §6.6 — and never reconciles them. At the higher figure, “57× cheaper” becomes roughly 15×."],
+  ["reported", "<b>29.5% pass@2</b> is developer-reported. BDH-CQ appears on neither the official ARC Prize leaderboard nor the community one (checked 2026-09-04). HRM and TRM do."],
+  ["reported", "The <b>independent audit</b> was run by two co-authors of the paper. The report says so plainly; the press release does not."],
+  ["unverified", "<b>ConceptARC (59.38%)</b> is listed in the training mixture in §4.2 and then used as an evaluation set in §6.1. §6.5 concedes the control does not rule out training exposure."],
+  ["absent", "There are <b>no ARC-AGI-2 results</b> anywhere — not in the report, not in the blogs. It is named as future work."],
+  ["absent", "What physically changes between the <b>effort levels</b> is not disclosed, and no value of R is ever given."],
+];
+
 async function boot() {
-  const [manifest, binRes, presets] = await Promise.all([
+  const [manifest, bin, presets] = await Promise.all([
     fetch("public/model.json").then((r) => r.json()),
     fetch("public/model.bin").then((r) => r.arrayBuffer()),
     fetch("public/presets.json").then((r) => r.json()),
   ]);
-  state.manifest = manifest;
-  state.model = new BDHModel(manifest, binRes);
-  state.tokMap = makeTokenMap(manifest);
+  S.manifest = manifest; S.presets = presets;
+  S.model = new BDHModel(manifest, bin);
+  S.tok = makeTokenMap(manifest);
 
-  // Open with the preset already running -- no blank canvas, no Run button.
   const P = presets.hook;
-  state.pairs = P.pairs.map(([s, t]) => ({ src: s.charCodeAt(0), tgt: t.charCodeAt(0) }));
-  state.queryIdx = state.pairs.findIndex((p) => p.src === P.query.charCodeAt(0));
+  S.pairs = P.pairs.map(([s, t]) => ({ src: s.charCodeAt(0), tgt: t.charCodeAt(0) }));
+  S.queryIdx = S.pairs.findIndex((p) => p.src === P.query.charCodeAt(0));
 
-  $("#sigma-dims").textContent = `${state.model.N} x ${state.model.D}`;
-  $("#ax-rows").textContent = `${state.model.N} neurons ↓`;
-  $("#ax-cols").textContent = `${state.model.D} dims →`;
-  $("#whash").textContent = await weightsHash(binRes);
+  $("#sigma-dims").textContent = `${S.model.N} × ${S.model.D}`;
+  $("#ax-rows").textContent = `${S.model.N} neurons`;
+  $("#ax-cols").textContent = `${S.model.D} dims`;
+  S.hash0 = await liveWeightsHash(S.model);
+  $("#whash").textContent = S.hash0;
 
-  $("#add-demo").onclick = addDemo;
-  $("#sigma-tabs").onclick = (e) => {
-    const b = e.target.closest("button"); if (!b) return;
-    state.view = b.dataset.view;
-    [...$("#sigma-tabs").children].forEach((c) => c.classList.toggle("on", c === b));
+  $("#try-remove").onclick = () => {
+    const b = $("#try-remove");
+    if (S.removed.has(S.queryIdx)) {
+      S.removed.delete(S.queryIdx);
+      b.textContent = "Remove the demonstration it needs →"; b.classList.remove("done");
+    } else {
+      S.removed.add(S.queryIdx);
+      b.textContent = "Put it back ↺"; b.classList.add("done");
+    }
     render();
   };
-  for (const id of ["#t-softmax", "#t-qk", "#t-relu"]) $(id).onchange = renderEquivalence;
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { render(); renderCapacity(); });
-
+  $("#sigma-tabs").onclick = (e) => {
+    const b = e.target.closest("button"); if (!b) return;
+    S.view = b.dataset.view;
+    $$("#sigma-tabs button").forEach((c) => c.classList.toggle("on", c === b));
+    render();
+  };
+  for (const id of ["#t-softmax", "#t-qk", "#t-relu"]) $(id).onchange = renderEquiv;
   $("#k-slider").oninput = onK;
-  $("#t-signed").onchange = onK;   // both curves are always drawn; the toggle only
-                                   // moves which one the readout samples (23ms, not 900ms)
+  $("#t-signed").onchange = onK;   // both curves are always drawn; this moves the readout only
   $("#cap-table-toggle").onclick = () => {
     const t = $("#cap-table"), on = t.hidden;
     t.hidden = !on; $("#cap-chart").hidden = on;
-    $("#cap-table-toggle").textContent = on ? "chart view" : "table view";
+    $("#cap-table-toggle").textContent = on ? "chart" : "table";
   };
+  $("#add-demo").onclick = addDemo;
+  $("#l-slider").oninput = () => {
+    S.nLayer = +$("#l-slider").value; $("#l-val").textContent = S.nLayer; render();
+  };
+  $$(".recall-q").forEach((q) => q.onclick = () => {
+    if (q.classList.contains("open")) return;
+    q.classList.add("open");
+    const a = document.createElement("span");
+    a.className = "ans"; a.innerHTML = q.dataset.a; q.append(a);
+  });
+  matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", () => { render(); renderCapacity(); });
 
+  $("#ledger").innerHTML = LEDGER.map(([tier, html]) =>
+    `<li><span class="tier tier-${tier}">${tier}</span><span>${html}</span></li>`).join("");
+
+  spy();
   render();
   renderCapacity();
 }
 
-/** Weights never change during adaptation. Hashing them is the claim's second attack surface. */
-async function weightsHash(buf) {
-  const d = await crypto.subtle.digest("SHA-256", buf);
-  return [...new Uint8Array(d).slice(0, 6)].map((b) => b.toString(16).padStart(2, "0")).join("");
+/**
+ * Hash the weight arrays the forward pass ACTUALLY reads -- not the source file.
+ * The fp16 tensors are decoded into fresh Float32Arrays at load, so digesting the downloaded
+ * blob would prove the wrong thing. This digests the live arrays, and is re-run after every
+ * interaction so "parameter updates: 0" is a measurement rather than a caption.
+ */
+async function liveWeightsHash(model) {
+  const parts = Object.keys(model.w).sort().map((k) => model.w[k]);
+  const total = parts.reduce((n, a) => n + a.byteLength, 0);
+  const flat = new Uint8Array(total);
+  let o = 0;
+  for (const a of parts) { flat.set(new Uint8Array(a.buffer, a.byteOffset, a.byteLength), o); o += a.byteLength; }
+  const d = await crypto.subtle.digest("SHA-256", flat);
+  return [...new Uint8Array(d)].slice(0, 6).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-const active = () => state.pairs.filter((_, i) => !state.removed.has(i));
+const active = () => S.pairs.filter((_, i) => !S.removed.has(i));
 
-/** Byte sequence: k demonstrations, then the query. Identical construction to cipher_task.py. */
 function buildTokens() {
   const seq = [];
-  for (const p of active()) seq.push(p.src, p.tgt, state.manifest.tokens.SEP);
-  seq.push(state.manifest.tokens.QRY, state.pairs[state.queryIdx].src);
+  for (const p of active()) seq.push(p.src, p.tgt, S.manifest.tokens.SEP);
+  seq.push(S.manifest.tokens.QRY, S.pairs[S.queryIdx].src);
   return seq;
 }
 
 function addDemo() {
-  const usedS = new Set(state.pairs.map((p) => p.src));
-  const usedT = new Set(state.pairs.map((p) => p.tgt));
-  const s = state.manifest.tokens.SRC.find((b) => !usedS.has(b));
-  const t = state.manifest.tokens.TGT.find((b) => !usedT.has(b));
+  const uS = new Set(S.pairs.map((p) => p.src)), uT = new Set(S.pairs.map((p) => p.tgt));
+  const s = S.manifest.tokens.SRC.find((b) => !uS.has(b));
+  const t = S.manifest.tokens.TGT.find((b) => !uT.has(b));
   if (s === undefined || t === undefined) return;
-  state.pairs.push({ src: s, tgt: t });
+  S.pairs.push({ src: s, tgt: t });
   render();
 }
 
-function renderDemos() {
-  const list = $("#demo-list");
-  list.textContent = "";
-  state.pairs.forEach((p, i) => {
-    const row = document.createElement("div");
-    row.className = "demo" + (state.removed.has(i) ? " removed" : "");
-    row.append(chip(state.tokMap.get(p.src)));
-    const a = document.createElement("span"); a.className = "arrow"; a.textContent = "→";
-    row.append(a, chip(state.tokMap.get(p.tgt)));
-    const btn = document.createElement("button");
-    btn.textContent = state.removed.has(i) ? "↺" : "×";
-    btn.title = state.removed.has(i) ? "restore" : "remove this demonstration";
-    btn.onclick = () => {
-      state.removed.has(i) ? state.removed.delete(i) : state.removed.add(i);
-      render();
-    };
-    row.append(btn);
-    list.append(row);
-  });
-  $("#add-demo").disabled = state.pairs.length >= 12;
+function demoRow(p, i) {
+  const row = document.createElement("div");
+  row.className = "demo" + (S.removed.has(i) ? " removed" : "");
+  row.append(chip(S.tok.get(p.src)));
+  const a = document.createElement("span"); a.className = "arrow"; a.textContent = "→";
+  row.append(a, chip(S.tok.get(p.tgt)));
+  const b = document.createElement("button");
+  b.textContent = S.removed.has(i) ? "↺" : "×";
+  b.title = S.removed.has(i) ? "restore this demonstration" : "remove this demonstration";
+  b.onclick = (e) => {
+    e.stopPropagation();
+    S.removed.has(i) ? S.removed.delete(i) : S.removed.add(i);
+    render();
+  };
+  row.append(b);
+  return row;
 }
 
 function render() {
-  renderDemos();
+  const list = $("#demo-list"); list.textContent = "";
+  S.pairs.forEach((p, i) => list.append(demoRow(p, i)));
+  const sb = $("#sb-demos"); sb.textContent = "";
+  S.pairs.forEach((p, i) => sb.append(demoRow(p, i)));
+  $("#add-demo").disabled = S.pairs.length >= 12;
+
+  const pick = $("#sb-query-pick"); pick.textContent = "";
+  S.pairs.forEach((p, i) => {
+    const c = chip(S.tok.get(p.src));
+    if (i === S.queryIdx) c.classList.add("sel");
+    c.style.cursor = "pointer";
+    c.onclick = () => { S.queryIdx = i; render(); };
+    pick.append(c);
+  });
+
   const tokens = buildTokens();
-  const qPair = state.pairs[state.queryIdx];
+  const qp = S.pairs[S.queryIdx];
 
-  // query row
-  const qr = $("#query-row");
-  qr.textContent = "";
-  qr.append(chip(state.tokMap.get(qPair.src), { big: true }));
-  const a = document.createElement("span"); a.className = "arrow"; a.textContent = "→";
-  const ghost = document.createElement("span");
-  ghost.className = "chip chip-big chip-ghost"; ghost.textContent = "?";
-  qr.append(a, ghost);
+  const qr = $("#query-row"); qr.textContent = "";
+  qr.append(chip(S.tok.get(qp.src), { big: true }));
+  const ar = document.createElement("span"); ar.className = "arrow"; ar.textContent = "→";
+  const gh = document.createElement("span");
+  gh.className = "chip chip-big chip-ghost"; gh.textContent = "?";
+  qr.append(ar, gh);
 
-  // forward pass
   const t0 = performance.now();
-  const out = state.model.forward(tokens);
-  const ms = performance.now() - t0;
+  const out = S.model.forward(tokens, { layers: S.nLayer });
+  $("#fwd-ms").textContent = `${(performance.now() - t0).toFixed(0)} ms`;
 
-  const V = state.model.V, last = tokens.length - 1;
+  const V = S.model.V, last = tokens.length - 1;
   let best = 0;
   for (let i = 1; i < V; i++) if (out.logits[last * V + i] > out.logits[last * V + best]) best = i;
-
-  // The oracle: the mapping is defined ONLY by the demonstrations still present.
-  const shown = active().find((p) => p.src === qPair.src);
+  const shown = active().find((p) => p.src === qp.src);
   const truth = shown ? shown.tgt : null;
 
   $("#model-out").textContent = "";
-  $("#model-out").append(chip(state.tokMap.get(best) ?? { kind: "sep", label: "?", byte: best },
-                              { big: true }));
+  $("#model-out").append(chip(S.tok.get(best) ?? { kind: "sep", label: "?", byte: best }, { big: true }));
   $("#oracle-out").textContent = "";
-  if (truth !== null) {
-    $("#oracle-out").append(chip(state.tokMap.get(truth), { big: true }));
-  } else {
+  if (truth !== null) $("#oracle-out").append(chip(S.tok.get(truth), { big: true }));
+  else {
     const u = document.createElement("span");
     u.className = "chip chip-big chip-ghost"; u.textContent = "—";
     $("#oracle-out").append(u);
   }
 
-  const note = $("#verdict-note");
-  if (truth === null) {
-    note.innerHTML = `<span class="no">unreachable</span> — that binding is no longer in the
-      prompt, so nothing defines the answer. The model still answers, confidently. ${ms.toFixed(0)}ms`;
-  } else if (best === truth) {
-    note.innerHTML = `<span class="ok">correct</span> — read out of σ, with zero
-      parameter updates. ${ms.toFixed(0)}ms`;
-  } else {
-    note.innerHTML = `<span class="no">wrong</span> — same query bytes, different
-      demonstrations. ${ms.toFixed(0)}ms`;
-  }
-  $("#param-updates").textContent = "0";
+  const n = $("#verdict-note");
+  if (truth === null)
+    n.innerHTML = `<b>Unreachable.</b> Nothing in the prompt defines this answer any more, so
+      there is no right answer to give. The model answers anyway, and confidently. The weights
+      never moved.`;
+  else if (best === truth)
+    n.innerHTML = `<b>Correct</b> — and nothing was trained. The rule was read out of a state
+      built during this forward pass, then discarded.`;
+  else
+    n.innerHTML = `<b>Wrong.</b> Identical query bytes, different demonstrations.`;
+
+  $("#sb-tokens").textContent =
+    tokens.map((b) => {
+      const t = S.tok.get(b);
+      return t ? (t.kind === "sep" ? "·" : t.kind === "qry" ? "|" : t.label) : "?";
+    }).join(" ") + `\n\n${tokens.length} tokens · bytes [${tokens.join(", ")}]`;
+
+  $("#l-note").textContent = S.nLayer === 4
+    ? "4 is what this model was trained with."
+    : `Trained at 4. At L=${S.nLayer} the same weights run ${S.nLayer > 4 ? "more" : "fewer"} times than training ever used, so behaviour here is off-distribution.`;
 
   renderSigma(out);
-  renderEquivalence();
+  renderEquiv();
+  verifyWeightsUnchanged();
 }
 
-function renderSigma(out) {
-  const { N, D } = state.model;
-  const cur = out.sigmas[0].sigma;            // layer 0, head 0
-  const cv = $("#sigma-canvas");
-  const noteEl = $("#sigma-note");
+/** Re-hash after every interaction. If adaptation ever touched a parameter, this would move. */
+async function verifyWeightsUnchanged() {
+  const h = await liveWeightsHash(S.model);
+  const same = h === S.hash0;
+  $("#whash").textContent = h;
+  const note = $("#whash-note");
+  note.textContent = same
+    ? `re-checked after this interaction, unchanged`
+    : `CHANGED — this should be impossible`;
+  note.style.color = same ? "" : "var(--bad)";
+  $("#param-updates").textContent = same ? "0" : "?";
+}
+  const { N, D } = S.model;
+  const cur = out.sigmas[0].sigma;
+  const cv = $("#sigma-canvas"), note = $("#sigma-note");
+  let nz = 0; for (let i = 0; i < cur.length; i++) if (cur[i] !== 0) nz++;
+  $("#sigma-density").textContent = `${(100 * nz / cur.length).toFixed(0)}%`;
 
-  if (state.view === "state") {
-    drawMatrix(cv, cur, N, D);
-    noteEl.textContent = "σ is dense: every cell carries some value within a few tokens, " +
-      "because the keys are ~43% dense. The structure lives in the writes and the differences.";
-    drawRowEnergy($("#energy-canvas"), cur, N, D);
-  } else if (state.view === "write") {
-    // The last write: rank-one by construction, and the one genuinely legible picture.
-    const s = out.sigmas[0];
-    const snaps = equivalenceCheck(state.model, buildTokens(), {}).snapshots;
-    const n = snaps.length;
+  if (S.view === "write") {
+    const snaps = equivalenceCheck(S.model, buildTokens(), {}).snapshots;
     const d = new Float32Array(N * D);
-    if (n >= 2) for (let i = 0; i < d.length; i++) d[i] = snaps[n - 1][i] - snaps[n - 2][i];
+    if (snaps.length >= 2)
+      for (let i = 0; i < d.length; i++)
+        d[i] = snaps[snaps.length - 1][i] - snaps[snaps.length - 2][i];
     drawMatrix(cv, d, N, D);
-    noteEl.textContent = "Δσ for the final token = rope(K)ₜ ⊗ Vₜ. " +
-      "A rank-one outer product — one row pattern times one column pattern.";
+    note.textContent = "One token's contribution: rope(K)ₜ ⊗ Vₜ. A rank-one outer product — one row pattern times one column pattern, which is why it bands.";
     drawRowEnergy($("#energy-canvas"), d, N, D);
+  } else if (S.view === "state") {
+    drawMatrix(cv, cur, N, D);
+    note.textContent = "The accumulated state. Dense within a few tokens, because the keys are themselves about 43% dense — so the raw matrix is not where the structure shows.";
+    drawRowEnergy($("#energy-canvas"), cur, N, D);
   } else {
-    if (state.prevSigma) {
-      drawDiff(cv, cur, state.prevSigma, N, D);
-      noteEl.textContent = "Change in σ since the previous configuration. " +
-        "Remove a demonstration and its contribution disappears from the state.";
+    if (S.prevSigma && S.prevSigma.length === cur.length) {
+      drawDiff(cv, cur, S.prevSigma, N, D);
       const d = new Float32Array(N * D);
-      for (let i = 0; i < d.length; i++) d[i] = cur[i] - state.prevSigma[i];
+      for (let i = 0; i < d.length; i++) d[i] = cur[i] - S.prevSigma[i];
       drawRowEnergy($("#energy-canvas"), d, N, D);
+      note.textContent = "Difference from the previous configuration. Remove a demonstration and its whole contribution leaves the state.";
     } else {
       drawMatrix(cv, cur, N, D);
-      noteEl.textContent = "Change a demonstration to see the difference map.";
+      note.textContent = "Change something — remove a demonstration, or query a different symbol — to see what moves.";
       drawRowEnergy($("#energy-canvas"), cur, N, D);
     }
   }
-  state.prevSigma = Float32Array.from(cur);
+  S.prevSigma = Float32Array.from(cur);
 }
 
-function renderEquivalence() {
-  const opts = {
+function renderEquiv() {
+  const o = {
     softmax: $("#t-softmax").checked,
     decoupleQK: $("#t-qk").checked,
     noRelu: $("#t-relu").checked,
   };
-  const r = equivalenceCheck(state.model, buildTokens(), opts);
-  const broken = r.relative > 1e-5;
+  const r = equivalenceCheck(S.model, buildTokens(), o);
   $("#resid").textContent = r.maxAbs.toExponential(2);
-  $(".residual").classList.toggle("broken", broken);
-
-  const note = $("#equiv-note");
-  if (opts.softmax) {
-    note.innerHTML = `<span class="no">Equivalence dies.</span> Softmax normalises across every
-      past position, so the state can no longer be a fixed-size running sum — you must keep
-      all past keys. <strong>This is why a Transformer needs a KV cache that grows.</strong>`;
-  } else if (opts.decoupleQK || opts.noRelu) {
-    note.innerHTML = `<span class="ok">Still equivalent.</span> These do <em>not</em> buy constant
-      memory. Q=K and the ReLU buy something else: they make σ readable as a Hebbian synapse
-      matrix over one non-negative neuron basis — and that non-negativity is what costs
-      capacity.`;
-  } else {
-    note.innerHTML = `Parallel and recurrent agree to float precision. Verified against PyTorch
-      at float64: <code>2.8e-14</code>.`;
-  }
+  $(".residual-card").classList.toggle("broken", r.relative > 1e-5);
+  const n = $("#equiv-note");
+  if (o.softmax)
+    n.innerHTML = `<b>Broken.</b> Softmax normalises each score against every other, so no
+      fixed-size running sum can reproduce it. You have to keep every past key — which is
+      exactly what a KV cache is.`;
+  else if (o.decoupleQK || o.noRelu)
+    n.innerHTML = `<b>Still equivalent.</b> These do not buy constant memory. Tying Q to K and
+      clamping activations non-negative are what make σ <em>readable</em> as synapses over one
+      basis of neurons.`;
+  else
+    n.innerHTML = `Parallel and recurrent agree to floating-point noise — the same layer computed
+      two entirely different ways. Verified against PyTorch at float64: <code>2.8e-14</code>.`;
 }
 
-// ---- capacity: the falsification mechanism for the claim's second half ----
+/* ── capacity ────────────────────────────────────────────────────────────── */
 const KS = [2, 4, 8, 16, 32, 64, 128, 192, 256];
-let capCurves = null;
 
 function renderCapacity() {
-  // Both curves always drawn: the signed curve IS the reference the claim is measured against.
-  capCurves = [
-    { name: "ReLU'd keys (BDH)", points: capacityCurve(KS, { nonneg: true, trials: 4 }) },
+  S.capCurves = [
+    { name: "ReLU'd keys", points: capacityCurve(KS, { nonneg: true, trials: 4 }) },
     { name: "signed keys", points: capacityCurve(KS, { nonneg: false, trials: 4 }) },
   ];
-  drawCapacity($("#cap-chart"), capCurves, { marker: +$("#k-slider").value });
-  capacityTable($("#cap-table"), capCurves);
-
-  const cNN = meanCosine({ nonneg: true }), cS = meanCosine({ nonneg: false });
-  $("#cos-nn").textContent = cNN.toFixed(3);
-  $("#cos-s").textContent = cS.toFixed(3);
+  drawCapacity($("#cap-chart"), S.capCurves, { marker: +$("#k-slider").value });
+  capacityTable($("#cap-table"), S.capCurves);
+  $("#cos-nn").textContent = meanCosine({ nonneg: true }).toFixed(3);
+  $("#cos-s").textContent = meanCosine({ nonneg: false }).toFixed(3);
   onK();
 }
 
 function onK() {
-  const k = +$("#k-slider").value;
-  const signed = $("#t-signed").checked;
-  $("#k-val").textContent = k;
-  $("#k-echo").textContent = k;
-  const acc = capacityTrial(k, { nonneg: !signed, seed: 1000 });
-  $("#cap-at-k").textContent = `${Math.round(acc * 100)}%`;
-  $("#cap-at-k-note").textContent = signed ? "signed keys" : "ReLU'd keys (BDH)";
-  if (capCurves) drawCapacity($("#cap-chart"), capCurves, { marker: k });
+  const k = +$("#k-slider").value, signed = $("#t-signed").checked;
+  $("#k-val").textContent = k; $("#k-echo").textContent = k;
+  $("#cap-at-k").textContent =
+    `${Math.round(capacityTrial(k, { nonneg: !signed, seed: 1000 }) * 100)}%`;
+  $("#cap-at-k-note").textContent = signed ? "signed keys" : "ReLU'd keys, as BDH has";
+  if (S.capCurves) drawCapacity($("#cap-chart"), S.capCurves, { marker: k });
+  $("#cap-note").innerHTML = signed
+    ? `<b>The same state now holds far more.</b> Identical shape, identical rank — only the key
+       geometry changed. Signed keys are orthogonal on average, so they barely interfere, and they
+       keep working past k = N = 256, beyond the state's own rank.`
+    : `Non-negative keys cannot be near-orthogonal. Two ReLU'd Gaussians overlap by 1/π ≈ 0.318
+       on average, and that overlap is what corrupts reads as k grows. The ReLU is what makes
+       BDH's activations sparse, positive and inspectable
+       (<a href="https://arxiv.org/abs/2509.26507">arXiv:2509.26507</a>) — this is its price.`;
+}
 
-  const note = $("#cap-note");
-  if (signed) {
-    note.innerHTML = `<span class="ok">Capacity jumps.</span> Same state, same size, same rank —
-      only the key geometry changed. Signed keys are orthogonal on average, so they barely
-      interfere; they hold bindings past k = N = 256, beyond the state's rank.
-      <strong>Capacity is bounded by overlap, not by size.</strong>`;
-  } else {
-    note.innerHTML = `ReLU'd keys are non-negative, so they cannot be near-orthogonal — their
-      mean pairwise cosine is 1/π ≈ 0.318, and that overlap is what corrupts reads as k grows.
-      The ReLU is what makes BDH's activations sparse, positive and inspectable
-      (<a href="https://arxiv.org/abs/2509.26507">arXiv:2509.26507</a>); this is what it costs.`;
-  }
+/* ── scroll rail ─────────────────────────────────────────────────────────── */
+function spy() {
+  const io = new IntersectionObserver((es) => {
+    for (const e of es)
+      if (e.isIntersecting)
+        $$("#rail a").forEach((a) => a.classList.toggle("on", a.dataset.act === e.target.id));
+  }, { rootMargin: "-45% 0px -45% 0px" });
+  $$("section.act").forEach((s) => io.observe(s));
 }
 
 boot().catch((e) => {
-  document.body.innerHTML = `<pre style="padding:24px;color:#e34948">${e.stack}</pre>`;
+  document.body.innerHTML =
+    `<pre style="padding:32px;font:13px/1.6 ui-monospace,monospace;color:#e34948">${e.stack}</pre>`;
 });

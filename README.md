@@ -10,19 +10,19 @@ Topic: **Test-Time Adaptation — Optimization versus Context**
 
 ---
 
-## ⚠ Status: work in progress
+## Status — work in progress
 
 This repository is **not a finished submission.** Being explicit about that, because the track
 judges evidence discipline and a README that overstates its own completeness is the wrong start.
 
 | | |
 |---|---|
-| Research + primary-source dossier | ✅ done |
-| Trained model + browser substrate | ✅ done, three passing gates |
-| Interactive artifact | 🟡 ~20% — core interaction only |
-| BDH / BDH-CQ module | ❌ not built |
-| Capacity (1/π) section | ❌ not built — *the claim's own second clause* |
-| One-page concept summary, blog, full README | ❌ not written |
+| Research + primary-source dossier | done |
+| Trained model + browser substrate | done, five passing gates |
+| Interactive artifact | narrative essay built; sandbox and polish outstanding |
+| BDH / BDH-CQ module | built — equations, replayed Table 3, evidence ledger |
+| Capacity (1/pi) section | built and live |
+| One-page concept summary, blog, final README | not written |
 
 See [`plan.md`](plan.md) for the full design and [`CLAUDE.md`](CLAUDE.md) for the working log,
 including the methodology traps this project already fell into and climbed out of.
@@ -40,7 +40,7 @@ It is **not** an official BDH model, and it is **not BDH-CQ**, whose weights are
 ## Quickstart
 
 ```bash
-npm test          # three gates: PyTorch parity, equivalence, app logic
+npm test          # five gates: PyTorch parity, equivalence, app logic
 npm run dev       # serve the artifact at http://localhost:8080
 ```
 
@@ -89,7 +89,7 @@ analytic: **1/π** for ReLU'd Gaussians. Capacity is bounded by key *overlap*, n
 |---|---|---|---|---|---|---|
 | accuracy | **100%** | 64% | 40% | 20% | 9% | 3% |
 
-⚠ This curve is a **demonstration-coverage** limit, not a capacity limit — the same state
+Note: This curve is a **demonstration-coverage** limit, not a capacity limit — the same state
 retrieves 99% at k=16 when measured directly. The two must not be conflated.
 
 ## What is live vs precomputed
@@ -104,7 +104,7 @@ retrieves 99% at k=16 when measured directly. The two must not be conflated.
 ## Honest limitations
 
 - Our toy runs **~43% active neurons**; the BDH paper reports ~5% for trained BDH-GPU at scale on
-  language. This model does not reproduce that, and does not claim to. *(⚠ the 5% figure is still
+  language. This model does not reproduce that, and does not claim to. *(Note: the 5% figure is still
   unverified against the primary source.)*
 - σ is **dense**, not sparse ridges — 100% of its 16,384 cells are nonzero within a few tokens.
 - The model is 131K parameters on a synthetic task. It is an honest miniature, not evidence about

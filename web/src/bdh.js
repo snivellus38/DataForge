@@ -66,9 +66,17 @@ export class BDHModel {
     this.freqs = this.w["attn.freqs"];
   }
 
-  /** Runs the forward pass. Returns {logits, sigma, xSparse} -- sigma is (nh, N, D) per layer. */
-  forward(tokens, { keepSigma = true } = {}) {
-    const { D, nh, N, L, V } = this;
+  /**
+   * Runs the forward pass. Returns {logits, sigmas, xSparse}; sigma is (N, D) per layer/head.
+   * `layers` overrides the iteration count. bdh.py is WEIGHT-TIED across layers -- the same
+   * encoder/encoder_v/decoder run every iteration -- so this is a real knob, not a truncation:
+   * it changes how many times one shared operator is applied, which is the same structure as
+   * BDH-CQ's H_{r+1} = F_theta(H_r, S_K). Away from the trained count the model is
+   * off-distribution, and the UI says so.
+   */
+  forward(tokens, { keepSigma = true, layers = null } = {}) {
+    const { D, nh, N, V } = this;
+    const L = layers ?? this.L;
     const T = tokens.length;
     const x = new Float32Array(T * D);
     for (let t = 0; t < T; t++)
