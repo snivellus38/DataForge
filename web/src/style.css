@@ -97,3 +97,20 @@ code { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9e
 footer { margin-top:28px; padding-top:16px; border-top:1px solid var(--line);
          font-size:12px; color:var(--ink3); }
 footer a { color:var(--ink2); }
+
+/* --- capacity section --- */
+.capacity { margin-top:16px; }
+.cap-controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap; margin:14px 0 8px; }
+.switch, .slider { display:flex; gap:8px; align-items:center; font-size:13px; color:var(--ink2); cursor:pointer; }
+.slider input[type=range] { width:170px; accent-color:var(--accent); }
+.slider strong { font:700 13px/1 ui-monospace, monospace; color:var(--ink); min-width:3ch; display:inline-block; }
+.ghost.inline { width:auto; margin:0; padding:5px 10px; font-size:12px; }
+#cap-chart { margin:4px 0; }
+.datatable { border-collapse:collapse; font-size:12px; width:100%; }
+.datatable th, .datatable td { border:1px solid var(--line); padding:5px 8px; text-align:right;
+                               font-family:ui-monospace, monospace; color:var(--ink2); }
+.datatable tr th:first-child { text-align:left; font-family:inherit; color:var(--ink); }
+.mechanism { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px;
+             margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+.mechanism strong { display:block; font:700 20px/1.2 ui-monospace, monospace; color:var(--ink); margin:2px 0; }
+.sub-note { font-size:11px; color:var(--ink3); }

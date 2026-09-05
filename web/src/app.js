@@ -6,6 +6,8 @@
 import { BDHModel, equivalenceCheck } from "./bdh.js";
 import { makeTokenMap, chip } from "./tokens.js";
 import { drawMatrix, drawDiff, drawRowEnergy, scaleOf } from "./sigma-view.js";
+import { capacityCurve, capacityTrial, meanCosine, ANALYTIC_COSINE } from "./capacity.js";
+import { drawCapacity, capacityTable } from "./chart.js";
 
 const $ = (s) => document.querySelector(s);
 
@@ -46,9 +48,19 @@ async function boot() {
     render();
   };
   for (const id of ["#t-softmax", "#t-qk", "#t-relu"]) $(id).onchange = renderEquivalence;
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { render(); renderCapacity(); });
+
+  $("#k-slider").oninput = onK;
+  $("#t-signed").onchange = onK;   // both curves are always drawn; the toggle only
+                                   // moves which one the readout samples (23ms, not 900ms)
+  $("#cap-table-toggle").onclick = () => {
+    const t = $("#cap-table"), on = t.hidden;
+    t.hidden = !on; $("#cap-chart").hidden = on;
+    $("#cap-table-toggle").textContent = on ? "chart view" : "table view";
+  };
 
   render();
+  renderCapacity();
 }
 
 /** Weights never change during adaptation. Hashing them is the claim's second attack surface. */
@@ -218,6 +230,49 @@ function renderEquivalence() {
   } else {
     note.innerHTML = `Parallel and recurrent agree to float precision. Verified against PyTorch
       at float64: <code>2.8e-14</code>.`;
+  }
+}
+
+// ---- capacity: the falsification mechanism for the claim's second half ----
+const KS = [2, 4, 8, 16, 32, 64, 128, 192, 256];
+let capCurves = null;
+
+function renderCapacity() {
+  // Both curves always drawn: the signed curve IS the reference the claim is measured against.
+  capCurves = [
+    { name: "ReLU'd keys (BDH)", points: capacityCurve(KS, { nonneg: true, trials: 4 }) },
+    { name: "signed keys", points: capacityCurve(KS, { nonneg: false, trials: 4 }) },
+  ];
+  drawCapacity($("#cap-chart"), capCurves, { marker: +$("#k-slider").value });
+  capacityTable($("#cap-table"), capCurves);
+
+  const cNN = meanCosine({ nonneg: true }), cS = meanCosine({ nonneg: false });
+  $("#cos-nn").textContent = cNN.toFixed(3);
+  $("#cos-s").textContent = cS.toFixed(3);
+  onK();
+}
+
+function onK() {
+  const k = +$("#k-slider").value;
+  const signed = $("#t-signed").checked;
+  $("#k-val").textContent = k;
+  $("#k-echo").textContent = k;
+  const acc = capacityTrial(k, { nonneg: !signed, seed: 1000 });
+  $("#cap-at-k").textContent = `${Math.round(acc * 100)}%`;
+  $("#cap-at-k-note").textContent = signed ? "signed keys" : "ReLU'd keys (BDH)";
+  if (capCurves) drawCapacity($("#cap-chart"), capCurves, { marker: k });
+
+  const note = $("#cap-note");
+  if (signed) {
+    note.innerHTML = `<span class="ok">Capacity jumps.</span> Same state, same size, same rank —
+      only the key geometry changed. Signed keys are orthogonal on average, so they barely
+      interfere; they hold bindings past k = N = 256, beyond the state's rank.
+      <strong>Capacity is bounded by overlap, not by size.</strong>`;
+  } else {
+    note.innerHTML = `ReLU'd keys are non-negative, so they cannot be near-orthogonal — their
+      mean pairwise cosine is 1/π ≈ 0.318, and that overlap is what corrupts reads as k grows.
+      The ReLU is what makes BDH's activations sparse, positive and inspectable
+      (<a href="https://arxiv.org/abs/2509.26507">arXiv:2509.26507</a>); this is what it costs.`;
   }
 }
 

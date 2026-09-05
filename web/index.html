@@ -66,6 +66,42 @@
     <p id="equiv-note" class="note"></p>
   </section>
 
+
+  <section class="panel capacity">
+    <h2>Where it forgets <span class="hint">and why &mdash; live, no training involved</span></h2>
+    <p class="note">Write <em>k</em> bindings into the same &sigma; and read every one back.
+      The claim says capacity is set by how much the keys <strong>overlap</strong>, not by the
+      state&rsquo;s size. Flip the keys from non-negative to signed and find out.</p>
+
+    <div class="cap-controls">
+      <label class="switch">
+        <input type="checkbox" id="t-signed">
+        <span>use signed keys instead of ReLU&rsquo;d</span>
+      </label>
+      <label class="slider">
+        <span>k = <strong id="k-val">32</strong></span>
+        <input type="range" id="k-slider" min="2" max="256" value="32">
+      </label>
+      <button id="cap-table-toggle" class="ghost inline">table view</button>
+    </div>
+
+    <div id="cap-chart"></div>
+    <div id="cap-table" hidden></div>
+
+    <div class="mechanism">
+      <div><span class="lbl">mean pairwise cosine, ReLU&rsquo;d keys</span>
+           <strong id="cos-nn">&mdash;</strong>
+           <span class="sub-note">analytic 1/&pi; = 0.318</span></div>
+      <div><span class="lbl">mean pairwise cosine, signed keys</span>
+           <strong id="cos-s">&mdash;</strong>
+           <span class="sub-note">orthogonal on average</span></div>
+      <div><span class="lbl">retrieval at k = <span id="k-echo">32</span></span>
+           <strong id="cap-at-k">&mdash;</strong>
+           <span class="sub-note" id="cap-at-k-note"></span></div>
+    </div>
+    <p id="cap-note" class="note"></p>
+  </section>
+
   <footer>
     <p><strong>What is live:</strong> everything on this page. A 131,072-parameter BDH we trained
       runs in your browser (257&nbsp;KB, fp16). It is <strong>not</strong> an official BDH model,
