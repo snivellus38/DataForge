@@ -1,0 +1,57 @@
+  step  2000  loss 2.2563  (196s)
+  step  2500  loss 1.9923  (249s)
+
+trained on k in [2,10]   (n=512 eval per k)
+  k :  acc   | in train range
+   2 :  52.5% | yes
+   3 :  32.6% | yes
+   4 :  26.6% | yes
+   5 :  18.8% | yes
+   6 :  16.4% | yes
+   7 :  13.3% | yes
+   8 :  11.3% | yes
+   9 :  12.1% | yes
+  10 :  11.7% | yes
+  11 :  11.1% | NO (extrapolation)
+  12 :   7.2% | NO (extrapolation)
+  13 :   8.4% | NO (extrapolation)
+wrote research/runs/sweep_mult1.json
+================================================
+  step  2000  loss 1.8310  (196s)
+  step  2500  loss 2.1011  (245s)
+
+trained on k in [2,10]   (n=512 eval per k)
+  k :  acc   | in train range
+   2 :  47.3% | yes
+   3 :  29.9% | yes
+   4 :  25.0% | yes
+   5 :  19.1% | yes
+   6 :  15.2% | yes
+   7 :  14.3% | yes
+   8 :  12.7% | yes
+   9 :  10.9% | yes
+  10 :   8.4% | yes
+  11 :   9.6% | NO (extrapolation)
+  12 :   6.2% | NO (extrapolation)
+  13 :   8.0% | NO (extrapolation)
+wrote research/runs/sweep_mult2.json
+================================================
+  step  2000  loss 0.0315  (270s)
+  step  2500  loss 0.0076  (413s)
+
+trained on k in [2,10]   (n=512 eval per k)
+  k :  acc   | in train range
+   2 : 100.0% | yes
+   3 : 100.0% | yes
+   4 : 100.0% | yes
+   5 : 100.0% | yes
+   6 : 100.0% | yes
+   7 :  99.8% | yes
+   8 :  99.6% | yes
+   9 :  99.8% | yes
+  10 :  99.6% | yes
+  11 :  96.7% | NO (extrapolation)
+  12 :  94.3% | NO (extrapolation)
+  13 :  90.0% | NO (extrapolation)
+wrote research/runs/sweep_mult4.json
+================================================

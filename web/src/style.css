@@ -1,0 +1,99 @@
+/* Light is the base; dark is SELECTED, not an automatic flip. Both scopes declared so an
+   explicit theme stamp wins over the OS setting in both directions. */
+:root {
+  color-scheme: light;
+  --bg:#fcfcfb; --panel:#ffffff; --ink:#0b0b0b; --ink2:#52514e; --ink3:#8a8880;
+  --line:#e6e5e1; --accent:#2a78d6; --warn:#eb6834; --good:#1baf7a; --bad:#e34948;
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg:#1a1a19; --panel:#222220; --ink:#ffffff; --ink2:#c3c2b7; --ink3:#8a8880;
+    --line:#2e2e2b; --accent:#3987e5; --warn:#d95926; --good:#199e70; --bad:#e66767;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#1a1a19; --panel:#222220; --ink:#ffffff; --ink2:#c3c2b7; --ink3:#8a8880;
+  --line:#2e2e2b; --accent:#3987e5; --warn:#d95926; --good:#199e70; --bad:#e66767;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font:15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+#app { max-width:1180px; margin:0 auto; padding:32px 20px 64px; }
+
+.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink3); margin:0 0 8px; }
+h1 { font-size:clamp(24px,3.4vw,36px); line-height:1.15; margin:0 0 12px; letter-spacing:-.02em; }
+.sub { color:var(--ink2); max-width:70ch; margin:0 0 28px; }
+h2 { font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3);
+     margin:0 0 12px; font-weight:600; display:flex; gap:8px; align-items:baseline; }
+h3 { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3); margin:16px 0 6px; }
+.hint { font-weight:400; text-transform:none; letter-spacing:0; color:var(--ink3); font-size:11px; }
+
+.stage { display:grid; gap:16px; align-items:start;
+         grid-template-columns:minmax(210px,1fr) minmax(190px,1fr) minmax(280px,1.3fr); }
+@media (max-width:900px) { .stage { grid-template-columns:1fr; } }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px; }
+
+/* Identity is the LETTER; colour only reinforces it (the categorical palette clears
+   just three slots on the all-pairs gate, and the sandbox can show many more). */
+.chip { display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px;
+        padding:0 7px; border-radius:7px; border:1px solid var(--line); background:var(--bg);
+        color:var(--ink); font:600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.chip-tgt { background:var(--chip-hue); color:#fff; border-color:transparent; }
+.chip-big { min-width:38px; height:38px; font-size:16px; border-radius:9px; }
+.chip-ghost { border-style:dashed; color:var(--ink3); }
+
+.demo { display:flex; align-items:center; gap:8px; padding:6px 0; }
+.demo .arrow { color:var(--ink3); }
+.demo button { margin-left:auto; border:0; background:none; color:var(--ink3); cursor:pointer;
+               font-size:16px; line-height:1; padding:4px 7px; border-radius:6px; }
+.demo button:hover { background:var(--line); color:var(--bad); }
+.demo.removed { opacity:.4; }
+
+.ghost { margin-top:8px; border:1px dashed var(--line); background:none; color:var(--ink2);
+         padding:7px 10px; border-radius:8px; cursor:pointer; font-size:13px; width:100%; }
+.ghost:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.ghost:disabled { opacity:.45; cursor:not-allowed; }
+
+.counter { display:flex; justify-content:space-between; align-items:baseline; margin-top:14px;
+           padding-top:12px; border-top:1px solid var(--line); font-size:12px; color:var(--ink3); }
+.counter strong { font:700 22px/1 ui-monospace, monospace; color:var(--good); }
+.counter.subtle { border:0; padding-top:4px; margin-top:4px; }
+.counter code { font-size:11px; color:var(--ink3); }
+
+#query-row { display:flex; align-items:center; gap:8px; min-height:44px; flex-wrap:wrap; }
+.verdict { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.lbl { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.06em;
+       color:var(--ink3); margin-bottom:6px; }
+.note { font-size:12px; color:var(--ink2); margin:12px 0 0; min-height:1.2em; }
+.ok { color:var(--good); font-weight:600; }
+.no { color:var(--bad); font-weight:600; }
+
+.tabs { display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
+.tabs button { border:1px solid var(--line); background:none; color:var(--ink2); font-size:12px;
+               padding:5px 9px; border-radius:7px; cursor:pointer; }
+.tabs button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+#sigma-canvas { width:100%; image-rendering:pixelated; border-radius:6px;
+                border:1px solid var(--line); display:block; background:var(--bg); }
+#energy-canvas { width:100%; height:54px; display:block; }
+.axis-note { display:flex; justify-content:space-between; font-size:10px; color:var(--ink3); margin:5px 0 0; }
+
+.equiv { margin-top:16px; }
+.residual { display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+            margin:12px 0; padding:12px 14px; background:var(--bg); border-radius:8px;
+            font-size:12px; color:var(--ink3); }
+.residual strong { font:700 17px/1 ui-monospace, monospace; color:var(--ink); }
+.residual.broken strong { color:var(--bad); }
+.toggles { display:flex; gap:16px; flex-wrap:wrap; font-size:13px; color:var(--ink2); }
+.toggles label { display:flex; gap:6px; align-items:center; cursor:pointer; }
+
+code { font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.9em; }
+footer { margin-top:28px; padding-top:16px; border-top:1px solid var(--line);
+         font-size:12px; color:var(--ink3); }
+footer a { color:var(--ink2); }

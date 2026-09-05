@@ -1,0 +1,11 @@
+device=cuda  N=64 neurons/head  params=57,344  sigma=2x64x64=8,192 floats/layer
+  10 :  17.0% | yes
+  11 :  14.8% | NO (extrapolation)
+  12 :  15.4% | NO (extrapolation)
+  13 :   9.4% | NO (extrapolation)
+=== mult3 N=96 ===
+device=cuda  N=96 neurons/head  params=69,632  sigma=2x96x64=12,288 floats/layer
+  10 : 100.0% | yes
+  11 : 100.0% | NO (extrapolation)
+  12 :  97.9% | NO (extrapolation)
+  13 :  95.5% | NO (extrapolation)

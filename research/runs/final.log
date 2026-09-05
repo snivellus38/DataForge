@@ -1,0 +1,41 @@
+device=cuda  seed=0  N=256  params=131,072  sigma=2x256x64=32,768 floats/layer  alphabet=48x48 (max k=48)
+  step      1  loss 5.5614  (1s)
+  step   1000  loss 3.6054  (131s)
+  step   2000  loss 3.0182  (267s)
+  step   3000  loss 0.0147  (402s)
+  step   4000  loss 0.8589  (542s)
+  step   5000  loss 0.1167  (680s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=97%  k12=87%  k16=43%  k20=22%  k24=13%  k32=5%  k40=4%  k48=3%
+  step   6000  loss 0.0008  (820s)
+  step   7000  loss 0.0022  (958s)
+  step   8000  loss 0.0579  (1020s)
+  step   9000  loss 0.0157  (1075s)
+  step  10000  loss 0.0027  (1130s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=100%  k12=97%  k16=54%  k20=27%  k24=15%  k32=6%  k40=3%  k48=3%
+  step  11000  loss 0.0006  (1208s)
+  step  12000  loss 0.0029  (1310s)
+  step  13000  loss 0.0244  (1411s)
+  step  14000  loss 0.0006  (1495s)
+  step  15000  loss 0.0002  (1586s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=100%  k12=99%  k16=60%  k20=36%  k24=19%  k32=9%  k40=5%  k48=3%
+  step  16000  loss 0.0002  (1678s)
+  step  17000  loss 0.0001  (1765s)
+  step  18000  loss 0.0000  (1860s)
+  step  19000  loss 0.0003  (1967s)
+  step  20000  loss 0.0001  (2027s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=100%  k12=100%  k16=61%  k20=37%  k24=18%  k32=10%  k40=6%  k48=3%
+  step  21000  loss 0.0003  (2086s)
+  step  22000  loss 0.0001  (2144s)
+  step  23000  loss 0.0001  (2202s)
+  step  24000  loss 0.0027  (2261s)
+  step  25000  loss 0.0000  (2320s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=100%  k12=100%  k16=62%  k20=42%  k24=21%  k32=9%  k40=6%  k48=3%
+  step  26000  loss 0.0000  (2385s)
+  step  27000  loss 0.0000  (2442s)
+  step  28000  loss 0.0000  (2501s)
+  step  29000  loss 0.0001  (2568s)
+  step  30000  loss 0.0128  (2630s)
+    acc k2=100%  k4=100%  k6=100%  k8=100%  k10=100%  k12=100%  k16=68%  k20=43%  k24=22%  k32=9%  k40=7%  k48=4%
+
+final (n=2048/k): k2=100.0%  k4=100.0%  k6=100.0%  k8=100.0%  k10=100.0%  k12=100.0%  k16=64.3%  k20=40.4%  k24=20.3%  k32=9.3%  k40=6.5%  k48=3.0%
+wrote research/runs/final.pt and research/runs/final.json

@@ -1,0 +1,76 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demonstrations Are Weights</title>
+<link rel="stylesheet" href="src/style.css">
+<body>
+<main id="app">
+  <header>
+    <p class="eyebrow">DataForge 2026 &middot; Pathway track &middot; Test-Time Adaptation</p>
+    <h1>Demonstrations are weights you write at inference time.</h1>
+    <p class="sub">A frozen model adapts by adding rank-one updates to a fixed-size associative
+      state, so changing only the demonstrations changes the answer &mdash; but that state&rsquo;s
+      capacity is set by how much its keys <em>overlap</em>, not by its size.</p>
+  </header>
+
+  <section class="stage">
+    <div class="panel demos">
+      <h2>Demonstrations <span class="hint">click &times; to remove</span></h2>
+      <div id="demo-list"></div>
+      <button id="add-demo" class="ghost">+ add a demonstration</button>
+      <div class="counter">
+        <span>parameter updates</span><strong id="param-updates">0</strong>
+      </div>
+      <div class="counter subtle">
+        <span>weights hash</span><code id="whash">&mdash;</code>
+      </div>
+    </div>
+
+    <div class="panel query">
+      <h2>Query</h2>
+      <div id="query-row"></div>
+      <div class="verdict">
+        <div><span class="lbl">model</span><div id="model-out"></div></div>
+        <div><span class="lbl">oracle</span><div id="oracle-out"></div></div>
+      </div>
+      <p id="verdict-note" class="note"></p>
+    </div>
+
+    <div class="panel sigma">
+      <h2>Synaptic state &sigma; <span class="hint" id="sigma-dims"></span></h2>
+      <div class="tabs" id="sigma-tabs">
+        <button data-view="state" class="on">state</button>
+        <button data-view="write">last write &Delta;&sigma;</button>
+        <button data-view="diff">difference</button>
+      </div>
+      <canvas id="sigma-canvas"></canvas>
+      <p class="axis-note"><span id="ax-rows">neurons &darr;</span><span id="ax-cols">dims &rarr;</span></p>
+      <h3>row energy</h3>
+      <canvas id="energy-canvas"></canvas>
+      <p id="sigma-note" class="note"></p>
+    </div>
+  </section>
+
+  <section class="panel equiv">
+    <h2>Is this real computation?</h2>
+    <p class="note">The same layer computed two ways: <code>bdh.py</code>&rsquo;s parallel
+      <code>tril</code> form, and the explicit Hebbian recurrence
+      <code>&sigma;<sub>t+1</sub> = &sigma;<sub>t</sub> + rope(K)<sub>t</sub> &otimes; V<sub>t</sub></code>.
+      A scripted animation cannot do this.</p>
+    <div class="residual"><span>max|parallel &minus; recurrent|</span><strong id="resid">&mdash;</strong></div>
+    <div class="toggles">
+      <label><input type="checkbox" id="t-softmax"> softmax on</label>
+      <label><input type="checkbox" id="t-qk"> Q &ne; K</label>
+      <label><input type="checkbox" id="t-relu"> no ReLU</label>
+    </div>
+    <p id="equiv-note" class="note"></p>
+  </section>
+
+  <footer>
+    <p><strong>What is live:</strong> everything on this page. A 131,072-parameter BDH we trained
+      runs in your browser (257&nbsp;KB, fp16). It is <strong>not</strong> an official BDH model,
+      and it is not BDH-CQ &mdash; whose weights are not public.
+      Architecture: <a href="https://github.com/pathwaycom/bdh">pathwaycom/bdh</a> (MIT), unmodified.</p>
+  </footer>
+</main>
+<script type="module" src="src/app.js"></script>

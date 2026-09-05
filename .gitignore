@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+Thumbs.db
+
+# Superseded experiment checkpoints. The JSON results and logs beside them ARE committed --
+# they are the experimental record behind the claims in plan.md. Only the shipping
+# checkpoint is tracked, because web/public/model.* is derived from it.
+research/runs/*.pt
+!research/runs/final.pt
+
+# machine-local Claude Code settings
+.claude/settings.local.json

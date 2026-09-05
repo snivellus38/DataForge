@@ -1,0 +1,218 @@
+{
+ "checkpoint": "research/runs/final.pt",
+ "model_acc_by_k": {
+  "2": 1.0,
+  "4": 1.0,
+  "6": 1.0,
+  "8": 1.0,
+  "10": 1.0,
+  "12": 1.0,
+  "16": 0.642578125,
+  "20": 0.40380859375,
+  "24": 0.20263671875,
+  "32": 0.09326171875,
+  "40": 0.0654296875,
+  "48": 0.02978515625
+ },
+ "hook": {
+  "why": "opening state: preset already running, no Run button (plan.md 'catchy')",
+  "pairs": [
+   [
+    "!",
+    "\u0080"
+   ],
+   [
+    "\"",
+    "\u0081"
+   ],
+   [
+    "#",
+    "\u0082"
+   ]
+  ],
+  "query": "\"",
+  "truth": "\u0081",
+  "bytes": [
+   33,
+   128,
+   32,
+   34,
+   129,
+   32,
+   35,
+   130,
+   32,
+   124,
+   34
+  ],
+  "prediction": [
+   {
+    "byte": 129,
+    "char": "\u0081",
+    "prob": 1.0
+   },
+   {
+    "byte": 142,
+    "char": "\u008e",
+    "prob": 0.0
+   },
+   {
+    "byte": 166,
+    "char": "\u00a6",
+    "prob": 0.0
+   }
+  ],
+  "correct": true
+ },
+ "ablation": {
+  "why": "the sixty-second moment: identical query bytes, one demonstration removed",
+  "pairs": [
+   [
+    "!",
+    "\u0080"
+   ],
+   [
+    "#",
+    "\u0082"
+   ]
+  ],
+  "query": "\"",
+  "truth": "\u0081",
+  "bytes": [
+   33,
+   128,
+   32,
+   35,
+   130,
+   32,
+   124,
+   34
+  ],
+  "prediction": [
+   {
+    "byte": 130,
+    "char": "\u0082",
+    "prob": 0.9719
+   },
+   {
+    "byte": 134,
+    "char": "\u0086",
+    "prob": 0.0243
+   },
+   {
+    "byte": 165,
+    "char": "\u00a5",
+    "prob": 0.0008
+   }
+  ],
+  "breaks": true
+ },
+ "verified": {
+  "hook_correct": true,
+  "ablation_breaks": true
+ },
+ "display": {
+  "why": "Model tokens are raw bytes; TGT is bytes 128-175 which render as \u0081 etc. The UI maps byte -> glyph. Display-only: the model never sees it. Source bytes render as SHAPES, target bytes as COLOURS, which makes the task a visual miniature of BDH-CQ sec 6.3 (a fresh colour permutation defined entirely through demonstrations).",
+  "src_byte_to_label": {
+   "33": "S0",
+   "34": "S1",
+   "35": "S2",
+   "36": "S3",
+   "37": "S4",
+   "38": "S5",
+   "39": "S6",
+   "40": "S7",
+   "41": "S8",
+   "42": "S9",
+   "43": "S10",
+   "44": "S11",
+   "45": "S12",
+   "46": "S13",
+   "47": "S14",
+   "48": "S15",
+   "49": "S16",
+   "50": "S17",
+   "51": "S18",
+   "52": "S19",
+   "53": "S20",
+   "54": "S21",
+   "55": "S22",
+   "56": "S23",
+   "57": "S24",
+   "58": "S25",
+   "59": "S26",
+   "60": "S27",
+   "61": "S28",
+   "62": "S29",
+   "63": "S30",
+   "64": "S31",
+   "65": "S32",
+   "66": "S33",
+   "67": "S34",
+   "68": "S35",
+   "69": "S36",
+   "70": "S37",
+   "71": "S38",
+   "72": "S39",
+   "73": "S40",
+   "74": "S41",
+   "75": "S42",
+   "76": "S43",
+   "77": "S44",
+   "78": "S45",
+   "79": "S46",
+   "80": "S47"
+  },
+  "tgt_byte_to_label": {
+   "128": "C0",
+   "129": "C1",
+   "130": "C2",
+   "131": "C3",
+   "132": "C4",
+   "133": "C5",
+   "134": "C6",
+   "135": "C7",
+   "136": "C8",
+   "137": "C9",
+   "138": "C10",
+   "139": "C11",
+   "140": "C12",
+   "141": "C13",
+   "142": "C14",
+   "143": "C15",
+   "144": "C16",
+   "145": "C17",
+   "146": "C18",
+   "147": "C19",
+   "148": "C20",
+   "149": "C21",
+   "150": "C22",
+   "151": "C23",
+   "152": "C24",
+   "153": "C25",
+   "154": "C26",
+   "155": "C27",
+   "156": "C28",
+   "157": "C29",
+   "158": "C30",
+   "159": "C31",
+   "160": "C32",
+   "161": "C33",
+   "162": "C34",
+   "163": "C35",
+   "164": "C36",
+   "165": "C37",
+   "166": "C38",
+   "167": "C39",
+   "168": "C40",
+   "169": "C41",
+   "170": "C42",
+   "171": "C43",
+   "172": "C44",
+   "173": "C45",
+   "174": "C46",
+   "175": "C47"
+  },
+  "palette_note": "Concrete shape set and colour palette are a Phase 3 design decision (use the dataviz skill; must work in both themes and be colour-blind safe)."
+ }
+}

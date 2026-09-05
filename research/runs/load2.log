@@ -1,0 +1,18 @@
+device=cuda  N=256 neurons/head  params=131,072  sigma=2x256x64=32,768 floats/layer
+  step 10000  loss 0.0054  (2241s)
+  step 20000  loss 0.0000  (3452s)
+   2 : 100.0% | yes
+   5 : 100.0% | yes
+   8 : 100.0% | yes
+  11 :  85.7% | NO (extrapolation)
+  14 :  62.1% | NO (extrapolation)
+  17 :  51.4% | NO (extrapolation)
+  20 :  31.2% | NO (extrapolation)
+  23 :  18.0% | NO (extrapolation)
+  26 :  15.2% | NO (extrapolation)
+  29 :   8.8% | NO (extrapolation)
+  32 :  10.0% | NO (extrapolation)
+  35 :   8.0% | NO (extrapolation)
+  38 :   4.9% | NO (extrapolation)
+wrote research/runs/N256.pt
+wrote research/runs/load2_N256.json

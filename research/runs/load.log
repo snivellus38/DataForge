@@ -1,0 +1,55 @@
+=== N=256, trained k in [2,24], eval to k=48 ===
+device=cuda  N=256 neurons/head  params=131,072  sigma=2x256x64=32,768 floats/layer
+
+trained on k in [2,24]   (n=512 eval per k)
+  k :  acc   | in train range
+   2 :  51.2% | yes
+   5 :  18.2% | yes
+   8 :  10.7% | yes
+  11 :  10.5% | yes
+  14 :   6.2% | yes
+  17 :   4.9% | yes
+  20 :   5.7% | yes
+  23 :   3.3% | yes
+  26 :   3.9% | NO (extrapolation)
+  29 :   4.1% | NO (extrapolation)
+  32 :   2.9% | NO (extrapolation)
+  35 :   2.9% | NO (extrapolation)
+  38 :   2.7% | NO (extrapolation)
+  41 :   2.0% | NO (extrapolation)
+Traceback (most recent call last):
+  File "C:\Users\harsh\Downloads\DataForge\research\week1_gate.py", line 67, in <module>
+    v = acc(k); rows.append((k, v))
+        ^^^^^^
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\utils\_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\Downloads\DataForge\research\week1_gate.py", line 59, in acc
+    pred = model(idx)[0][:, pos, :].argmax(-1)
+           ^^^^^^^^^^
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\Downloads\DataForge\research\..\vendor\bdh.py", line 127, in forward
+    yKV = self.attn(
+          ^^^^^^^^^^
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\nn\modules\module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\nn\modules\module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\Downloads\DataForge\research\..\vendor\bdh.py", line 69, in forward
+    QR = self.rope(r_phases, Q)
+         ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\harsh\Downloads\DataForge\research\..\vendor\bdh.py", line 54, in rope
+    return (v * phases_cos).to(v.dtype) + (v_rot * phases_sin).to(v.dtype)
+                                           ~~~~~~^~~~~~~~~~~~
+RuntimeError: CUDA error: out of memory
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

@@ -1,0 +1,15 @@
+{
+  "name": "dataforge-bdh-explainer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node web/test/validate.mjs && node web/test/equivalence.mjs && node web/test/app_logic.mjs",
+    "test:parity": "node web/test/validate.mjs",
+    "test:equivalence": "node web/test/equivalence.mjs",
+    "verify:torch": "python research/verify_equivalence.py",
+    "train": "python research/train.py --steps 30000 --out research/runs/final",
+    "export": "python research/export_weights.py --ckpt research/runs/final.pt --out web/public/model && python research/make_fixture.py && python research/make_presets.py",
+    "test:app": "node web/test/app_logic.mjs",
+    "dev": "python -m http.server 8080 --directory web"
+  }
+}
