@@ -194,6 +194,16 @@ cipher reproduces, and we should not imply it does. Also: that 5% number came fr
 fetch, not a verbatim read, and the BDH-paper grounding agents never ran -- so it is
 **UNVERIFIED and must be checked against arXiv:2509.26507 before being quoted anywhere.**
 
+**15. The page once shipped COMPLETELY DEAD, and every gate stayed green.**
+A patch dropped a `function renderSigma(out) {` declaration from app.js. The module threw
+SyntaxError on load, nothing executed, and the browser rendered plain HTML with empty
+placeholders. All five gates still passed -- because none of them parsed app.js, let alone ran
+it. They tested the model, the ports, and the markup, and the glue between them was untested.
+`web/test/smoke.mjs` now boots the real page in jsdom and asserts ~20 elements actually populate.
+**It runs FIRST in `npm test`**, so a dead page fails before anything else reports success.
+Lesson worth keeping: a test suite that never executes the entry point is not testing the product.
+When editing app.js by string replacement, re-run `npm run test:smoke` -- not just the unit gates.
+
 ## Working agreements
 
 - **The user is token-constrained.** Do not spawn large multi-agent workflows without asking.

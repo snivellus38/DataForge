@@ -232,6 +232,8 @@ async function verifyWeightsUnchanged() {
   note.style.color = same ? "" : "var(--bad)";
   $("#param-updates").textContent = same ? "0" : "?";
 }
+
+function renderSigma(out) {
   const { N, D } = S.model;
   const cur = out.sigmas[0].sigma;
   const cv = $("#sigma-canvas"), note = $("#sigma-note");

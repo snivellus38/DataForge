@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node web/test/validate.mjs && node web/test/equivalence.mjs && node web/test/app_logic.mjs && node web/test/capacity.mjs && node web/test/wiring.mjs",
+    "test": "node web/test/smoke.mjs && node web/test/validate.mjs && node web/test/equivalence.mjs && node web/test/app_logic.mjs && node web/test/capacity.mjs && node web/test/wiring.mjs",
     "test:parity": "node web/test/validate.mjs",
     "test:equivalence": "node web/test/equivalence.mjs",
     "verify:torch": "python research/verify_equivalence.py",
@@ -12,6 +12,10 @@
     "test:app": "node web/test/app_logic.mjs",
     "dev": "python -m http.server 8080 --directory web",
     "test:capacity": "node web/test/capacity.mjs",
-    "test:wiring": "node web/test/wiring.mjs"
+    "test:wiring": "node web/test/wiring.mjs",
+    "test:smoke": "node web/test/smoke.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
   }
 }
