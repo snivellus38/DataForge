@@ -204,6 +204,38 @@ it. They tested the model, the ports, and the markup, and the glue between them 
 Lesson worth keeping: a test suite that never executes the entry point is not testing the product.
 When editing app.js by string replacement, re-run `npm run test:smoke` -- not just the unit gates.
 
+**16. THE OPEN PROBLEM IS DESIGN AMBITION, not correctness.** The user's verdict on the current
+page: *"looks fine but not up to the mark of the sites I mentioned."* They are starting a fresh
+session to specify the target precisely. **Wait for that spec before rebuilding the UI** -- do not
+guess at a direction and burn effort.
+The science, the substrate and the honesty layer are done and verified. What is missing is
+instrument-grade interaction. An accurate diagnosis of the gap against the PS's named references:
+
+| The references do | We do |
+|---|---|
+| Transformer Explainer: full architecture diagram, data visibly flowing through it, click any block to expand | one layer/head traced; no pipeline diagram at all |
+| TF Playground / GAN Lab: the whole page is one live instrument, controls everywhere, continuous re-render | prose sections with figures embedded between them |
+| bbycroft LLM viz: 3D walkthrough, camera moves with the narrative | static panels |
+| Distill: scrollytelling -- figures respond to scroll position | figures are inert while you scroll |
+| CNN Explainer: hover anything, see it highlighted in every other view | linking exists only INSIDE the machine room, not across acts |
+| Neuronpedia: browse/search individual units | no per-neuron drill-down |
+
+Concrete things known to be missing, independent of whatever direction they choose:
+- No architecture/pipeline diagram (x -> encoder -> ReLU -> sigma write/read -> gate -> decoder).
+- No scroll-linked figures; every act is self-contained.
+- No cross-act linked highlighting (hovering a demonstration should light its tokens in the
+  machine-room strip and its rows in sigma -- it does not).
+- No per-neuron drill-down (click neuron n, see what it responds to across tokens).
+- Only layer 0 / head 0 is ever traced; there are 4 layers x 2 heads.
+- No visible transition/animation between states; panels snap.
+- Mobile is untested and the machine room is dense.
+
+**17. NOBODY HAS LOOKED AT THIS ON A REAL BROWSER except the user.** Every claim about layout,
+typography, colour rendering, canvas proportions, dark mode and mobile is UNVERIFIED by the
+assistant -- `smoke.mjs` proves the page runs and populates, not that it looks right. jsdom has
+no canvas backend and no layout engine. If a future session gets browser/screenshot tooling,
+use it; otherwise ask the user to look and describe.
+
 ## Working agreements
 
 - **The user is token-constrained.** Do not spawn large multi-agent workflows without asking.
@@ -233,6 +265,25 @@ Append an entry here at the end of each session. Newest last.
 - `npm test` runs both JS gates; `npm run verify:torch` runs the PyTorch twin.
 - **Next: Phase 3 (the artifact).** Blocked on nothing technical. The three open decisions from the
   checklist remain -- especially the claim's second clause, which sets the narrative.
+
+### 2026-09-05 — Session 3 (Opus 5) — artifact built, design gap open
+- Rebuilt the page from a dashboard into a **guided visual essay**: hook, the state, the machine
+  room, is-it-real, forgetting, BDH-CQ, say-it-back, sandbox. Guide-then-sandbox, per the PS.
+- Built the **BDH module** (was mandatory and entirely missing): eq. (1) and its named special
+  case, eqs. (2)-(4), the weight-tying connection to `H_{r+1} = F_theta(H_r, S_K)`, replayed
+  Table 3 with locators, and a 7-item evidence ledger tiering every BDH-CQ number by claim type.
+- Built the **capacity section**, making the claim's second clause falsifiable in one click.
+- Built the **machine room** (`web/src/machine.js` + `trace()` in bdh.js): transport-driven,
+  four linked panels, hoverable score matrix. Verified `trace()` reproduces `forward()` exactly.
+- **Shipped a completely dead page and did not notice** -- see item 15. Fixed by adding
+  `web/test/smoke.mjs`, which boots the real page in jsdom and asserts ~30 elements populate.
+  It runs FIRST in `npm test`. Six gates now.
+- Two findings the instrument surfaced: sparsity is **per-token (17-63%)**, not the single ~43%
+  figure I had been quoting; and the score matrix contains **negative** cells because RoPE
+  rotates keys before they meet -- BDH's decay is phase interference, not a decay term.
+- `git init`, first push to github.com/snivellus38/DataForge as snivellus38.
+- **Next session: the user will specify the target design.** See item 16 for the gap analysis.
+  Do not rebuild the UI before that spec arrives.
 
 ### 2026-09-04 — Session 1 (Opus 5)
 - Read `Pathway_PS.md`; scouted BDH/BDH-CQ primary sources; pulled the official `bdh.py` verbatim.

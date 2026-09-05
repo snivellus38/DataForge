@@ -18,8 +18,8 @@ judges evidence discipline and a README that overstates its own completeness is 
 | | |
 |---|---|
 | Research + primary-source dossier | done |
-| Trained model + browser substrate | done, five passing gates |
-| Interactive artifact | narrative essay built; sandbox and polish outstanding |
+| Trained model + browser substrate | done, six passing gates |
+| Interactive artifact | guided essay + machine room built; design ambition still short of the reference class |
 | BDH / BDH-CQ module | built — equations, replayed Table 3, evidence ledger |
 | Capacity (1/pi) section | built and live |
 | One-page concept summary, blog, final README | not written |
@@ -40,7 +40,7 @@ It is **not** an official BDH model, and it is **not BDH-CQ**, whose weights are
 ## Quickstart
 
 ```bash
-npm test          # five gates: PyTorch parity, equivalence, app logic
+npm test          # six gates, smoke first: page-boots, parity, equivalence, app logic, capacity, wiring
 npm run dev       # serve the artifact at http://localhost:8080
 ```
 

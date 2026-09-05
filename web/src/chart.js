@@ -72,6 +72,52 @@ export function drawCapacity(host, series, opts = {}) {
     svg.append(el("line", { x1: x, x2: x, y1: pad.t, y2: H - pad.b,
                             stroke: ink.muted, "stroke-width": 1, "stroke-dasharray": "3 3" }));
   }
+
+  // Hover layer: crosshair + tooltip, shipped by default on a line chart. Hit targets are the
+  // full column band, not the 4px marks, so it stays usable on coarse pointers.
+  const cross = el("line", { y1: pad.t, y2: H - pad.b, stroke: ink.muted, "stroke-width": 1,
+                             opacity: 0, "pointer-events": "none" });
+  const dots = series.map((_, i) => el("circle", { r: 6, fill: pal[i % pal.length],
+                             stroke: ink.surface, "stroke-width": 2, opacity: 0,
+                             "pointer-events": "none" }));
+  svg.append(cross, ...dots);
+
+  const tip = document.createElement("div");
+  tip.className = "chart-tip"; tip.hidden = true;
+  host.style.position = "relative";
+  host.append(tip);
+
+  const hit = el("rect", { x: pad.l, y: pad.t, width: W - pad.l - pad.r, height: H - pad.t - pad.b,
+                           fill: "transparent", style: "cursor:crosshair" });
+  svg.append(hit);
+
+  const show = (evt) => {
+    const box = svg.getBoundingClientRect();
+    const px = ((evt.clientX - box.left) / box.width) * W;
+    let near = ks[0], best = Infinity;
+    for (const k of ks) { const d = Math.abs(X(k) - px); if (d < best) { best = d; near = k; } }
+    const x = X(near);
+    cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("opacity", .5);
+    series.forEach((s, i) => {
+      const p = s.points.find((q) => q.k === near);
+      dots[i].setAttribute("cx", X(p.k)); dots[i].setAttribute("cy", Y(p.acc));
+      dots[i].setAttribute("opacity", 1);
+    });
+    tip.hidden = false;
+    tip.innerHTML = `<b>k = ${near}</b>` + series.map((s, i) => {
+      const p = s.points.find((q) => q.k === near);
+      return `<span><i style="background:${pal[i % pal.length]}"></i>${s.name}
+              <em>${Math.round(p.acc * 100)}%</em></span>`;
+    }).join("");
+    const left = (x / W) * host.clientWidth;
+    tip.style.left = `${Math.min(Math.max(left + 12, 0), host.clientWidth - 190)}px`;
+    tip.style.top = `12px`;
+  };
+  const hide = () => { cross.setAttribute("opacity", 0); dots.forEach((d) => d.setAttribute("opacity", 0)); tip.hidden = true; };
+  svg.addEventListener("mousemove", show);
+  svg.addEventListener("mouseleave", hide);
+  svg.addEventListener("touchmove", (e) => { if (e.touches[0]) show(e.touches[0]); }, { passive: true });
+
   host.append(svg);
   return svg;
 }

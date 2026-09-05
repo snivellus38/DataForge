@@ -311,3 +311,13 @@ a{color:var(--accent)}
   font-size:11.5px;padding:6px 9px;border-radius:6px;white-space:nowrap;z-index:5;
   box-shadow:0 4px 14px -4px rgba(0,0,0,.4)}
 .mr-tip .mr-num{font-family:var(--mono);margin-left:6px;opacity:.85}
+
+/* chart hover layer */
+.chart-tip{position:absolute;pointer-events:none;background:var(--panel);color:var(--ink);
+  border:1px solid var(--rule2);border-radius:8px;padding:9px 11px;font-size:12px;
+  box-shadow:var(--shadow);z-index:4;min-width:158px}
+.chart-tip b{display:block;font-family:var(--mono);font-size:11.5px;color:var(--ink3);
+  margin-bottom:5px;font-weight:500}
+.chart-tip span{display:flex;align-items:center;gap:7px;line-height:1.8;color:var(--ink2)}
+.chart-tip i{width:9px;height:9px;border-radius:2px;flex:none}
+.chart-tip em{margin-left:auto;font-style:normal;font-family:var(--mono);color:var(--ink);font-weight:600}
