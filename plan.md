@@ -1,3 +1,17 @@
+> **HISTORICAL — this is the concept plan as approved on 2026-09-05, kept for the record.**
+> It describes a single-page artifact that no longer exists. The build diverged deliberately and
+> the plan was not retro-fitted, because a plan rewritten to match what happened stops being
+> evidence of what was decided in advance.
+>
+> For what was actually built and why, read [`README.md`](README.md); for the reasoning, the
+> measurements and the dead ends, read [`CLAUDE.md`](CLAUDE.md). The two substantive changes:
+> the artifact became **three pages** (THE FIELD / THE LOOP / THE PRICE) rather than one essay,
+> and the claim's second clause was settled as the **1/π capacity trade-off**. Everything this
+> plan says about the science — the equivalence, the BDH-CQ bridge, the evidence discipline —
+> still holds and was carried through.
+
+---
+
 # DataForge 2026 — Pathway Track: "Demonstrations Are Weights"
 
 ## Context
