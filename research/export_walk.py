@@ -52,7 +52,7 @@ CORPUS = [
 WALK = [6, 3]          # indices into CORPUS: [0] legible default, [1] representative
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--ckpt", default="trained_model_things/kriti_checkpoints (1)/french_best.pt")
+ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/walk")
 ap.add_argument("--head", type=int, default=0, help="head kept for the full-resolution stages")
 ap.add_argument("--layer", type=int, default=3, help="layer kept for the full-resolution stages")

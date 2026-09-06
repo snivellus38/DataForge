@@ -36,7 +36,7 @@ CORPUS = [
 ]
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--ckpt", default="trained_model_things/kriti_checkpoints (1)/french_best.pt")
+ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/synapses.json")
 ap.add_argument("--head", type=int, default=0)
 ap.add_argument("--layer", type=int, default=3)

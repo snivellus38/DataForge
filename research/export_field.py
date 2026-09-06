@@ -54,7 +54,7 @@ import torch
 import networkx as nx
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--ckpt", default="trained_model_things/kriti_checkpoints (1)/french_best.pt")
+ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/big/field")
 ap.add_argument("--percentile", type=float, default=99.0,
                 help="edge threshold on |G*|; 99.0 reproduces the prior run's 94,373 edges")

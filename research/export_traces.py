@@ -62,7 +62,7 @@ CORPUS = [
 ]
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--ckpt", default="trained_model_things/kriti_checkpoints (1)/french_best.pt")
+ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/big/traces")
 ap.add_argument("--hero", type=int, default=5,
                 help="index into CORPUS marked as the default/starred sentence in the UI")

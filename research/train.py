@@ -2,7 +2,7 @@
 Train the shipping model for the artifact.
 
 This is the script the submission must be able to defend line-by-line, and the one the README's
-"how to reproduce" section points at. `week1_gate.py` is an experiment harness; this is the
+"how to reproduce" section points at. `feasibility_gate.py` is an experiment harness; this is the
 production path. Seeded, checkpointed, and it logs every metric the artifact quotes.
 
     python research/train.py --steps 30000 --out research/runs/final

@@ -4,8 +4,8 @@ The 8M-parameter BDH architecture, as trained for the English->French translatio
 PROVENANCE
 ----------
 This is the architecture the author trained for an earlier Pathway hackathon; the class is
-transcribed from that training notebook (`trained_model_things/bdh_best_model (1).ipynb`, Cell 2)
-so the checkpoints in `trained_model_things/kriti_checkpoints (1)/` load exactly. It is NOT the
+transcribed from that training notebook (`models/notebooks/bdh-translation-training.ipynb`, Cell 2)
+so the checkpoints in `models/checkpoints/` load exactly. It is NOT the
 vendored `pathwaycom/bdh` reference implementation -- that lives untouched in `vendor/bdh.py` and
 must stay that way.
 

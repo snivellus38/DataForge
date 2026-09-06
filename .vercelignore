@@ -1,9 +1,10 @@
 # The deployed site is web/ and nothing else. Everything below is either huge, private,
 # or reproduction material that belongs in the git repo but not on the CDN.
 
-# 475MB of prior-hackathon checkpoints. Gitignored, so a Git-connected deploy never sees them --
-# but a `vercel deploy` from this directory would happily upload all of it. Do not remove.
-trained_model_things/
+# The 8M checkpoints and their telemetry. The weights are gitignored, so a Git-connected deploy
+# never sees them -- but a `vercel deploy` from this directory would happily upload all of it.
+# Do not remove.
+models/
 
 node_modules/
 .git/
@@ -15,5 +16,10 @@ __pycache__/
 research/
 vendor/
 web/test/
+
+# The README's screen captures and the built one-page summary: ~15 MB that belongs on GitHub,
+# not on the artifact's CDN. Verified safe -- no page under web/ links to anything in docs/.
+docs/
+
 *.md
 !README.md

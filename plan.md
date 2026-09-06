@@ -198,7 +198,7 @@ Ship **`bdh-lens`**: a small MIT library (Python + JS) that materializes σ from
 
 | Risk | Mitigation |
 |---|---|
-| ~~Shrunk BDH never learns the cipher~~ | **RETIRED 2026-09-05.** 131K-param BDH reaches **100% at every trained k (2–10)** and extrapolates: 100% at k=11–12, 99.4% at k=13. `research/week1_gate.py` |
+| ~~Shrunk BDH never learns the cipher~~ | **RETIRED 2026-09-05.** 131K-param BDH reaches **100% at every trained k (2–10)** and extrapolates: 100% at k=11–12, 99.4% at k=13. `research/feasibility_gate.py` |
 | ~~Equivalence claim is wrong~~ | **Retired.** Verified numerically at float64: `2.8e-14` |
 | No visible capacity cliff | **Diagnosed 2026-09-05, still open.** Two causes, both mine: (a) the 13-symbol alphabet hard-capped `k` at 13, so the cliff was unreachable by construction — alphabet is now 48+48; (b) shrinking `N` at a fixed 2500-step budget produced decay curves that were largely *undertraining* (N=64: 47%→70% at k=2 when trained 3.2× longer, still climbing). Correct method: train a capable model to convergence, then raise `k` until a fixed-size σ genuinely fails. Running now. **Do not present a small-`N` curve as interference unless k=2 is ~100%.** |
 | A judge reads it as "BDH-CQ demo" | The word "BDH-CQ" never appears on a live panel; every replayed number carries a source locator badge |

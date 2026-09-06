@@ -47,7 +47,7 @@ import torch.nn.functional as F
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bdh_big import BigBDH, BigBDHConfig, load_big, generate
 
-CKPT = "trained_model_things/kriti_checkpoints (1)"
+CKPT = "models/checkpoints"
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Held-out-ish probe sentences. NOT a proper validation corpus -- the training .bin files are not

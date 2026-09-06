@@ -3,7 +3,7 @@ Which neurons respond to which KIND of word -- tested against a null, not just a
 
 WHY THIS SCRIPT EXISTS RATHER THAN SHIPPING THE PRIOR RUN'S FILE
 ----------------------------------------------------------------
-`trained_model_things/viz_data_complete (1)/monosemanticity/precomputed.json` reports 200 neurons
+`models/telemetry/monosemanticity/precomputed.json` reports 200 neurons
 with `selectivity: 1.0`, at mean activations around 0.0027, over 15 sentences. Selectivity of 1.0
 means "fired for exactly one concept and never for the others" -- which is trivially easy to
 achieve by accident. A neuron that fires on 4 tokens in the whole corpus lands entirely inside one
@@ -56,7 +56,7 @@ CORPUS = [
 ]
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--ckpt", default="trained_model_things/kriti_checkpoints (1)/french_best.pt")
+ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/concepts.json")
 ap.add_argument("--layer", type=int, default=3)
 ap.add_argument("--draws", type=int, default=2000, help="permutations for the null")
