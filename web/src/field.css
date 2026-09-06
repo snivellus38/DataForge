@@ -1,0 +1,199 @@
+/* THE FIELD — instrument chrome.
+   The canvas is always dark (see palette.js: additive glow needs a dark ground), so this page
+   commits to a single dark treatment rather than pretending to be theme-aware and then painting
+   a black rectangle in the middle of a white page. The essay that embeds the field keeps the
+   site's light/dark system; this standalone instrument does not. */
+:root {
+  color-scheme: dark;
+  --ground: #100f0e;
+  --ink: #f3f1ec;
+  --ink2: #a8a49c;
+  --ink3: #6f6b64;
+  --rule: rgba(255, 255, 255, .10);
+  --glass: rgba(20, 19, 18, .72);
+  --hot: #e0872a;
+  --cool: #3987e5;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --serif: ui-serif, Charter, "Iowan Old Style", Georgia, serif;
+}
+* { box-sizing: border-box; }
+/* MUST come before any rule that sets `display` on a hideable element. `.fallback` sets
+   display:grid, and an author rule beats the UA stylesheet's [hidden]{display:none} -- so
+   without this the fallback overlay covers the live field permanently. It shipped that way
+   once; the smoke test now asserts computed display, not just the attribute. */
+[hidden] { display: none !important; }
+body {
+  margin: 0; height: 100dvh; overflow: hidden;
+  background: var(--ground); color: var(--ink);
+  font: 14px/1.55 var(--sans); font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+#field, #arcs, #orthant { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#orthant { cursor: grab; }
+#orthant.grabbing { cursor: grabbing; }
+.counters.two { grid-template-columns: repeat(2, 1fr); }
+#o-slider { width: 100%; accent-color: var(--hot); }
+#field { cursor: crosshair; }
+#arcs { cursor: default; }
+/* labels for the six-iteration small multiples, positioned from JS over the shared canvas */
+.tile-labels { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.tile-labels b {
+  position: absolute; font: 600 10px/1 var(--sans); letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink3);
+}
+.tile-labels b em { font-style: normal; color: var(--hot); font-family: var(--mono); }
+#field.grabbing { cursor: grabbing; }
+
+/* ── overlay chrome ─────────────────────────────────────────────────────────────────────── */
+.hud {
+  position: fixed; z-index: 2;
+  transition: padding .18s ease;
+  background: var(--glass);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--rule); border-radius: 12px;
+  padding: 16px 18px;
+}
+.hud-tl { top: 20px; left: 20px; max-width: 340px; }
+.hud-tr { top: 20px; right: 20px; width: 262px; }
+
+/* ── collapsing the side panels ──────────────────────────────────────────────────────────────
+   The field is the page; the panels are chrome over it. Each collapses to a 30px handle, which
+   is the only part that must never go away. The contents are hidden rather than slid off-screen
+   so nothing focusable survives out of view, and the panel is sized by its content, so no
+   JS measurement is involved and the <=900px layout keeps working unchanged. */
+.hud-toggle {
+  position: absolute; top: 8px; width: 24px; height: 24px; padding: 0;
+  display: grid; place-items: center; cursor: pointer;
+  background: rgba(255, 255, 255, .05); color: var(--ink2);
+  border: 1px solid var(--rule); border-radius: 7px;
+  font: 600 15px/1 var(--sans);
+}
+.hud-toggle:hover { background: rgba(255, 255, 255, .12); color: var(--ink); }
+.hud-toggle:focus-visible { outline: 2px solid var(--hot); outline-offset: 2px; }
+.hud-tl .hud-toggle { right: 8px; }
+.hud-tr .hud-toggle { left: 8px; }
+/* keep the panel's own content clear of its handle */
+.hud-tl .hud-body { padding-right: 30px; }
+.hud-tr .hud-body { padding-left: 30px; }
+
+.hud.is-collapsed { padding: 6px; width: auto; max-width: none; min-width: 0; }
+.hud.is-collapsed .hud-toggle { position: static; }
+
+/* Site nav. It lives INSIDE the top-left HUD rather than as its own fixed bar, because the two
+   HUDs already occupy the top corners and a full-width bar would sit on top of both -- and at
+   <=900px the left HUD goes full width, so a top-centre bar would collide there too. */
+.pagenav {
+  display: flex; gap: 3px; align-items: center;
+  margin: -3px -4px 13px -5px; padding-bottom: 11px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+}
+.pagenav a {
+  color: var(--ink2); text-decoration: none;
+  padding: 5px 9px; border-radius: 999px; border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, .03);
+}
+.pagenav a:hover { color: var(--ink); background: rgba(255, 255, 255, .10); }
+.pagenav a[aria-current="page"] {
+  color: var(--ground); background: var(--hot); border-color: var(--hot); font-weight: 600;
+}
+.pagenav a:focus-visible { outline: 2px solid var(--hot); outline-offset: 2px; }
+
+.eyebrow {
+  margin: 0 0 10px; font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink3);
+}
+h1 {
+  margin: 0 0 10px; font-family: var(--serif); font-weight: 600;
+  font-size: 27px; line-height: 1.14; letter-spacing: -.02em;
+}
+h1 b { color: var(--hot); font-weight: 600; }
+.sub { margin: 0 0 14px; color: var(--ink2); font-size: 12.5px; max-width: 30ch; }
+
+.counters { margin: 0; padding-top: 12px; border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.counters div { margin: 0; }
+.counters dt { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); }
+.counters dd { margin: 2px 0 0; }
+.counters b { display: block; font-size: 19px; font-weight: 600; font-family: var(--mono); }
+.counters span { display: block; font-size: 10.5px; color: var(--ink3); }
+
+/* ── controls ───────────────────────────────────────────────────────────────────────────── */
+.row { display: block; margin: 0 0 11px; }
+.row span { display: block; font-size: 10px; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 4px; }
+.row i { font-style: normal; text-transform: none; letter-spacing: 0; font-family: var(--mono); }
+select {
+  width: 100%; padding: 7px 9px; font: inherit; font-size: 12.5px;
+  color: var(--ink); background: rgba(255,255,255,.05);
+  border: 1px solid var(--rule); border-radius: 7px;
+}
+select:focus-visible { outline: 2px solid var(--hot); outline-offset: 1px; }
+.legend { margin: 12px 0 0; padding-top: 11px; border-top: 1px solid var(--rule);
+  font-size: 11.5px; color: var(--ink2); display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.legend i { font-style: normal; display: inline-flex; align-items: center; gap: 5px; }
+.legend .sw { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.legend .bar { width: 54px; height: 8px; border-radius: 4px; display: inline-block; }
+.note { margin: 9px 0 0; font-size: 11px; line-height: 1.5; color: var(--ink3); }
+
+/* ── neuron card ────────────────────────────────────────────────────────────────────────── */
+.card { bottom: 118px; right: 20px; width: 262px; }
+.card h2 { margin: 0 0 9px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink3); font-weight: 600; }
+.card h2 b { color: var(--hot); font-family: var(--mono); font-size: 14px; letter-spacing: 0; }
+.card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 12px; }
+.card dl div { display: contents; }
+.card dt { color: var(--ink3); }
+.card dd { margin: 0; text-align: right; font-family: var(--mono); }
+
+/* ── transport ──────────────────────────────────────────────────────────────────────────── */
+.transport {
+  left: 20px; right: 20px; bottom: 20px;
+  display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center;
+  padding: 12px 16px;
+}
+.play {
+  width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+  color: var(--ground); background: var(--hot); border: 0;
+  font-size: 13px; line-height: 1; display: grid; place-items: center;
+}
+.play:hover { filter: brightness(1.12); }
+.play:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+#scrub { width: 100%; accent-color: var(--hot); }
+.strip {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 1px;
+  font-family: var(--mono); font-size: 12px; line-height: 1.35;
+  max-height: 4.6em; overflow-y: auto;
+}
+.strip b {
+  padding: 0 1.5px; border-radius: 3px; cursor: pointer; font-weight: 400;
+  color: var(--ink3); white-space: pre;
+}
+.strip b.seen { color: var(--ink2); }
+.strip b.now { background: var(--hot); color: var(--ground); }
+.strip b.tag { color: var(--cool); }
+.strip b:hover { background: rgba(255,255,255,.12); color: var(--ink); }
+
+/* ── fallback ───────────────────────────────────────────────────────────────────────────── */
+.fallback {
+  position: fixed; inset: 0; z-index: 3; display: grid; place-content: center;
+  padding: 40px; text-align: center; background: var(--ground);
+}
+.fallback p { max-width: 46ch; color: var(--ink2); }
+.fallback dl { display: grid; grid-template-columns: auto auto; gap: 4px 18px;
+  font-family: var(--mono); font-size: 13px; margin: 20px auto 0; text-align: left; }
+.fallback dt { color: var(--ink3); }
+.fallback dd { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+@media (max-width: 900px) {
+  .hud-tl { max-width: none; right: 20px; }
+  .hud-tr { position: static; width: auto; margin: 0; }
+  /* The handles work here too -- a stacked panel collapses to a pill, which is if anything more
+     useful on a small screen. Deliberately NO `display` rule on .hud-body at any width: one would
+     beat the [hidden] reset and leave a "collapsed" panel showing, which is the exact bug the
+     cascade check in field_smoke.mjs exists to catch. */
+  .card { display: none; }
+}

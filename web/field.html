@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Field &mdash; 12,288 neurons of a Dragon Hatchling, thinking in French</title>
+<meta name="description" content="Every neuron of an 8M-parameter BDH, laid out by what it reads and writes, lighting up token by token as the model translates English into French.">
+<link rel="stylesheet" href="src/field.css">
+<body>
+
+<canvas id="field" aria-label="Neuron field: 12,288 neurons of an 8M-parameter BDH"></canvas>
+<canvas id="arcs" aria-label="Causal attention scores as arcs over the sentence bytes" hidden></canvas>
+<div id="tile-labels" class="tile-labels" hidden></div>
+<canvas id="orthant" aria-label="Random unit keys on a sphere, ReLU'd versus signed" hidden></canvas>
+
+<noscript><div class="fallback"><p>The field is a live WebGL render of a trained model's
+  activations. It needs JavaScript.</p></div></noscript>
+<div id="nogl" class="fallback" hidden>
+  <p><b>No WebGL2 here.</b> The field needs a GPU context this browser will not give &mdash;
+  embedded webviews and preview panes often refuse one. Open this page in Chrome, Edge or
+  Firefox directly and it will render. Meanwhile, everything it shows is also in these numbers.</p>
+  <dl id="nogl-stats"></dl>
+</div>
+
+<!-- ── overlay: identity + live counters ─────────────────────────────────────────────────── -->
+<!-- Both side panels collapse to their handle. They float over a full-bleed canvas, so on a
+     laptop they cover a real fraction of the field; "get out of the way" has to be one click.
+     The contents are `hidden` rather than translated off-screen, so a collapsed panel holds no
+     focusable selects and cannot be tabbed into. -->
+<header class="hud hud-tl" id="hud-l">
+  <button class="hud-toggle" id="tgl-l" type="button" aria-expanded="true" aria-controls="hud-l-body"
+          title="Hide this panel — H hides both"><span aria-hidden="true">&lsaquo;</span></button>
+  <div class="hud-body" id="hud-l-body">
+  <nav class="pagenav" aria-label="Sections of this artifact">
+    <a href="field.html" aria-current="page">The field</a>
+    <a href="loop.html">The loop</a>
+    <a href="price.html">The price</a>
+  </nav>
+  <p class="eyebrow">Dragon Hatchling &middot; 7,962,624 parameters &middot; English &rarr; French</p>
+  <h1>You are looking at<br><b id="n-neurons">12,288</b> neurons.</h1>
+  <p class="sub">Laid out by what each one reads and writes. Nothing is lit until the model
+    reads a token.</p>
+  <dl class="counters">
+    <div><dt>firing now</dt><dd><b id="c-active">&mdash;</b><span id="c-pct">&mdash;</span></dd></div>
+    <div><dt>token</dt><dd><b id="c-tok">&mdash;</b><span id="c-byte">&mdash;</span></dd></div>
+    <div><dt>iteration</dt><dd><b id="c-layer">&mdash;</b><span>of 6, same weights</span></dd></div>
+  </dl>
+  </div>
+</header>
+
+<!-- ── overlay: controls ─────────────────────────────────────────────────────────────────── -->
+<aside class="hud hud-tr" id="panel">
+  <button class="hud-toggle" id="tgl-r" type="button" aria-expanded="true" aria-controls="panel-body"
+          title="Hide this panel — H hides both"><span aria-hidden="true">&rsaquo;</span></button>
+  <div class="hud-body" id="panel-body">
+  <label class="row">
+    <span>view</span>
+    <select id="sel-view">
+      <option value="field">the field &mdash; one iteration</option>
+      <option value="tiles">all six iterations at once</option>
+      <option value="arcs">attention, as arcs</option>
+      <option value="orthant">the orthant &mdash; what it costs</option>
+    </select>
+  </label>
+  <label class="row">
+    <span>sentence</span>
+    <select id="sel-sent"></select>
+  </label>
+  <label class="row">
+    <span>iteration <i>(n_layer)</i></span>
+    <select id="sel-layer"></select>
+  </label>
+  <label class="row">
+    <span>colour by</span>
+    <select id="sel-mode">
+      <option value="act">what is firing now</option>
+      <option value="sigma">what &sigma; has stored</option>
+      <option value="degree">synapse count</option>
+      <option value="community">graph community</option>
+    </select>
+  </label>
+  <label class="row">
+    <span>layout</span>
+    <select id="sel-layout">
+      <option value="global.xy">all heads, by read/write</option>
+      <option value="graph">head 0, by synapses</option>
+    </select>
+  </label>
+  <p class="legend" id="legend"></p>
+  <p class="note" id="mode-note"></p>
+  <div id="orth-panel" hidden>
+    <label class="row">
+      <span>keys drawn <i id="o-k">256</i></span>
+      <input id="o-slider" type="range" min="8" max="512" step="8" value="256">
+    </label>
+    <dl class="counters two">
+      <div><dt>ReLU'd, 3072-D</dt><dd><b id="o-hi">&mdash;</b><span>the model's keys</span></dd></div>
+      <div><dt>signed, 3072-D</dt><dd><b id="o-hisign">&mdash;</b><span>counterfactual</span></dd></div>
+    </dl>
+    <p class="note">Non-negative vectors cannot be near-orthogonal, so every new binding smears
+      across the ones already stored. The limit <b>arccos(1/&pi;) = 71.4&deg;</b> is what the
+      model's 3,072-dimensional keys sit at; the spheres are measured in the 3 dimensions drawn,
+      where the crowding is stronger still. Drag to rotate.</p>
+  </div>
+  <dl class="counters" id="arc-stats" hidden>
+    <div><dt>negative</dt><dd><b id="a-neg">&mdash;</b><span>of arcs into this byte</span></dd></div>
+    <div><dt>corpus</dt><dd><b id="a-negall">38.5%</b><span>all causal scores</span></dd></div>
+  </dl>
+  </div>
+</aside>
+
+<!-- ── overlay: neuron card ──────────────────────────────────────────────────────────────── -->
+<aside class="hud card" id="card" hidden>
+  <h2>neuron <b id="k-id">&mdash;</b></h2>
+  <dl>
+    <div><dt>head</dt><dd id="k-head">&mdash;</dd></div>
+    <div><dt>index in head</dt><dd id="k-local">&mdash;</dd></div>
+    <div><dt>synapses out / in</dt><dd id="k-deg">&mdash;</dd></div>
+    <div><dt>community</dt><dd id="k-cl">&mdash;</dd></div>
+    <div><dt>firing now</dt><dd id="k-act">&mdash;</dd></div>
+  </dl>
+  <p class="note" id="k-note"></p>
+</aside>
+
+<!-- ── transport ────────────────────────────────────────────────────────────────────────── -->
+<footer class="hud transport">
+  <button id="play" class="play" aria-label="Play">&#9654;</button>
+  <input id="scrub" type="range" min="0" max="1" value="0" aria-label="Token">
+  <div class="strip" id="strip" aria-label="Sentence; click a byte to seek"></div>
+</footer>
+
+<script type="module" src="src/inspector.js"></script>
