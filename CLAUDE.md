@@ -1039,19 +1039,34 @@ for the weights); README rewritten around the media, the comparison and an engin
 whose centrepiece is a table of *what shipped broken and which gate catches it now*; the
 AI-assistance section folded into one "References and tooling" section as the user asked.
 
-**59. CI FOUND A FLAKE IN THE HONESTY LAYER'S OWN GATE ON ITS SECOND EVER RUN.** `price_smoke`
-failed on Linux at *"...and the page says it is confidently wrong, not hedging"* while the commit
-before it -- differing only in README prose -- passed. Not the README: a race that had been in the
-gate since session 4b and had simply never lost before.
-Slide 1 REPLAYS on a loop (item 32). After clicking "remove the demonstration" the gate polled
-`h-phase` for `/answered/` -- but between the click handler firing and the next render the page is
-still showing the PREVIOUS pass's finished state, phase included. The poll exited on that stale
-frame and asserted against a verdict computed while the demonstration was still present. It passed
-on this machine and failed on a slower runner, which is the signature of a test that is
-timing-lucky rather than correct.
-Fix: wait for the state that can only exist after a fresh pass has completed in the NEW
-configuration -- phase settled AND the verdict repopulated AND its text different from the
-pre-click one. Never poll a single field on a page that loops; poll for a transition you caused.
+**59. CI FOUND A FLAKE IN THE HONESTY LAYER'S OWN GATE ON ITS SECOND EVER RUN -- and the first
+fix addressed the wrong half of it.** `price_smoke` failed on Linux at *"...and the page says it
+is confidently wrong, not hedging"* while the commit before it -- differing only in README prose
+-- passed.
+
+There were two faults, and only the second one was the cause.
+- **The poll was a race.** Slide 1 REPLAYS on a loop (item 32), so between the click on "remove
+  the demonstration" and the next render the page still shows the PREVIOUS pass's finished state,
+  phase included. Polling `h-phase` for `/answered/` exits on that stale frame and asserts against
+  a verdict computed while the demonstration was still present. Real, worth fixing: wait for a
+  state that can only exist after a fresh pass in the NEW configuration (phase settled AND verdict
+  repopulated AND its text different from the pre-click one). **Never poll a single field on a
+  page that loops; poll for the transition you caused.**
+- **But the actual cause was the FRAME BUDGET, and fixing the poll alone made CI redder, not
+  greener.** The jsdom harness stubs rAF as `if (frames++ < 120) setTimeout(...)`. Lift the cap
+  and measure: a full price run consumes **250** frames. So past frame 120 the animation was
+  simply DEAD, and every assertion after that point passed only because it happened to have run
+  already. A slower runner reaches them later, finds a frozen page, and fails. The longer poll
+  then made it worse -- it waited 12s for an animation that could never advance again.
+  **`loop_smoke` had the identical latent bug: cap 200, actual consumption 326.** It had not gone
+  red yet. Both are now 6000, matching `field_smoke` (which is frozen, and is the evidence that
+  6000 costs nothing -- each frame is a `setTimeout(...,0)` served only while the test awaits).
+
+The lesson worth keeping: **a cap that exists only to stop an infinite loop must not be set near
+what a run actually needs.** Set that way it silently becomes a pacing control, and the suite
+starts depending on which assertions win a race against it. If a stubbed rAF has a budget, measure
+the real consumption once and leave an order of magnitude.
+
 `npm test` is now **236 checks** (price_smoke 77).
 
 **60. The `Co-Authored-By: Claude` trailer is gone from all 24 commits, at the user's request** --

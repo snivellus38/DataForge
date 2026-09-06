@@ -75,7 +75,15 @@ Object.assign(globalThis, {
   // Node's built-in performance.now() is what price.js actually wants for the forward timing.
   window, document: doc, fetch: window.fetch, devicePixelRatio: 1,
   addEventListener: window.addEventListener.bind(window),
-  requestAnimationFrame: (fn) => { if (frames++ < 120) setTimeout(() => fn(frames * 100), 0); return frames; },
+  // FRAME BUDGET. The cap only exists so an unbounded rAF loop cannot keep the event loop alive
+  // forever; it is not a pacing control, and setting it near what a run actually needs makes the
+  // gate depend on timing luck. This page animates on a loop -- the hero slide replays every
+  // ~4.2 virtual seconds, and the stubbed clock advances 100ms per frame -- so a full run costs
+  // ~250 frames here. At the old cap of 120 the animation was DEAD for the back half of the
+  // suite, and the assertions after that point only passed because they happened to have run
+  // already. On a slower CI runner they had not, and the gate went red. 6000 is the same budget
+  // field_smoke.mjs uses; each frame is a setTimeout(...,0), so the headroom is nearly free.
+  requestAnimationFrame: (fn) => { if (frames++ < 6000) setTimeout(() => fn(frames * 100), 0); return frames; },
   cancelAnimationFrame: () => {},
 });
 
