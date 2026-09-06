@@ -101,6 +101,63 @@ const navChecks = [
   ["the current-page pill matches field.css", currentDrift.length === 0],
 ];
 
+// ── the front door ──────────────────────────────────────────────────────────────────────────
+//
+// index.html used to be a redirect into field.html. It is now the way in, because the track
+// scores "audience definition, prerequisites, learning objectives" by name and the journey's
+// first stop (field.html) is frozen, so the framing could not go there.
+//
+// It deliberately carries NO .sitenav: the nav is a three-link control asserted byte-identical
+// above, and the frozen field.css copy cannot gain a fourth link. Assert that here, so a later
+// "let's add the door to the nav" change fails loudly on the frozen page instead of silently
+// making the three pages disagree.
+const doorHtml = readFileSync("web/index.html", "utf8");
+const doorCss = readFileSync("web/src/theme.css", "utf8") + readFileSync("web/src/door.css", "utf8");
+
+const doorIsRedirect = /http-equiv=["']refresh/i.test(doorHtml) || /location\.replace/.test(doorHtml);
+const doorFrames = ["Who this is for", "Before you start", "You will leave able to"];
+const doorFramesFound = doorFrames.filter((h) => doorHtml.includes(h));
+const doorLinks = ["field.html", "loop.html", "price.html"].filter((h) => doorHtml.includes(`href="${h}"`));
+
+// Same trap as tokens.js's generated chips: jsdom has no layout engine, so an unstyled block
+// renders as unstyled boxes with every gate green. Check the class names resolve to CSS.
+const doorClasses = [...new Set([...doorHtml.matchAll(/\bclass="([^"]+)"/g)]
+  .flatMap((m) => m[1].trim().split(/\s+/)))];
+const doorUnstyled = doorClasses.filter(
+  (c) => !new RegExp("\." + c.replace(/[-.]/g, "\$&") + "(?![\w-])").test(doorCss));
+
+// ── at least three primary papers from 2022-2026, cited BESIDE the claims ───────────────────
+//
+// The track requires >=3 recent primary papers "with citations beside technical claims". A
+// trailing bibliography does not satisfy that, so this asserts both: enough distinct papers in
+// the window, AND that some of them appear outside price.html's Sources paragraph.
+const inWindow = (id) => { const ym = Number(id.slice(0, 4)); return ym >= 2201 && ym <= 2612; };
+const arxivIn = (src) => new Set([...src.matchAll(/arxiv\.org\/abs\/(\d{4}\.\d{4,5})/g)]
+  .map((m) => m[1]).filter(inWindow));
+
+const priceHtml = readFileSync("web/price.html", "utf8");
+const allPapers = new Set([...arxivIn(doorHtml), ...arxivIn(priceHtml)]);
+// strip the Sources paragraph, then see which papers survive -- those are the cited-beside ones
+const priceBody = priceHtml.replace(/<p class="srcs">[\s\S]*?<\/p>/g, "");
+const besideClaims = arxivIn(priceBody);
+
+console.log();
+console.log(`door:   frames ${doorFramesFound.length}/3   links ${doorLinks.length}/3   ` +
+            `sitenav ${(doorHtml.match(/class="sitenav"/g) || []).length}`);
+console.log(`papers: ${[...allPapers].sort().join(" ")}`);
+console.log(`        beside a claim on price.html: ${[...besideClaims].sort().join(" ") || "(none)"}`);
+
+const doorChecks = [
+  ["the door is a real page, not a redirect", !doorIsRedirect],
+  ["the door states audience, prerequisites and objectives", doorFramesFound.length === 3],
+  ["the door links to all three stops", doorLinks.length === 3],
+  ["the door does not add a fourth nav destination", !doorHtml.includes('class="sitenav"')],
+  ["every class the door uses is styled", doorUnstyled.length === 0],
+  ["at least three primary papers from 2022-2026", allPapers.size >= 3],
+  ["papers are cited beside claims, not only in Sources", besideClaims.size >= 2],
+];
+if (doorUnstyled.length) console.log("  UNSTYLED on the door: " + doorUnstyled.join(", "));
+
 const man = JSON.parse(readFileSync("web/public/model.json", "utf8"));
 const bin = readFileSync("web/public/model.bin");
 const m = new BDHModel(man, bin.buffer.slice(bin.byteOffset, bin.byteOffset + bin.byteLength));
@@ -116,6 +173,7 @@ for (let i = 0; i < base.logits.length; i++) {
 
 const checks = [
   ...navChecks,
+  ...doorChecks,
   ["no missing element ids", missing.length === 0],
   ["no missing class targets", badClass.length === 0],
   ["layers:4 == default (model trained at 4)", dSame === 0],

@@ -74,6 +74,12 @@
       <p>The weights are identical &mdash; same hash, byte for byte. Yet removing one line changed
         the answer. Whatever held that rule was written somewhere else, and thrown away when the
         line disappeared.</p>
+      <p class="note">That is the whole fork in test-time adaptation. The other route
+        <em>optimises</em>: HRM (<a href="https://arxiv.org/abs/2506.21734">arXiv:2506.21734</a>)
+        and TRM (<a href="https://arxiv.org/abs/2510.04871">arXiv:2510.04871</a>) turn an unseen
+        task's demonstrations into training samples and take a backward pass before answering.
+        Here the parameter count that changed is <b>zero</b>, and the adaptation lives in state
+        that did not exist a second ago.</p>
       <p>It was written into <span class="sym">&sigma;</span>: a matrix built fresh on every
         forward pass. Each token adds one <em>rank-one</em> update, and the model answers by
         reading it back.</p>
@@ -232,6 +238,12 @@
         state holds bindings <em>past its own rank</em>.</p>
       <p>Non-negativity is what made the last three slides possible. It is also what makes this
         one fail.</p>
+      <p class="note">This ceiling is not news to the field, and that is the point: DeltaNet
+        (<a href="https://arxiv.org/abs/2406.06484">arXiv:2406.06484</a>) exists because
+        &ldquo;the additive update in linear transformers&rdquo; &mdash; precisely the write BDH
+        uses &mdash; is weak at associative recall, and replacing it with the delta rule is
+        reported to fix that. What is ours is the <em>mechanism and the constant</em>: the
+        overlap is 1/&pi;, it comes from the ReLU, and a signed-key counterfactual removes it.</p>
     </div>
     <div class="col">
       <div class="tools">
@@ -405,8 +417,13 @@
       <p class="srcs">
         <a href="https://arxiv.org/abs/2509.26507">The Dragon Hatchling</a> ·
         <a href="https://arxiv.org/abs/2608.09888">BDH-CQ technical report</a> ·
+        <a href="https://arxiv.org/abs/2406.06484">DeltaNet</a> ·
+        <a href="https://arxiv.org/abs/2407.04620">Test-time training layers</a> ·
+        <a href="https://arxiv.org/abs/2506.21734">HRM</a> ·
+        <a href="https://arxiv.org/abs/2510.04871">TRM</a> ·
         <a href="https://github.com/pathwaycom/bdh">pathwaycom/bdh</a> (MIT, unmodified) ·
-        <a href="https://github.com/snivellus38/DataForge">source &amp; reproduction</a></p>
+        <a href="https://github.com/snivellus38/DataForge">source &amp; reproduction</a> ·
+        <a href="index.html">audience, prerequisites &amp; objectives</a></p>
       <p class="note">The 8M English&ndash;French and Portuguese checkpoints are the author's own
         prior hackathon work, reused and disclosed. They add a learned positional embedding on top
         of RoPE and have no decay term; both deviations are stated wherever they appear.</p>

@@ -3,19 +3,177 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Demonstrations Are Weights &mdash; DataForge 2026, Pathway track</title>
-<meta name="description" content="Three views of one Dragon Hatchling: the whole field of 12,288 neurons, one iteration opened up, and what its readability costs.">
-<!-- The journey starts at THE FIELD. This page exists only to send you there, so the site has a
-     conventional entry point without duplicating a page that is frozen at its own URL. -->
-<meta http-equiv="refresh" content="0; url=field.html">
-<link rel="canonical" href="field.html">
+<meta name="description" content="A frozen Dragon Hatchling adapts by writing rank-one updates into a fixed-size state. Three interactive views of one 8M-parameter BDH: the whole neuron field, one iteration opened up, and what its readability costs.">
 <link rel="stylesheet" href="src/theme.css">
+<link rel="stylesheet" href="src/door.css">
 <body>
-<div style="display:grid;place-content:center;height:100dvh;text-align:center;gap:14px">
-  <p class="eyebrow">DataForge 2026 &middot; Pathway track</p>
-  <p style="font-size:15px;color:var(--ink2)">Opening <b style="color:var(--hot)">THE FIELD</b>&hellip;</p>
-  <p style="font-size:13px">
-    <a href="field.html" style="color:var(--hot)">The field</a> &nbsp;&middot;&nbsp;
-    <a href="loop.html" style="color:var(--ink2)">The loop</a> &nbsp;&middot;&nbsp;
-    <a href="price.html" style="color:var(--ink2)">The price</a></p>
-</div>
-<script>location.replace("field.html");</script>
+
+<main class="door">
+
+  <header class="masthead">
+    <span class="mark"><b>&sigma;</b>&ensp;demonstrations are weights</span>
+    <span class="where">DataForge 2026 &middot; Pathway track &middot; test-time adaptation</span>
+  </header>
+
+  <div class="claim">
+    <h1>Demonstrations are <em>weights</em><br>you write at inference&nbsp;time.</h1>
+
+    <p class="full">A frozen model adapts by adding rank-one updates to a fixed-size associative
+      state, so changing only the demonstrations changes the answer &mdash; <b>but that state's
+      capacity is set by how much its keys overlap, not by its size, so the non-negativity that
+      makes BDH inspectable is also what makes it forget sooner.</b></p>
+
+    <p class="testit">That is one sentence and both halves are falsifiable. The first half takes
+      about sixty seconds &mdash; <a href="price.html">THE PRICE</a> opens on a live
+      131K-parameter model that answers correctly, then answers <em>confidently wrong</em> when
+      you delete one demonstration and leave the query bytes byte-identical. The second half is a
+      slider, and a counterfactual that does not degrade.</p>
+  </div>
+
+  <div class="frame">
+    <section>
+      <h2>Who this is for</h2>
+      <p>A data scientist or ML engineer who can read a Transformer diagram and has not yet met a
+        post-Transformer architecture. No BDH background is assumed, and nothing here needs a GPU,
+        an install, or a sign-in &mdash; the models run in your browser tab.</p>
+    </section>
+
+    <section>
+      <h2>Before you start</h2>
+      <ul>
+        <li>Attention as a <b>matrix product</b> &mdash; that <span class="mono">QK&#7488;V</span>
+          is three multiplications. You do not need to have implemented one.</li>
+        <li>What a <b>KV cache</b> is, and why it grows with every token you generate.</li>
+        <li>That <b>softmax</b> normalises across a whole row. That single fact turns out to be
+          the hinge of the entire argument.</li>
+      </ul>
+    </section>
+
+    <section class="objectives">
+      <h2>You will leave able to</h2>
+      <ul>
+        <li>Say <b>which</b> of BDH's choices actually buys a fixed-size state &mdash; and which
+          two only buy readability. Most people guess wrong.</li>
+        <li>Predict, <b>from the weights alone</b>, which neurons in a trained model will never
+          fire on real text.</li>
+        <li>State what non-negativity <b>costs</b>, and reproduce the constant that sets the
+          ceiling: <span class="mono">1/&pi;</span>.</li>
+      </ul>
+    </section>
+  </div>
+
+  <nav class="stops" aria-label="The three stops">
+
+    <a class="stop" href="field.html">
+      <span class="n">01</span>
+      <h3>The field</h3>
+      <p class="q">What does a whole model look like while it is thinking?</p>
+      <p class="does">All 12,288 neurons of an 8M-parameter BDH at once, in WebGL. Scrub through a
+        sentence, switch between four colour modes, click any neuron to pin it and see its
+        synapses. The dark half of the picture is not a rendering artifact.</p>
+      <span class="foot"><span class="tag ours">ours, replayed</span>
+        <span>6.3&nbsp;MB &middot; ~8&nbsp;min</span><span class="go">enter &rarr;</span></span>
+    </a>
+
+    <a class="stop" href="loop.html">
+      <span class="n">02</span>
+      <h3>The loop</h3>
+      <p class="q">What actually happens inside one iteration?</p>
+      <p class="does">Eight stops through a single block, from input byte to next-byte
+        distribution, with a flow diagram whose every edge is a real number &mdash; weight
+        &times; source activation, not an illustration. &sigma; is accumulated in your browser
+        from the model's own rank-one writes.</p>
+      <span class="foot"><span class="tag ours">ours, replayed</span>
+        <span>4.9&nbsp;MB &middot; ~10&nbsp;min</span><span class="go">enter &rarr;</span></span>
+    </a>
+
+    <a class="stop first" href="price.html">
+      <span class="n">03</span>
+      <h3>The price</h3>
+      <p class="q">What is the claim, and what does it cost?</p>
+      <p class="does">Twelve slides. A live model you can break in one click, the equivalence
+        proof and three ways to attack it, what non-negativity buys, and then the bill. Ends with
+        the BDH-CQ evidence, tiered by how much each number is actually worth.</p>
+      <span class="foot"><span class="tag live">live model</span>
+        <span>0.9&nbsp;MB &middot; ~15&nbsp;min</span><span class="go">start here &rarr;</span></span>
+    </a>
+
+  </nav>
+
+  <div class="base">
+    <h2>What is live, what is not</h2>
+    <div class="evidence">
+      <div>
+        <span class="tag live">live, in this tab</span>
+        <p>A <b>131,072-parameter BDH we trained</b> on an in-context substitution cipher, running
+          as plain typed arrays &mdash; forward pass, &sigma;, the equivalence residual and the
+          capacity sweep are all computed while you watch.
+          <code>web/public/model.bin</code>, 257&nbsp;KB.</p>
+      </div>
+      <div>
+        <span class="tag ours">ours, replayed</span>
+        <p>An <b>8M-parameter BDH</b> that translates English into French, trained by one of us
+          before this hackathon and reused with disclosure. Its activations, attention and synapse
+          graph were exported offline by <code>research/export_*.py</code> and are replayed
+          here.</p>
+      </div>
+      <div>
+        <span class="tag replay">replayed, cited</span>
+        <p>Every <b>BDH-CQ</b> figure, quoted from arXiv:2608.09888 with a section or table
+          locator. BDH-CQ has no public weights and no public API, so nothing here runs it and
+          nothing here is presented as its output. Nothing on any page is animated fiction.</p>
+      </div>
+    </div>
+
+    <h2>Where this sits, and what each source is doing here</h2>
+    <ol class="refs">
+      <li id="r1"><b>Kosowski, Uzna&#324;ski, Chorowski, Stamirowska, Bartoszkiewicz (2025).</b>
+        The Dragon Hatchling.
+        <a href="https://arxiv.org/abs/2509.26507">arXiv:2509.26507</a> &mdash;
+        <span class="for">the architecture itself, and the source of the claim that non-negativity
+        buys interpretable, sparse, monosemantic structure. That half is theirs; the price we put
+        on it is ours.</span></li>
+
+      <li id="r2"><b>Engdahl et&nbsp;al. (2026).</b> BDH-CQ technical report.
+        <a href="https://arxiv.org/abs/2608.09888">arXiv:2608.09888</a> &mdash;
+        <span class="for">in-context learning with recurrent latent reasoning. Cited for its
+        equation&nbsp;(1) and the additive special case named in &sect;3.2, which is exactly what
+        the public BDH code computes. Replayed evidence only.</span></li>
+
+      <li id="r3"><b>Yang, Wang, Zhang, Shen, Kim (2024).</b> Parallelizing Linear Transformers
+        with the Delta Rule over Sequence Length.
+        <a href="https://arxiv.org/abs/2406.06484">arXiv:2406.06484</a> &mdash;
+        <span class="for">cited beside our second clause. Its abstract replaces &ldquo;the
+        additive update in linear transformers&rdquo; with the delta rule and reports that variant
+        &ldquo;more effective at associative recall&rdquo; &mdash; that additive update is
+        precisely BDH's write, and the capacity ceiling we measure is why an alternative to it
+        exists.</span></li>
+
+      <li id="r4"><b>Sun et&nbsp;al. (2024).</b> Learning to (Learn at Test Time): RNNs with
+        Expressive Hidden States.
+        <a href="https://arxiv.org/abs/2407.04620">arXiv:2407.04620</a> &mdash;
+        <span class="for">the same idea taken further: make the update rule a step of
+        self-supervised learning rather than a fixed outer product. The contrast that shows BDH's
+        write is the simple end of a real design space.</span></li>
+
+      <li id="r5"><b>Wang et&nbsp;al. (2025); Jolicoeur-Martineau (2025).</b> Hierarchical
+        Reasoning Model; Less is More: Recursive Reasoning with Tiny Networks.
+        <a href="https://arxiv.org/abs/2506.21734">arXiv:2506.21734</a>,
+        <a href="https://arxiv.org/abs/2510.04871">arXiv:2510.04871</a> &mdash;
+        <span class="for">the <em>other</em> route to test-time adaptation, and the reason this
+        artifact takes the side it does: both adapt by optimising, a backward pass per unseen
+        task, where BDH-CQ adapts in recurrent state with no parameter update. Worth reading for
+        evidence discipline too &mdash; TRM reports 45% on ARC-AGI-1 and 8% on ARC-AGI-2, while
+        BDH-CQ reports no ARC-AGI-2 result at all.</span></li>
+    </ol>
+
+    <p class="colophon">
+      Source, data and every reproduction script:
+      <a href="https://github.com/snivellus38/DataForge">github.com/snivellus38/DataForge</a>.
+      The architecture in <span class="mono">vendor/bdh.py</span> is Pathway's, MIT-licensed and
+      unmodified; the trained weights, the task, the browser port and these pages are ours, MIT.
+      This is <b>not</b> an official BDH model and it is <b>not</b> BDH-CQ. Built with substantial
+      AI assistance, disclosed in full in the README.</p>
+  </div>
+
+</main>

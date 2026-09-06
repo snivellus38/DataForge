@@ -1,0 +1,169 @@
+/* THE DOOR — web/index.html.
+
+   This page used to be a three-line redirect into field.html. It is now the front of the
+   artifact, because three things the track scores by name -- audience, prerequisites, learning
+   objectives -- had nowhere to live: field.html is the journey's first stop and it is FROZEN,
+   so the framing could not go there without editing a finished page.
+
+   It deliberately carries NO .sitenav. The nav is a three-link control (field / loop / price)
+   that is byte-identical across those pages and asserted so by web/test/wiring.mjs; the frozen
+   field.css copy cannot gain a fourth link. So the door is the way in, not a fourth destination,
+   and the three cards below are its navigation.
+
+   Tokens come from theme.css. Nothing here is hoisted out of field.css. */
+
+.door {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 26px 22px 40px;
+}
+
+/* ── masthead ─────────────────────────────────────────────────────────────────────────────── */
+.masthead {
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+  padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+}
+.masthead .mark {
+  font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--ink3);
+}
+.masthead .mark b { color: var(--hot); font-weight: 600; font-size: 13px; }
+.masthead .where { margin-left: auto; font-size: 10.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--ink3); }
+
+/* ── the claim ────────────────────────────────────────────────────────────────────────────── */
+.claim { margin: 30px 0 0; }
+.claim h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(30px, 5.4vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -.015em;
+  font-weight: 500;
+}
+.claim h1 em { font-style: italic; color: var(--hot); }
+
+/* The falsifiable sentence, in full. The track asks for one sentence a learner can test, so it
+   is on the page verbatim rather than paraphrased into a tagline. */
+.full {
+  margin: 20px 0 0; max-width: 74ch;
+  font-size: 15.5px; line-height: 1.62; color: var(--ink2);
+  border-left: 2px solid var(--hot); padding-left: 15px;
+}
+.full b { color: var(--ink); font-weight: 600; }
+
+.testit {
+  margin: 16px 0 0; font-size: 12.5px; color: var(--ink3);
+}
+.testit a { color: var(--hot); }
+
+/* ── who / before / after ─────────────────────────────────────────────────────────────────── */
+.frame {
+  margin: 34px 0 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule); border-radius: 10px; overflow: hidden;
+}
+.frame section { background: var(--ground); padding: 16px 17px 18px; }
+.frame h2 {
+  margin: 0 0 9px; font-size: 10px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink3); font-weight: 600;
+}
+.frame p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink2); }
+.frame ul { margin: 0; padding: 0; list-style: none; }
+.frame li {
+  font-size: 12.5px; line-height: 1.5; color: var(--ink2);
+  padding: 0 0 0 15px; margin-bottom: 7px; position: relative;
+}
+.frame li:last-child { margin-bottom: 0; }
+.frame li::before {
+  content: ""; position: absolute; left: 0; top: .55em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--ink3);
+}
+.frame li b { color: var(--ink); font-weight: 600; }
+.frame.objectives li::before { background: var(--hot); }
+
+/* ── the three stops ──────────────────────────────────────────────────────────────────────── */
+.stops {
+  margin: 22px 0 0;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+.stop {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--rule); border-radius: 10px;
+  padding: 17px 17px 15px;
+  background: rgba(255, 255, 255, .015);
+  text-decoration: none; color: inherit;
+  transition: border-color .16s, background .16s, transform .16s;
+}
+.stop:hover {
+  border-color: rgba(224, 135, 42, .55);
+  background: rgba(224, 135, 42, .05);
+  transform: translateY(-2px);
+}
+.stop .n {
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink3); letter-spacing: .1em;
+}
+.stop h3 {
+  margin: 5px 0 0; font-size: 17px; font-weight: 600; letter-spacing: .01em;
+  text-transform: uppercase; color: var(--ink);
+}
+.stop .q {
+  margin: 9px 0 0; font-family: var(--serif); font-style: italic;
+  font-size: 14.5px; line-height: 1.45; color: var(--hot);
+}
+.stop .does { margin: 10px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--ink2); }
+.stop .foot {
+  margin-top: auto; padding-top: 13px;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  font-size: 10px; color: var(--ink3);
+}
+.stop .go { margin-left: auto; color: var(--hot); font-size: 11px; letter-spacing: .08em; }
+.stop.first { border-color: rgba(224, 135, 42, .35); }
+
+/* ── honesty + sources ────────────────────────────────────────────────────────────────────── */
+.base { margin: 30px 0 0; padding-top: 20px; border-top: 1px solid var(--rule); }
+.base h2 {
+  margin: 0 0 11px; font-size: 10px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink3); font-weight: 600;
+}
+.evidence { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 0 0 22px; }
+.evidence p { margin: 7px 0 0; font-size: 12px; line-height: 1.55; color: var(--ink2); }
+.evidence code { font-family: var(--mono); font-size: 11px; color: var(--ink3); }
+
+.refs { margin: 0; font-size: 12px; line-height: 1.75; color: var(--ink3); }
+.refs a { color: var(--ink2); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.refs a:hover { color: var(--hot); border-bottom-color: var(--hot); }
+.refs li { margin-bottom: 6px; }
+.refs ul { margin: 0; padding-left: 17px; }
+
+.colophon {
+  margin: 22px 0 0; font-size: 11px; line-height: 1.6; color: var(--ink3);
+}
+.colophon a { color: var(--ink2); }
+
+/* ── narrow ───────────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 880px) {
+  .frame, .stops, .evidence { grid-template-columns: 1fr; }
+  .frame { gap: 1px; }
+  .stops { gap: 11px; }
+  .stop .foot { padding-top: 11px; }
+}
+@media (max-width: 480px) {
+  .door { padding: 20px 15px 32px; }
+  .claim { margin-top: 22px; }
+  .full { padding-left: 12px; font-size: 14.5px; }
+  .masthead .where { margin-left: 0; width: 100%; }
+}
+
+/* ── inline citations ─────────────────────────────────────────────────────────────────────────
+   The track requires at least three primary papers from 2022-2026 cited BESIDE the technical
+   claims they support, not collected in a trailing bibliography. So each marker links down to
+   its annotated entry, and each entry says what it is being cited FOR. */
+.cite {
+  font-family: var(--mono); font-size: .78em; vertical-align: .35em;
+  color: var(--hot); text-decoration: none; padding: 0 1px;
+}
+.cite:hover { text-decoration: underline; }
+.refs li b { color: var(--ink2); font-weight: 600; }
+.refs li .for { color: var(--ink3); font-style: italic; }
+.refs li:target { color: var(--ink); }
