@@ -25,7 +25,7 @@ Pathway's Dragon Hatchling (**BDH**) or **BDH-CQ**. Modeled on the NeurIPS 2026 
 
 - `vendor/bdh.py` — unmodified official implementation, MIT (`vendor/LICENSE-bdh`). Do not edit.
 - `research/cipher_task.py` — the in-context substitution-cipher task (fresh bijection per example).
-- `research/week1_gate.py` — the feasibility gate. **Passed.** See Session Log.
+- `research/feasibility_gate.py` — the feasibility gate. **Passed.** See Session Log.
 
 **Status (end of session 4d): THREE pages, all live, twelve gates green (228 checks, exit 0).**
 
@@ -266,8 +266,10 @@ no canvas backend and no layout engine. If a future session gets browser/screens
 use it; otherwise ask the user to look and describe.
 
 **16. THERE IS A SECOND, REAL MODEL: 8M params, English->French, and it works.**
-`trained_model_things/` (gitignored, 475MB, the user's own solo prior-hackathon work -- reusable,
-must be disclosed in the README per PS line 178). Architecture transcribed verbatim to
+`models/` (the user's own solo prior-hackathon work -- reusable, must be disclosed in the README
+per PS line 178). **Since session 6 the notebook and all the small telemetry ARE committed**; only
+the five `.pt` files (443MB) and the 33MB raw telemetry dump are gitignored, and those ship as
+GitHub Release assets -- see `models/README.md`. Architecture transcribed verbatim to
 `research/bdh_big.py`; it loads the checkpoints strictly and **generates correct French**
 ("Le Parlement europeen a vote contre cette resolution", "Merci beaucoup."). 6L x D=192 x 4 heads,
 N=3072/head, **12,288 neurons, 7.96M params**, byte vocab, 50K iters, **val loss 0.670**.
@@ -394,7 +396,7 @@ Append an entry here at the end of each session. Newest last.
   of the network.** sigma is dense (item 13) so the natural heatmap reads as noise, and we retreated
   to small quiet figures — while never drawing G*, the one visual a Transformer structurally
   cannot have. Approved plan: `~/.claude/plans/right-now-whatever-we-velvet-phoenix.md`.
-- **Went through `trained_model_things/` in full.** It is not a spare checkpoint — see items 16-18.
+- **Went through `models/` in full.** It is not a spare checkpoint — see items 16-18.
 - **Claim sharpened (extends item 12, does not overturn it):** *non-negativity is the whole trade*.
   The positive orthant makes the state readable (5.11% sparse, hub graph) AND caps it (1/pi
   overlap). Both pans now measured on our own models instead of one measured and one cited.
@@ -407,7 +409,7 @@ Append an entry here at the end of each session. Newest last.
   gave every sentence its full data and gzipped the traces pack (item 36). Gate checks activations round-trip within 0.5 quantisation
   steps against pre-quantisation PyTorch values, re-derives 5.11% and 38.5% from the shipped bytes,
   and asserts trace neuron ids address real field nodes.
-- `.gitignore` now excludes `trained_model_things/` — 475MB, and two `.pt` files are ~96MB each,
+- `.gitignore` now excludes `models/` — 475MB, and two `.pt` files are ~96MB each,
   which would have been committed by any `git add -A`.
 - **Phase B done.** `web/field.html` + `src/inspector.js` + `src/field-gl.js` (WebGL2, hand-rolled,
   HDR float target + `1-exp(-x·e)` tone map so dense firing keeps its shape instead of clipping to
@@ -950,3 +952,95 @@ match what happened stops being evidence of what was decided in advance; `vercel
    big pages would fail to boot. Put the URL in the README (it says *pending*) and on the door.
 2. Nobody has opened the pages in a **real, non-headless** browser at desktop size this session —
    the visual checks here were headless screenshots and CDP measurements.
+
+### 2026-09-06 — Session 6 (Opus 5) — the repo becomes readable from outside
+
+The artifact was done and the *repository* still read like a working directory. Brief: make the
+README something a recruiter, a judge or an ML engineer can each open cold; publish the 8M model;
+give the files professional names. Every number below is produced by a script in the repo.
+
+**53. THE FIRST GATE ONLY PASSED ON THIS MACHINE, and nothing could have told us.** Four of the
+twelve frozen files — `field-gl.js`, `field-data.js`, `orthant.js`, `palette.js` — were **CRLF in
+the Windows working tree and LF in the repository**. `npm run freeze` had hashed the CRLF bytes,
+so on any clean clone anywhere else (CI, a judge reproducing the build) `frozen.mjs` fails before
+a single test runs. `git status` was clean the whole time, because `core.autocrlf=true` makes that
+difference invisible.
+- Found only by asking a different question than the gate asks: not "do the files match the
+  checksums" but "do the worktree bytes match the bytes git actually stores".
+  `git cat-file -p HEAD:<path> | sha256sum` against `sha256sum <path>` over the freeze manifest.
+- Fixed at the root: `.gitattributes` pins `* text=auto eol=lf` (plus explicit `binary` for the
+  packs, the checkpoints, the media and the notebook), the four files were normalised, and
+  `npm run freeze` re-run. Exactly those four checksums changed; the other eight were already LF.
+  **The frozen page's content did not change** — only the line endings the freeze was measuring.
+- `.github/workflows/tests.yml` now runs `npm ci && npm test` on Linux on every push, which is the
+  only thing that would have caught this and the only thing that will catch it again.
+
+**54. A closed form fell out of the memory comparison, and it is the best line in the README.**
+`research/compare_memory.py` (no torch, no weights — reads the two committed configs, so it runs
+on a clean clone). A KV cache for the same D/L/H costs `2·L·D·b` per token; sigma costs
+`L·H·N·D·b` flat. Divide, and **D, L and the dtype all cancel**:
+
+    T* = H·N/2 = N_total/2
+
+**BDH's state is the cheaper one exactly when the context exceeds half the model's neuron count.**
+8M model: sigma is a flat 28.3 MB, crossover 6,144 tokens, and at its own 512-token trained block
+size sigma is **12.0x LARGER** than the cache it replaces. Toy: 0.26 MB, crossover 256, 1.7x at
+its longest prompt. Compute crossover is `N·H = N_total`, twice as far out.
+Both our models are trained *below* their own crossover. Say that; "constant memory" without it is
+the kind of half-truth this project exists to correct.
+
+**55. The training run's own telemetry contained an unused result: sparsity is LEARNED.**
+`models/telemetry/evolution/*.json`, plotted by `research/plot_training.py`. x active goes
+**49.89% at init → 3.11% at 2,500 → 5.09% at 47,500**, monotonically climbing after the floor
+while the loss falls 2.18 → 1.31. Nothing in the objective rewards sparsity — no L1, no k-WTA, no
+threshold. The network switches most of itself off and then *recruits*. Portuguese repeats the
+shape. And the endpoint corroborates item 23 through an entirely different code path: 5.09% on the
+run's own 3-sentence probe against **5.129%** from our export over 55,959,552 slots (the figure's
+reference line is read from `traces.json` at plot time, not typed).
+Caveat that ships with it: three sentences, mid-training. The shape is the evidence; only the
+endpoint is independently reproduced.
+
+**56. `sigma_capacity.py` never actually ran the signed counterfactual — the README cited it for a
+number only the JS port could produce.** The counterfactual is the half that makes the capacity
+claim falsifiable, so it has to be reproducible in the reference implementation. It now runs both
+key types from the same seed and prints both rows: non-negative **100/99/94/75/48/23/14/10** at
+k=8…512, signed **100 all the way to 256, 99 at 384, 96 at 512**. `web/test/capacity.mjs`'s
+hardcoded PyTorch reference was stale against this (k=64: 79.6 vs 75) and is now synced; the JS
+still agrees within the 10pp tolerance, so the check still discriminates.
+
+**57. Two numbers in the old README were from a superseded export.** The shipped bytes say
+**37.1%** of neurons never fire (4,561 of 12,288) and **38.7%** are isolated in `G*`; the README
+said 37.9% for the first, which came from an earlier run over 1,629 token-layer steps. Derived
+straight from `walk.bin.gz` + `field.bin`, the confusion matrix is 4,496 / 260 / 65 / 7,467 →
+MCC **+0.944**, P(silent|isolated) **94.5%** against a **37.1%** base rate, mean degree 0.7 vs
+97.0. When two exports disagree, quote the one the artifact actually ships.
+
+**Renames (git mv where tracked).** `trained_model_things/` → `models/`,
+`kriti_checkpoints (1)/` → `models/checkpoints/`, `viz_data_complete (1)/` → `models/telemetry/`,
+`bdh_best_model (1).ipynb` → `models/notebooks/bdh-translation-training.ipynb`, `README_stuff/` →
+`docs/media/`, `week1_gate.py` → `feasibility_gate.py`. Spaces and `(1)` were the priority: they
+were quoted inside six export scripts' default `--ckpt` arguments, so every copy-pasted command
+needed shell quoting to work. `.gitignore` and `.vercelignore` updated (`docs/` is now excluded
+from the deploy — verified no page under `web/` links into it).
+
+**58. Media: 138 MB of screen captures → 14 MB, and two of the decisions were editorial.**
+`docs/media/encode.sh`, ffmpeg. The setting that mattered was **`stats_mode=diff` +
+`diff_mode=rectangle`** — these pages are a static UI around one animating canvas, so weighting
+the palette by what *moves* and re-encoding only the changed rectangle beat every attempt at
+tuning colour counts (12.5 MB → 1.8 MB at 900px/7fps with no visible loss). The two judgement
+calls: the six-iteration view ships as a **still at full resolution**, because its content is six
+labelled tiles and downscaling makes exactly the informative part unreadable; and the 67 s
+flow-diagram capture is **cut in two at 40 s**, because it is two demonstrations — the diagram
+animating, then clicking a neuron to trace it — and split, each can be captioned for what it
+shows. Originals live in the gitignored `docs/media/_originals/`.
+
+**Also:** `models/README.md` (provenance, recipe, file inventory, release instructions, SHA256SUMS
+for the weights); README rewritten around the media, the comparison and an engineering section
+whose centrepiece is a table of *what shipped broken and which gate catches it now*; the
+AI-assistance section folded into one "References and tooling" section as the user asked.
+
+**STILL OPEN:**
+1. **The release is not created.** `gh` is installed but not authenticated. `gh auth login`, then
+   `models/publish-release.sh`. Until then every `gh release download` line in the docs is a
+   promise, not a fact.
+2. Item 17 stands: nobody has opened the pages in a real, non-headless browser at desktop size.
