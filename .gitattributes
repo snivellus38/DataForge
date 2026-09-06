@@ -1,0 +1,22 @@
+# Line endings are load-bearing here, not cosmetic.
+#
+# web/test/frozen.mjs pins field.html and the eleven files it loads by sha256. Those checksums
+# are computed over the bytes on disk, so if a checkout hands one machine CRLF and another LF,
+# the first gate in `npm test` fails on every machine except the one that ran `npm run freeze`.
+# That is exactly what was happening: four of the twelve frozen files were CRLF in a Windows
+# working tree and LF in the repository, so a clean clone anywhere else -- CI, a judge
+# reproducing the build -- failed before any test ran.
+#
+# Pinning eol=lf makes the working tree match the blob on every platform, so the checksums mean
+# the same thing everywhere.
+* text=auto eol=lf
+
+# Binary: never touch these, on any platform.
+*.png   binary
+*.gif   binary
+*.jpg   binary
+*.pdf   binary
+*.bin   binary
+*.gz    binary
+*.pt    binary
+*.ipynb binary

@@ -1,0 +1,25 @@
+name: tests
+
+# The whole suite runs in Node with jsdom. No GPU, no network, no Python: every fixture and data
+# pack it reads is committed, which is the property that makes this workflow possible at all.
+# Twelve gates, and several of them exist because a specific bug shipped past everything else --
+# see "The test suite, and what each gate caught" in the README.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: npm test
+        run: npm test
