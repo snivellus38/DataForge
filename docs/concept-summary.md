@@ -96,5 +96,5 @@ failures still have correct output dimensions. Not verbalizing is what makes it 
 cannot audit it. Ours mirrors it in miniature: a 131K toy and an 8M translation model are honest
 instruments, not evidence about BDH at scale.
 
-**Continue at** the artifact itself, the Dragon Hatchling paper, BDH-CQ §3.2 and Appendix A.3–A.4,
-and DeltaNet for where the field went next.
+**Continue at** the artifact — https://demonstrations-are-weights.vercel.app — then the Dragon
+Hatchling paper, BDH-CQ §3.2 and Appendix A.3–A.4, and DeltaNet for where the field went next.

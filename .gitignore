@@ -26,3 +26,5 @@ trained_model_things/
 # Windows keeps file locks on a browser profile after exit, so this can be undeletable
 # for a while; ignoring it rather than fighting it.
 research/__mobile_profile/
+
+.vercel

@@ -12,7 +12,7 @@ Both halves are falsifiable in the artifact. The first takes about sixty seconds
 
 | | |
 |---|---|
-| **Artifact** | *pending deployment — see [Deploying](#deploying)* |
+| **Artifact** | **https://demonstrations-are-weights.vercel.app** — opens without sign-in |
 | **Source** | https://github.com/snivellus38/DataForge |
 | **One-page summary** | [`docs/concept-summary.pdf`](docs/concept-summary.pdf) |
 | **Run locally** | `npm run dev` → http://localhost:8080 |
@@ -311,6 +311,15 @@ curl -sI <url>/public/big/traces.bin.gz | grep -i "content-type\|content-encodin
 curl -sI <url>/public/walk.bin.gz       | grep -i "content-type\|content-encoding"
 ```
 
+Verified on the live origin: both packs arrive **byte-identical to disk** and still gzip after
+transport decoding. Vercel applies Brotli on top when the browser asks for it, which is transparent
+re-compression, not the mislabelling that would break the loader.
+
 ```bash
-vercel login && vercel --prod
+vercel login
+vercel link --yes --project demonstrations-are-weights   # the folder name has capitals; Vercel
+vercel --prod --yes                                      # project names must be lowercase
 ```
+
+Deployment Protection must stay **off** for Production — the track requires a URL that opens
+without sign-in. Test it in a private window, not just with curl.
