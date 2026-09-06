@@ -144,13 +144,25 @@ ok("forward time is a real measurement", /\d+ ms/.test(txt("h-meters")), txt("h-
 // remove the demonstration: the answer must flip while the weights do not
 {
   const modelBefore = txt("h-model");
+  const verdictBefore = txt("h-verdict");
   $("h-toggle").dispatchEvent(new window.MouseEvent("click", { bubbles: true }));
   await settle(150);
+  // WAITING ON `h-phase` ALONE IS A RACE, and it cost a red CI run. The slide replays on a
+  // loop, so between the click handler firing and the next render the page can still be
+  // showing the PREVIOUS pass's completed state: phase "answered", the old verdict, the old
+  // chip. A poll that only asks for /answered/ exits on that stale frame and then asserts
+  // against a verdict computed before the demonstration was removed. It passed locally and
+  // failed on a slower runner, which is the signature of a test that is timing-lucky rather
+  // than correct. Wait for the state that can ONLY exist after a fresh pass has finished in
+  // the new configuration: the phase settled, the verdict repopulated, and its text actually
+  // different from the one we started with.
   let done = false;
-  for (let i = 0; i < 120 && !done; i++) {
+  for (let i = 0; i < 200 && !done; i++) {
     await settle(60);
-    done = /answered/.test(txt("h-phase"));
+    const v = txt("h-verdict");
+    done = /answered/.test(txt("h-phase")) && v !== "" && v !== verdictBefore;
   }
+  ok("the pass reruns after the demonstration is removed", done, txt("h-phase"));
   ok("removing the demonstration changes the answer", txt("h-model") !== modelBefore,
      `${modelBefore} -> ${txt("h-model")}`);
   ok("...and the page says it is confidently wrong, not hedging",

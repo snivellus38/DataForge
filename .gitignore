@@ -26,6 +26,8 @@ models/checkpoints/*.pt
 # Also released, as prior-run-telemetry.tar.gz.
 models/telemetry/telemetry/
 models/telemetry/hero_tokens/
+# built by models/publish-release.sh from the two directories above, and uploaded to the release
+models/prior-run-telemetry.tar.gz
 
 # Screen captures, pre-encoding. docs/media/encode.sh turns these into the ~1 MB GIFs the README
 # embeds; the multi-megabyte sources stay out of the tree.

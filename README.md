@@ -41,7 +41,7 @@ Both halves are falsifiable inside the artifact. The first takes about a minute:
 | **One-page summary** | [`docs/concept-summary.pdf`](docs/concept-summary.pdf) |
 | **Defense sheet** | [`docs/defense.md`](docs/defense.md) — every on-screen number mapped to the script that makes it |
 | **Run locally** | `npm run dev` → http://localhost:8080 |
-| **Tests** | `npm test` — 12 gates, 235 checks, no GPU and no network |
+| **Tests** | `npm test` — 12 gates, 236 checks, no GPU and no network |
 
 Submitted to **DataForge 2026, Pathway track ("Explain the Frontier")**, on the concept of
 **test-time adaptation: optimization versus context**.
@@ -456,13 +456,13 @@ deliberately: edit, then `npm run freeze`.
 
 ## The test suite, and what each gate caught
 
-`npm test` runs twelve gates and 235 checks in this order. Several of them exist because a
+`npm test` runs twelve gates and 236 checks in this order. Several of them exist because a
 specific bug shipped past everything else.
 
 | Gate | What it protects |
 |---|---|
 | `frozen` | field.html and its eleven files are byte-identical to the frozen checksums |
-| `price_smoke` | boots THE PRICE in jsdom; 76 checks; canvases must paint non-uniform pixels; the evidence ledger's disclosures must be present |
+| `price_smoke` | boots THE PRICE in jsdom; 77 checks; canvases must paint non-uniform pixels; the evidence ledger's disclosures must be present |
 | `field_smoke` | boots THE FIELD on both render paths; readouts must **differ** between sentences |
 | `bigdata` | shipped bytes round-trip within 0.5 quantisation steps; re-derives the sparsity and negative-score figures from them |
 | `walk` | RoPE re-derivation and σ accumulation, each with a negative control (247× and 580× worse) |
@@ -501,7 +501,7 @@ Nothing here needs a GPU or a network unless you are retraining.
 
 ```bash
 npm ci
-npm test                # 12 gates, 235 checks
+npm test                # 12 gates, 236 checks
 npm run dev             # serve the artifact at http://localhost:8080
 ```
 

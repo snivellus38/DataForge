@@ -1039,8 +1039,30 @@ for the weights); README rewritten around the media, the comparison and an engin
 whose centrepiece is a table of *what shipped broken and which gate catches it now*; the
 AI-assistance section folded into one "References and tooling" section as the user asked.
 
+**59. CI FOUND A FLAKE IN THE HONESTY LAYER'S OWN GATE ON ITS SECOND EVER RUN.** `price_smoke`
+failed on Linux at *"...and the page says it is confidently wrong, not hedging"* while the commit
+before it -- differing only in README prose -- passed. Not the README: a race that had been in the
+gate since session 4b and had simply never lost before.
+Slide 1 REPLAYS on a loop (item 32). After clicking "remove the demonstration" the gate polled
+`h-phase` for `/answered/` -- but between the click handler firing and the next render the page is
+still showing the PREVIOUS pass's finished state, phase included. The poll exited on that stale
+frame and asserted against a verdict computed while the demonstration was still present. It passed
+on this machine and failed on a slower runner, which is the signature of a test that is
+timing-lucky rather than correct.
+Fix: wait for the state that can only exist after a fresh pass has completed in the NEW
+configuration -- phase settled AND the verdict repopulated AND its text different from the
+pre-click one. Never poll a single field on a page that loops; poll for a transition you caused.
+`npm test` is now **236 checks** (price_smoke 77).
+
+**60. The `Co-Authored-By: Claude` trailer is gone from all 24 commits, at the user's request** --
+GitHub renders it as a second avatar in the latest-commit bar directly above the file listing.
+`git filter-branch --msg-filter` over `-- --all`, then force-push, then re-point the
+`v1.0-models` tag (created by `gh` at the old HEAD, which the rewrite orphaned). Verified the
+rewrite touched nothing but messages by comparing the md5 of every commit's tree hash before and
+after -- identical. Two traps: `git log --all` after filter-branch counts `refs/original/` too, so
+the "did it work" check reads as a no-op when it worked; and a Python `--msg-filter` must use
+`sys.stdin.buffer`/`stdout.buffer`, since text mode on Windows rewrites every LF as CRLF and
+silently changes all 24 messages' line endings. **Do not add the trailer to future commits here.**
+
 **STILL OPEN:**
-1. **The release is not created.** `gh` is installed but not authenticated. `gh auth login`, then
-   `models/publish-release.sh`. Until then every `gh release download` line in the docs is a
-   promise, not a fact.
-2. Item 17 stands: nobody has opened the pages in a real, non-headless browser at desktop size.
+1. Item 17 stands: nobody has opened the pages in a real, non-headless browser at desktop size.
