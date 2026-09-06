@@ -24,7 +24,8 @@
     "test:walk": "node web/test/walk.mjs",
     "export:walk": "python research/export_walk.py && python research/export_concepts.py && python research/export_synapses.py && python research/merge_replicate.py",
     "test:loop": "node web/test/loop_smoke.mjs",
-    "test:price": "node web/test/price_smoke.mjs"
+    "test:price": "node web/test/price_smoke.mjs",
+    "summary": "python docs/build_summary.py"
   },
   "devDependencies": {
     "jsdom": "^29.1.1"
