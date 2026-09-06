@@ -44,8 +44,12 @@ def rope(ph, v):
     return v * torch.cos(p_) + vr * torch.sin(p_)
 
 
-def trial(k, N, D, sparsity):
-    keys = torch.relu(torch.randn(k, N, dtype=torch.float64))
+def trial(k, N, D, sparsity, nonneg=True):
+    g = torch.randn(k, N, dtype=torch.float64)
+    # The counterfactual. Same state, same size, same rank bound -- the ONLY change is dropping
+    # the ReLU on the keys. If capacity does not improve, the claim that overlap (not size) is
+    # the binding constraint is wrong, so this branch is what makes the claim falsifiable.
+    keys = torch.relu(g) if nonneg else g
     if sparsity >= 0:                       # optionally force harder sparsity than ReLU gives
         mask = torch.rand(k, N, dtype=torch.float64) < sparsity
         keys = keys * mask
@@ -63,11 +67,26 @@ def trial(k, N, D, sparsity):
 
 print(f"sigma is {a.N}x{a.D} = {a.N*a.D:,} floats. keys = ReLU(N(0,1)) over {a.N} dims"
       + (f", extra sparsity {a.sparsity}" if a.sparsity >= 0 else " (~50% nonzero)"))
-print("mean cosine between two non-negative keys:",
-      f"{torch.nn.functional.cosine_similarity(torch.relu(torch.randn(2000,a.N)),torch.relu(torch.randn(2000,a.N))).mean():.3f}")
-print(f"\n{'k':>5} {'retrieval':>10}")
+cos = lambda nn: torch.nn.functional.cosine_similarity(
+    *( [torch.relu(torch.randn(2000, a.N)) for _ in range(2)] if nn
+       else [torch.randn(2000, a.N) for _ in range(2)] )).mean()
+print(f"mean pairwise cosine  non-negative {cos(True):+.3f}   signed {cos(False):+.3f}"
+      f"   (analytic 1/pi = {1/math.pi:.4f})")
+
 ks = [2, 4, 8, 16, 32, 64, 96, 128, 192, 256, 384, 512]
-for k in ks:
-    acc = sum(trial(k, a.N, a.D, a.sparsity) for _ in range(max(20, a.trials // max(1, k // 8)))) \
-          / max(20, a.trials // max(1, k // 8))
-    print(f"{k:>5} {acc:>9.1%}")
+curves = {}
+for nonneg in (True, False):
+    torch.manual_seed(0)                     # same draws for both, so the ReLU is the only change
+    curves[nonneg] = []
+    for k in ks:
+        reps = max(20, a.trials // max(1, k // 8))
+        curves[nonneg].append(sum(trial(k, a.N, a.D, a.sparsity, nonneg)
+                                  for _ in range(reps)) / reps)
+
+print()
+print(f"{'k':>6}" + "".join(f"{k:>7}" for k in ks))
+print(f"{'non-neg':>6}" + "".join(f"{v:>6.0%} " for v in curves[True]))
+print(f"{'signed':>6}" + "".join(f"{v:>6.0%} " for v in curves[False]))
+print()
+print("Same state, same rank bound. The only difference between the rows is the ReLU on the")
+print("keys -- so what caps BDH's memory is key overlap, not the size of the state.")

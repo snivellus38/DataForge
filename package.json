@@ -26,7 +26,9 @@
     "test:loop": "node web/test/loop_smoke.mjs",
     "test:price": "node web/test/price_smoke.mjs",
     "summary": "python docs/build_summary.py",
-    "test:mobile": "python research/check_mobile.py"
+    "test:mobile": "python research/check_mobile.py",
+    "figures": "python research/compare_memory.py && python research/plot_training.py",
+    "media": "bash docs/media/encode.sh"
   },
   "devDependencies": {
     "jsdom": "^29.1.1"

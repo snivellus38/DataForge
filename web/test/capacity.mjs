@@ -1,9 +1,9 @@
 // The JS capacity measurement must agree with research/sigma_capacity.py, which is what the
-// README quotes. Reference values are the Python run at N=256, D=64, 30 trials.
+// README quotes. Reference values are the seeded default run: python research/sigma_capacity.py
 import { capacityCurve, meanCosine, ANALYTIC_COSINE } from "../src/capacity.js";
 
-const PY = {                       // research/sigma_capacity.py, 2026-09-05
-  nonneg: { 8: 1.00, 16: 0.985, 32: 0.942, 64: 0.796, 128: 0.473, 192: 0.335, 256: 0.224 },
+const PY = {                       // research/sigma_capacity.py, seeded run, 2026-09-06
+  nonneg: { 8: 1.00, 16: 0.99, 32: 0.94, 64: 0.75, 128: 0.48, 192: 0.32, 256: 0.23 },
   signed: { 8: 1.00, 16: 1.00, 32: 1.00, 64: 1.00, 128: 1.00, 192: 1.00, 256: 1.00 },
 };
 const KS = [8, 16, 32, 64, 128, 192, 256];
