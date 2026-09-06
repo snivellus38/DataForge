@@ -3,17 +3,28 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node web/test/smoke.mjs && node web/test/validate.mjs && node web/test/equivalence.mjs && node web/test/app_logic.mjs && node web/test/capacity.mjs && node web/test/wiring.mjs",
+    "test": "node web/test/frozen.mjs && node web/test/price_smoke.mjs && node web/test/field_smoke.mjs && node web/test/bigdata.mjs && node web/test/walk.mjs && node web/test/loop_smoke.mjs && node web/test/field.mjs && node web/test/validate.mjs && node web/test/equivalence.mjs && node web/test/app_logic.mjs && node web/test/capacity.mjs && node web/test/wiring.mjs",
     "test:parity": "node web/test/validate.mjs",
     "test:equivalence": "node web/test/equivalence.mjs",
     "verify:torch": "python research/verify_equivalence.py",
     "train": "python research/train.py --steps 30000 --out research/runs/final",
     "export": "python research/export_weights.py --ckpt research/runs/final.pt --out web/public/model && python research/make_fixture.py && python research/make_presets.py",
     "test:app": "node web/test/app_logic.mjs",
-    "dev": "python -m http.server 8080 --directory web",
+    "dev": "python research/serve.py",
     "test:capacity": "node web/test/capacity.mjs",
     "test:wiring": "node web/test/wiring.mjs",
-    "test:smoke": "node web/test/smoke.mjs"
+    "test:smoke": "node web/test/price_smoke.mjs",
+    "test:bigdata": "node web/test/bigdata.mjs",
+    "export:big": "python research/export_field.py && python research/export_traces.py",
+    "test:field": "node web/test/field.mjs",
+    "test:field-smoke": "node web/test/field_smoke.mjs",
+    "preview:field": "python research/preview_field.py --curve 0.40 --idle 0.26 --exposure 1.35 --out hero.png",
+    "test:frozen": "node web/test/frozen.mjs",
+    "freeze": "sha256sum web/field.html web/src/field.css web/src/inspector.js web/src/field-gl.js web/src/field-data.js web/src/arcs.js web/src/orthant.js web/src/bigdata.js web/src/palette.js web/test/field.mjs web/test/field_smoke.mjs web/test/bigdata.mjs > web/test/frozen.sha256",
+    "test:walk": "node web/test/walk.mjs",
+    "export:walk": "python research/export_walk.py && python research/export_concepts.py && python research/export_synapses.py && python research/merge_replicate.py",
+    "test:loop": "node web/test/loop_smoke.mjs",
+    "test:price": "node web/test/price_smoke.mjs"
   },
   "devDependencies": {
     "jsdom": "^29.1.1"

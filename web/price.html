@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Price of a Positive Number &mdash; demonstrations are weights you write at inference time</title>
+<meta name="description" content="A frozen Dragon Hatchling adapts by writing rank-one updates into a fixed-size state. The non-negativity that makes that state readable is the same thing that caps what it can hold.">
+<link rel="stylesheet" href="src/theme.css">
+<link rel="stylesheet" href="src/price.css">
+<body>
+
+<nav class="sitenav" aria-label="Sections of this artifact">
+  <a href="field.html">The field</a>
+  <a href="loop.html">The loop</a>
+  <a href="price.html" aria-current="page">The price</a>
+  <span class="spacer"></span>
+  <span class="mark"><b>&sigma;</b>&ensp;demonstrations are weights</span>
+</nav>
+
+<div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+
+<main class="deck" id="deck">
+
+<!-- 1 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="0">
+  <div class="wrap hero">
+    <p class="eyebrow">DataForge 2026 &middot; Pathway track &middot; test-time adaptation</p>
+    <h1>Demonstrations are weights<br>you write at inference&nbsp;time.</h1>
+    <p class="lede">Watch it happen. A frozen model reads three examples of a rule it has never
+      seen, writes them into a state that did not exist a moment ago, and answers &mdash; without
+      a single parameter changing.</p>
+
+    <div class="hero-live">
+      <div class="tape-col">
+        <div class="tape-head">
+          <span class="lbl">the sequence, as the model reads it</span>
+          <span class="mini" id="h-phase">&mdash;</span>
+        </div>
+        <div id="h-tape" class="tape"></div>
+
+        <div class="answerbar">
+          <div><span class="lbl">model says</span><div id="h-model" class="ans"></div></div>
+          <div><span class="lbl">true answer</span><div id="h-truth" class="ans"></div></div>
+          <div><span class="lbl">confidence</span><strong id="h-p" class="ans-p">&mdash;</strong></div>
+        </div>
+        <p id="h-verdict" class="verdict"></p>
+        <div class="hero-actions">
+          <button id="h-toggle" class="cta">Remove the demonstration it needs &rarr;</button>
+          <button id="h-replay" class="ghost" aria-label="Replay">&#10227; replay</button>
+        </div>
+      </div>
+
+      <div class="sigma-col">
+        <div class="tape-head">
+          <span class="lbl">&sigma; &mdash; the state being written</span>
+          <span class="mini" id="h-tcount">token 0</span>
+        </div>
+        <canvas id="h-sigma" class="sigcanvas" aria-label="The synaptic state accumulating token by token"></canvas>
+        <dl class="counters" id="h-meters"></dl>
+        <p class="hashline"><span class="lbl">weights, SHA-256</span>
+          <code id="h-hash">&mdash;</code>
+          <span class="mini" id="h-hashnote">unchanged since page load</span></p>
+      </div>
+    </div>
+    <p class="cue">use &larr; &rarr; &nbsp;·&nbsp; 12 slides</p>
+  </div>
+</section>
+
+<!-- 2 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="1">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">One</p>
+      <h2>So where did the rule go?</h2>
+      <p>The weights are identical &mdash; same hash, byte for byte. Yet removing one line changed
+        the answer. Whatever held that rule was written somewhere else, and thrown away when the
+        line disappeared.</p>
+      <p>It was written into <span class="sym">&sigma;</span>: a matrix built fresh on every
+        forward pass. Each token adds one <em>rank-one</em> update, and the model answers by
+        reading it back.</p>
+      <div class="eqbox">
+        <span class="eqline"><b>&sigma;</b><sub>t</sub> = <b>&sigma;</b><sub>t&minus;1</sub> +
+          rope(K)<sub>t</sub> &otimes; V<sub>t</sub></span>
+        <span class="eqline dim">out<sub>t</sub> = <b>&sigma;</b><sub>t</sub><sup>&#8868;</sup>
+          rope(Q)<sub>t</sub></span>
+      </div>
+      <p class="note" id="sig-note"></p>
+      <p class="link"><a href="loop.html">See this happen at 8M scale in THE LOOP &rarr;</a></p>
+    </div>
+    <div class="col">
+      <div class="tabs" id="sig-tabs" role="tablist">
+        <button data-v="write" class="on" role="tab">a single write</button>
+        <button data-v="state" role="tab">the whole state</button>
+        <button data-v="diff" role="tab">what one line was worth</button>
+      </div>
+      <canvas id="sig-canvas" class="sigcanvas tall" aria-label="The sigma state"></canvas>
+      <label class="slider wide"><span>token <b id="sig-tval">0</b></span>
+        <input type="range" id="sig-t" min="0" max="10" value="0"></label>
+      <p class="axis"><span id="sig-rows">neurons</span><span id="sig-cols">dims</span></p>
+      <dl class="counters two" id="sig-stats"></dl>
+    </div>
+  </div>
+</section>
+
+<!-- 3 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="2">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Two</p>
+      <h2>Is any of this actually running?</h2>
+      <p>A convincing animation would look identical. So here is a check an animation cannot fake.
+        The reference implementation computes attention the <em>parallel</em> way &mdash; a full
+        token&times;token score matrix. We compute the same layer the <em>recurrent</em> way,
+        accumulating <span class="sym">&sigma;</span> token by token.</p>
+      <p>If <span class="sym">&sigma;</span> were decoration, the two would disagree.</p>
+      <p>Now break it. Only one of these three changes forces a cache that grows with context
+        &mdash; and <strong>which one is the lesson</strong>.</p>
+    </div>
+    <div class="col">
+      <div class="resid">
+        <span class="lbl">max | parallel &minus; recurrent |</span>
+        <strong id="eq-resid">&mdash;</strong>
+        <span class="mini" id="eq-note"></span>
+      </div>
+      <div class="breaks">
+        <span class="lbl">break it:</span>
+        <label class="sw"><input type="checkbox" id="t-softmax"><span>add softmax</span></label>
+        <label class="sw"><input type="checkbox" id="t-qk"><span>Q &ne; K</span></label>
+        <label class="sw"><input type="checkbox" id="t-relu"><span>drop the ReLU</span></label>
+      </div>
+      <p class="note" id="eq-lesson"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="3">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Three</p>
+      <h2>What that buys, one:<br>neurons that mean something</h2>
+      <p>Because activations are non-negative and sparse, a neuron either participates or it does
+        not &mdash; there is no cancelling. That makes "what does this neuron respond to?" a
+        question with an answer.</p>
+      <p>Pick a concept. These are the neurons of the 8M model that prefer it
+        <em>more than chance allows</em>.</p>
+      <div class="warn">
+        <b>The control matters more than the result.</b> A neuron that fires on five bytes in the
+        whole corpus is <em>trivially</em> 100% selective. So every neuron here is tested against
+        its own permutation null &mdash; concept labels shuffled, its activations held fixed,
+        <b id="c-draws">2,000</b> times. Only neurons beating their own 95th percentile count,
+        and the headline survives Benjamini&ndash;Hochberg at 5% FDR.
+      </div>
+    </div>
+    <div class="col">
+      <div class="pills" id="c-pills" role="tablist"></div>
+      <canvas id="c-scatter" aria-label="Observed selectivity against the permutation null"></canvas>
+      <p class="axis"><span>null 95th percentile &rarr;</span><span>observed &uarr;</span></p>
+      <dl class="counters four" id="c-stats"></dl>
+      <div id="c-list" class="neuronlist"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="4">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Four</p>
+      <h2>What that buys, two:<br>synapses you can watch</h2>
+      <p>BDH's claim is not really about neurons, it is about <em>synapses</em>. There is a
+        standing neuron-to-neuron graph
+        <span class="mono">G* = D<sub>x</sub><sup>&#8868;</sup>E<sup>&#8868;</sup></span>,
+        computed from the weights with <strong>no data at all</strong>.</p>
+      <p>Below, specific wired pairs light up as the sentence runs &mdash; the Hebbian product
+        <span class="mono">x<sub>i</sub>(t)&middot;x<sub>j</sub>(t)</span> on a wire that already
+        existed. Press play.</p>
+      <p class="note">Careful: this is <b>not</b> <span class="sym">&sigma;</span>.
+        <span class="sym">&sigma;</span> is N&times;D, not neuron&times;neuron, so it cannot be
+        read as a weight between two named neurons. G* can. Different objects.</p>
+    </div>
+    <div class="col">
+      <div class="tools">
+        <label class="tool"><span>sentence</span><select id="y-sent"></select></label>
+        <button id="y-play" class="play sm" aria-label="Play">&#9654;</button>
+      </div>
+      <canvas id="y-timeline" aria-label="Synapse coactivation over the sentence"></canvas>
+      <div class="strip" id="y-strip"></div>
+      <dl class="counters" id="y-stats"></dl>
+    </div>
+  </div>
+</section>
+
+<!-- 6 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="5">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Five</p>
+      <h2>What that buys, three:<br>the wiring predicts the silence</h2>
+      <p>G* is computed from two weight matrices and nothing else. It has never seen French.</p>
+      <p>Yet it tells you, in advance, <strong>which neurons will do nothing at all</strong>.
+        Neurons with no synapse above threshold are almost exactly the neurons that never fire on
+        the whole corpus.</p>
+      <p class="pull">Structure predicts function. The dark half of THE FIELD is not a rendering
+        artifact &mdash; it is the disconnected half of the graph.</p>
+      <p class="note"><b>Caveats:</b> the corpus is 7 sentences, so "never fires here" is not
+        "dead forever"; and "isolated" is defined by a p99 threshold, so the count moves if the
+        threshold moves. Both numbers below are recomputed in your browser from the shipped bytes.
+        <span class="tag live">computed here</span></p>
+    </div>
+    <div class="col">
+      <canvas id="g-scatter" aria-label="Synapse degree against firing rate"></canvas>
+      <p class="axis"><span>total degree in G* &rarr;</span><span>tokens fired on &uarr;</span></p>
+      <dl class="counters four" id="g-stats"></dl>
+      <div class="matrix2" id="g-matrix"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="6">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Six</p>
+      <h2>And here is the bill</h2>
+      <p>A fixed-size state must fill up. The obvious guess is that it holds about as many rules as
+        it has rows. The obvious guess is wrong, and being wrong about it is the most useful thing
+        on this page.</p>
+      <p>Below, <span class="sym">k</span> bindings are written into a state and read straight
+        back. No model, no training &mdash; just the geometry.</p>
+      <p class="pull">Two ReLU'd Gaussians overlap by <b>1/&pi;</b> on average. Every pair.
+        Unavoidably. Let the keys go negative and they become orthogonal on average, and the same
+        state holds bindings <em>past its own rank</em>.</p>
+      <p>Non-negativity is what made the last three slides possible. It is also what makes this
+        one fail.</p>
+    </div>
+    <div class="col">
+      <div class="tools">
+        <label class="sw big"><input type="checkbox" id="k-signed">
+          <span>let keys go negative</span></label>
+        <label class="slider"><span>k = <b id="k-val">32</b></span>
+          <input type="range" id="k-slider" min="2" max="256" value="32"></label>
+      </div>
+      <div id="k-chart"></div>
+      <dl class="counters" id="k-stats"></dl>
+      <p class="note">Computed in this tab from <code>research/sigma_capacity.py</code>, ported
+        and checked against it. <span class="tag live">live</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="7">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Seven</p>
+      <h2>Two curves that look the same<br>and mean different things</h2>
+      <p>Here is a mistake worth showing, because we made it. Train the toy on
+        <span class="sym">k</span>&nbsp;&isin;&nbsp;[2,&nbsp;10] and it degrades past k=12. It
+        looks exactly like a state filling up.</p>
+      <p>It is not. Measure <em>the same state</em> directly and it still retrieves 95% at k=32
+        &mdash; far past where the model fails.</p>
+      <p class="pull">The model curve is an <b>extrapolation limit</b>, set by the range of k it
+        was trained on. The state curve is <b>associative capacity</b>, set by key overlap. Calling
+        the first one "interference" is a factual error.</p>
+      <p class="note">This is why the capacity result on the previous slide is measured on
+        <span class="sym">&sigma;</span> directly and not inferred from a training run.</p>
+    </div>
+    <div class="col">
+      <div id="d-chart"></div>
+      <dl class="counters two" id="d-stats"></dl>
+      <p class="note" id="d-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 ─────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="8">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Eight</p>
+      <h2>A replication that failed,<br>and what it taught us</h2>
+      <p>The Dragon Hatchling paper says two BDH models can be <em>concatenated</em> into one
+        larger model &mdash; §7.1, "Model merging: concatenating two models". Join every tensor
+        with an <span class="sym">n</span> dimension, average the rest.</p>
+      <p>We have two 8M models, French and Portuguese. We ran the recipe exactly. It produced
+        <code>iiiiiiii</code>.</p>
+      <p>So we ruled things out. <b>RoPE handling?</b> No &mdash; concatenating the frequency
+        buffers as the paper says still collapses. <b>The residual doubling?</b> No &mdash;
+        halving E halves the logits exactly and the output is still degenerate.</p>
+      <p class="pull">What is left is the paper's own precondition: its two models are
+        <b>clones of a common base</b>. Ours were trained independently. Concatenation along
+        <span class="sym">n</span> is well defined <em>structurally</em> &mdash; but a neuron's
+        <em>meaning</em> is only shared between models descended from one initialisation.</p>
+      <p class="note"><b>Not a refutation.</b> The paper's Table 2 is for forked models. We have no
+        common base to fork from, so we tested a harder case it never claims.</p>
+    </div>
+    <div class="col">
+      <div id="m-table"></div>
+      <div class="samples" id="m-samples"></div>
+      <p class="note" id="m-note"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 ────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="9">
+  <div class="wrap prose-wide">
+    <p class="no">Nine</p>
+    <h2>Where this lives in BDH-CQ</h2>
+    <div class="two">
+      <div class="col">
+        <p>Everything so far ran on models we trained. BDH-CQ writes demonstrations into a
+          contextual memory <span class="sym">S</span> with frozen parameters. The report gives
+          the update in its general form &mdash; and then names the special case linear attention
+          realises:</p>
+        <div class="eqbox paper">
+          <span class="eqline"><b>S</b><sub>t</sub> = U<sub>&theta;</sub>(<b>S</b><sub>t&minus;1</sub>,
+            D<sub>t</sub>)<span class="etag">general form</span></span>
+          <span class="eqline"><b>S</b><sub>t</sub> = <b>S</b><sub>t&minus;1</sub> +
+            U<sub>&theta;</sub>(D<sub>t</sub>)<span class="etag hi">the special case</span></span>
+          <span class="ecap">arXiv:2608.09888 &sect;3.2, p.3 &mdash; "linear attention being the
+            conceptually simplest standalone realization&hellip; capturing the special case"</span>
+        </div>
+        <div class="warn">
+          <b>One correction, and it is on the problem statement itself.</b> It is tempting to say
+          BDH-CQ's memory <em>is</em> additive accumulation. The report does not say that.
+          Equation&nbsp;(1) is the general <span class="mono">U<sub>&theta;</sub></span>; additive
+          accumulation is named as a <em>special case</em>, and the actual rule is proprietary.
+          We can show you the special case because it is what the public code computes. We cannot
+          show you theirs.
+        </div>
+      </div>
+      <div class="col">
+        <p>Answering happens in a second state. A workspace <span class="sym">H</span> is refined
+          <span class="sym">R</span> times against the finished memory, and only the last step is
+          decoded &mdash; reasoning with no verbal trace:</p>
+        <div class="eqbox paper">
+          <span class="eqline">H<sub>0</sub> = E<sub>&theta;</sub>(x<sup>&#9733;</sup>,
+            <b>S</b><sub>K</sub>)</span>
+          <span class="eqline">H<sub>r+1</sub> = F<sub>&theta;</sub>(H<sub>r</sub>,
+            <b>S</b><sub>K</sub>)<span class="etag">same &theta;, applied R times</span></span>
+          <span class="eqline">&#375; = G<sub>&theta;</sub>(H<sub>R</sub>)</span>
+          <span class="ecap">arXiv:2608.09888 &sect;3.3, eqs. (2)&ndash;(4), p.3. The report never
+            states a value for R, and never says what changes between its effort levels.</span>
+        </div>
+        <p>Our model has that shape in miniature, for a reason that surprised us: the reference
+          <code>bdh.py</code> is <strong>weight-tied across layers</strong>. Its encoder and
+          decoders are built once and reused, so <code>n_layer</code> is not depth &mdash; it is
+          how many times one operator runs. <a href="loop.html">You can watch all six &rarr;</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 ────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="10">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Ten</p>
+      <h2>Reading the evidence honestly</h2>
+      <p>BDH-CQ's headline is 29.5% pass@2 on ARC-AGI-1 at $0.00070 per task. Each number below is
+        a different <em>kind</em> of claim, and the difference is the point.</p>
+      <ul class="ledger" id="ledger"></ul>
+      <p class="note">The report is unusually candid &mdash; it discloses the ConceptARC overlap
+        and names its auditors as co-authors itself. The press coverage is where the distinctions
+        blur.</p>
+    </div>
+    <div class="col">
+      <div class="replay">
+        <div class="rhead"><span class="tag replay">replayed, not computed here</span>
+          <h3>Coverage decides what the memory can do</h3></div>
+        <p class="mini">The cleanest experiment in the report. The test inputs are
+          <em>byte-identical</em> between the two columns. Only the demonstrations change.</p>
+        <table class="dt">
+          <tr><th></th><th>demonstrations<br>stop short</th><th>one at the<br>target complexity</th></tr>
+          <tr><th>Ordering, length 8</th><td>0 / 24</td><td class="good">13 / 24</td></tr>
+          <tr><th>Nesting, depth 5</th><td>19 / 24</td><td class="good">24 / 24</td></tr>
+        </table>
+        <p class="mini src">arXiv:2608.09888, Table 3, &sect;6.2, p.7 &mdash; exact outputs at
+          pass@2. Developer-reported.</p>
+        <p>You already ran this experiment. Removing one line on slide one changed the answer while
+          the query stayed byte-identical. Same intervention, same conclusion.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 ────────────────────────────────────────────────────────────────────────────────────── -->
+<section class="slide" data-i="11">
+  <div class="wrap two">
+    <div class="col">
+      <p class="no">Close</p>
+      <h2>Say it back</h2>
+      <div class="recall" id="recall"></div>
+      <p class="pull claim">Demonstrations are weights you write at inference time: a frozen model
+        adapts by adding rank-one updates to a fixed-size associative state, so changing only the
+        demonstrations changes the answer &mdash; but that state's capacity is set by how much its
+        keys overlap, not by its size, so the non-negativity that makes BDH inspectable is also
+        what makes it forget sooner.</p>
+    </div>
+    <div class="col">
+      <h3 class="subh">What is live, what is not</h3>
+      <dl class="prov" id="prov"></dl>
+      <h3 class="subh">Sources</h3>
+      <p class="srcs">
+        <a href="https://arxiv.org/abs/2509.26507">The Dragon Hatchling</a> ·
+        <a href="https://arxiv.org/abs/2608.09888">BDH-CQ technical report</a> ·
+        <a href="https://github.com/pathwaycom/bdh">pathwaycom/bdh</a> (MIT, unmodified) ·
+        <a href="https://github.com/snivellus38/DataForge">source &amp; reproduction</a></p>
+      <p class="note">The 8M English&ndash;French and Portuguese checkpoints are the author's own
+        prior hackathon work, reused and disclosed. They add a learned positional embedding on top
+        of RoPE and have no decay term; both deviations are stated wherever they appear.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<button class="arrow left" id="prev" aria-label="Previous slide">&larr;</button>
+<button class="arrow right" id="next" aria-label="Next slide">&rarr;</button>
+
+<div id="boot" class="boot"><p>Loading a 131K-parameter model into this tab&hellip;</p></div>
+<noscript><div class="boot"><p>This page runs a real model in your browser. It needs JavaScript.</p></div></noscript>
+
+<script type="module" src="src/price.js"></script>
