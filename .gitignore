@@ -12,3 +12,12 @@ research/runs/*.pt
 
 # machine-local Claude Code settings
 .claude/settings.local.json
+
+# Prior-hackathon assets: 475MB, and the source of every "big model" number in the artifact.
+# The CHECKPOINTS are the real source -- everything under web/public/big/ is derived from them
+# by research/export_field.py and research/export_traces.py, and IS committed. The raw telemetry
+# dump is the earlier run's own export of the same checkpoints, kept locally as a cross-check
+# (our pipeline independently reproduces its 5.15% sparsity as 5.11%).
+# These are the author's own prior work and are disclosed as such in the README; they are
+# excluded here for size, not for provenance.
+trained_model_things/

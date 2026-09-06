@@ -1,0 +1,2048 @@
+{
+ "what": "concept selectivity per neuron, with a per-neuron permutation null",
+ "source_ckpt": "french_best.pt",
+ "layer": 3,
+ "draws": 2000,
+ "method": "selectivity = max class mean / sum of class means over labelled byte positions. The null permutes concept labels across labelled positions with each neuron's activations held fixed, so it preserves that neuron's own firing rate and burstiness. A neuron counts as selective only if it beats its own 95th percentile; the headline count additionally survives Benjamini-Hochberg at 5% FDR.",
+ "why": "the prior run reported selectivity 1.0 for 200 neurons with no null at all. A rarely firing neuron is trivially selective by chance, so an uncontrolled count is not evidence of monosemanticity.",
+ "caveats": [
+  "8 sentences, 363 labelled byte positions -- small, and Europarl-flavoured.",
+  "Concepts are coarse word classes, not a linguistic ontology.",
+  "Selectivity is measured at layer 3 only.",
+  "'Fires on' counts labelled positions only, not the whole corpus."
+ ],
+ "concepts": {
+  "currency": [
+   "euros",
+   "pounds",
+   "dollar",
+   "yen",
+   "euro",
+   "livres",
+   "prix",
+   "price"
+  ],
+  "country": [
+   "Germany",
+   "France",
+   "Allemagne",
+   "European",
+   "europeen",
+   "Europe"
+  ],
+  "institution": [
+   "Parliament",
+   "Commission",
+   "parlement",
+   "Council",
+   "conseil",
+   "treaty",
+   "traite",
+   "resolution"
+  ],
+  "action_verb": [
+   "voted",
+   "signed",
+   "presented",
+   "discussed",
+   "approved",
+   "vote",
+   "signe",
+   "presente",
+   "discute",
+   "approuve"
+  ]
+ },
+ "counts": {
+  "currency": 59,
+  "country": 72,
+  "institution": 137,
+  "action_verb": 95
+ },
+ "corpus": [
+  {
+   "i": 0,
+   "text": "<F:en>The price was fifty euros and thirty pounds<T:fr>Le prix etait de cinquante euros et trente livres",
+   "n_labelled": 31,
+   "T": 104
+  },
+  {
+   "i": 1,
+   "text": "<F:en>The dollar strengthened against the yen today<T:fr>Le dollar s'est renforce face au yen aujourd'hui",
+   "n_labelled": 18,
+   "T": 105
+  },
+  {
+   "i": 2,
+   "text": "<F:en>Germany and France signed the bilateral treaty<T:fr>L'Allemagne et la France ont signe le traite bilateral",
+   "n_labelled": 51,
+   "T": 112
+  },
+  {
+   "i": 3,
+   "text": "<F:en>The European Parliament voted on this resolution<T:fr>Le parlement europeen a vote cette resolution",
+   "n_labelled": 64,
+   "T": 105
+  },
+  {
+   "i": 4,
+   "text": "<F:en>The Commission presented the annual budget report<T:fr>La Commission a presente le rapport budgetaire annuel",
+   "n_labelled": 37,
+   "T": 114
+  },
+  {
+   "i": 5,
+   "text": "<F:en>The budget was discussed. The budget was approved. The budget will be implemented.<T:fr>Le budget a ete discute. Le budget a ete approuve. Le budget sera mis en oeuvre.",
+   "n_labelled": 32,
+   "T": 174
+  },
+  {
+   "i": 6,
+   "text": "<F:en>The Council voted on the treaty about euros in France<T:fr>Le conseil a vote le traite sur les euros en France",
+   "n_labelled": 57,
+   "T": 116
+  },
+  {
+   "i": 7,
+   "text": "<F:en>The European Commission presented the resolution<T:fr>La Commission europeenne a presente la resolution",
+   "n_labelled": 73,
+   "T": 109
+  }
+ ],
+ "summary": {
+  "n_neurons": 12288,
+  "n_alive": 7040,
+  "n_beating_own_null": 2692,
+  "expected_by_chance": 352.0,
+  "enrichment": 7.65,
+  "n_significant_fdr5": 1836,
+  "by_concept": {
+   "currency": 358,
+   "country": 303,
+   "institution": 684,
+   "action_verb": 491
+  }
+ },
+ "top": [
+  {
+   "global": 1955,
+   "head": 0,
+   "neuron": 1955,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7763,
+   "p": 0.001,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.009151,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2023,
+   "head": 0,
+   "neuron": 2023,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9327,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.057538,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3166,
+   "head": 1,
+   "neuron": 94,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5915,
+   "p": 0.0005,
+   "fires_on": 14,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.011381,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 12125,
+   "head": 3,
+   "neuron": 2909,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8657,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003283,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11681,
+   "head": 3,
+   "neuron": 2465,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8051,
+   "p": 0.01099,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006168,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4167,
+   "head": 1,
+   "neuron": 1095,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7359,
+   "p": 0.002,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.008535
+   }
+  },
+  {
+   "global": 100,
+   "head": 0,
+   "neuron": 100,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7238,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.012804,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4087,
+   "head": 1,
+   "neuron": 1015,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8173,
+   "p": 0.0015,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.017742
+   }
+  },
+  {
+   "global": 1437,
+   "head": 0,
+   "neuron": 1437,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.753,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003702,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 54,
+   "head": 0,
+   "neuron": 54,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8602,
+   "p": 0.01099,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005466,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8087,
+   "head": 2,
+   "neuron": 1943,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5365,
+   "p": 0.0005,
+   "fires_on": 25,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.200851,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 1405,
+   "head": 0,
+   "neuron": 1405,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8152,
+   "p": 0.01149,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.014792,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11874,
+   "head": 3,
+   "neuron": 2658,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8579,
+   "p": 0.009,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.014186,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7897,
+   "head": 2,
+   "neuron": 1753,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.521,
+   "p": 0.0005,
+   "fires_on": 26,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.254275,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11483,
+   "head": 3,
+   "neuron": 2267,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6831,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.015221,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11480,
+   "head": 3,
+   "neuron": 2264,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7533,
+   "p": 0.0095,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.003884
+   }
+  },
+  {
+   "global": 11289,
+   "head": 3,
+   "neuron": 2073,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8084,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.106941
+   }
+  },
+  {
+   "global": 2053,
+   "head": 0,
+   "neuron": 2053,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5955,
+   "p": 0.0005,
+   "fires_on": 14,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.03233,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7841,
+   "head": 2,
+   "neuron": 1697,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8616,
+   "p": 0.008,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.00354,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4778,
+   "head": 1,
+   "neuron": 1706,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7117,
+   "p": 0.0015,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006326,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11218,
+   "head": 3,
+   "neuron": 2002,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7982,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.009338,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7931,
+   "head": 2,
+   "neuron": 1787,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6109,
+   "p": 0.0005,
+   "fires_on": 13,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.013277,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4533,
+   "head": 1,
+   "neuron": 1461,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7699,
+   "p": 0.004,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.025707
+   }
+  },
+  {
+   "global": 9862,
+   "head": 3,
+   "neuron": 646,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8416,
+   "p": 0.0065,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.011279
+   }
+  },
+  {
+   "global": 11324,
+   "head": 3,
+   "neuron": 2108,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8707,
+   "p": 0.0015,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007149,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4643,
+   "head": 1,
+   "neuron": 1571,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7058,
+   "p": 0.0005,
+   "fires_on": 13,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.030279,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4602,
+   "head": 1,
+   "neuron": 1530,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6188,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.016659,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4433,
+   "head": 1,
+   "neuron": 1361,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7677,
+   "p": 0.002,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.002888,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4478,
+   "head": 1,
+   "neuron": 1406,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.748,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005777,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 1293,
+   "head": 0,
+   "neuron": 1293,
+   "concept": "currency",
+   "selectivity": 1.0,
+   "null_p95": 0.8257,
+   "p": 0.0035,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.012582,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5179,
+   "head": 1,
+   "neuron": 2107,
+   "concept": "currency",
+   "selectivity": 1.0,
+   "null_p95": 0.8321,
+   "p": 0.0035,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.010903,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7244,
+   "head": 2,
+   "neuron": 1100,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6324,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.013127,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 897,
+   "head": 0,
+   "neuron": 897,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8171,
+   "p": 0.01099,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003764,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7388,
+   "head": 2,
+   "neuron": 1244,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8008,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.011134,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9932,
+   "head": 3,
+   "neuron": 716,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8044,
+   "p": 0.0005,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.028597
+   }
+  },
+  {
+   "global": 4941,
+   "head": 1,
+   "neuron": 1869,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6275,
+   "p": 0.0005,
+   "fires_on": 13,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.017448,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5071,
+   "head": 1,
+   "neuron": 1999,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9372,
+   "p": 0.0065,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.004628,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5110,
+   "head": 1,
+   "neuron": 2038,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7369,
+   "p": 0.0015,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.004082,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11006,
+   "head": 3,
+   "neuron": 1790,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7467,
+   "p": 0.0035,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007928,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 11037,
+   "head": 3,
+   "neuron": 1821,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6622,
+   "p": 0.0015,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003107,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2700,
+   "head": 0,
+   "neuron": 2700,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7609,
+   "p": 0.0005,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.018277,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2308,
+   "head": 0,
+   "neuron": 2308,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8987,
+   "p": 0.0045,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003923,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2256,
+   "head": 0,
+   "neuron": 2256,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6452,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.018032,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7255,
+   "head": 2,
+   "neuron": 1111,
+   "concept": "country",
+   "selectivity": 1.0,
+   "null_p95": 0.9036,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.001322,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 10857,
+   "head": 3,
+   "neuron": 1641,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6631,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.010258,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 569,
+   "head": 0,
+   "neuron": 569,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.683,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.021987,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 4865,
+   "head": 1,
+   "neuron": 1793,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7057,
+   "p": 0.0015,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.014407
+   }
+  },
+  {
+   "global": 4894,
+   "head": 1,
+   "neuron": 1822,
+   "concept": "country",
+   "selectivity": 1.0,
+   "null_p95": 0.8747,
+   "p": 0.009,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.005953,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9693,
+   "head": 3,
+   "neuron": 477,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5783,
+   "p": 0.0005,
+   "fires_on": 18,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.012181,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9665,
+   "head": 3,
+   "neuron": 449,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6138,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.021203,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9007,
+   "head": 2,
+   "neuron": 2863,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7716,
+   "p": 0.0095,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.018648,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8983,
+   "head": 2,
+   "neuron": 2839,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6739,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.011822,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9476,
+   "head": 3,
+   "neuron": 260,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7519,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006315,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8986,
+   "head": 2,
+   "neuron": 2842,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9381,
+   "p": 0.01099,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.002572,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9130,
+   "head": 2,
+   "neuron": 2986,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7299,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.02482,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7677,
+   "head": 2,
+   "neuron": 1533,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8177,
+   "p": 0.007,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.005395
+   }
+  },
+  {
+   "global": 7489,
+   "head": 2,
+   "neuron": 1345,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7341,
+   "p": 0.0015,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.030066,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3275,
+   "head": 1,
+   "neuron": 203,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.6794,
+   "p": 0.0005,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.025424
+   }
+  },
+  {
+   "global": 2479,
+   "head": 0,
+   "neuron": 2479,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.657,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.015124
+   }
+  },
+  {
+   "global": 2572,
+   "head": 0,
+   "neuron": 2572,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5809,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006395,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 891,
+   "head": 0,
+   "neuron": 891,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8245,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.00662,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8364,
+   "head": 2,
+   "neuron": 2220,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7821,
+   "p": 0.0045,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007379,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8371,
+   "head": 2,
+   "neuron": 2227,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7936,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007549,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 9727,
+   "head": 3,
+   "neuron": 511,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7562,
+   "p": 0.0045,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.01227,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5220,
+   "head": 1,
+   "neuron": 2148,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.643,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.012436,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2361,
+   "head": 0,
+   "neuron": 2361,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6836,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007978,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7021,
+   "head": 2,
+   "neuron": 877,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6644,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.019738,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7007,
+   "head": 2,
+   "neuron": 863,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6516,
+   "p": 0.001,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005761,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2718,
+   "head": 0,
+   "neuron": 2718,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6342,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.015729,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 7102,
+   "head": 2,
+   "neuron": 958,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.732,
+   "p": 0.0015,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.002797,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8275,
+   "head": 2,
+   "neuron": 2131,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.829,
+   "p": 0.01099,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.000555,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8304,
+   "head": 2,
+   "neuron": 2160,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8329,
+   "p": 0.0055,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003934,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2563,
+   "head": 0,
+   "neuron": 2563,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6912,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006813,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8246,
+   "head": 2,
+   "neuron": 2102,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8834,
+   "p": 0.009,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.002941,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8247,
+   "head": 2,
+   "neuron": 2103,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7215,
+   "p": 0.0005,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.003137
+   }
+  },
+  {
+   "global": 2244,
+   "head": 0,
+   "neuron": 2244,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.543,
+   "p": 0.0005,
+   "fires_on": 15,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.025043,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2241,
+   "head": 0,
+   "neuron": 2241,
+   "concept": "country",
+   "selectivity": 1.0,
+   "null_p95": 0.8815,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.012401,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2268,
+   "head": 0,
+   "neuron": 2268,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8972,
+   "p": 0.01,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.027324,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 10306,
+   "head": 3,
+   "neuron": 1090,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7076,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.056863,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6315,
+   "head": 2,
+   "neuron": 171,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6726,
+   "p": 0.0015,
+   "fires_on": 8,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.010972,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6526,
+   "head": 2,
+   "neuron": 382,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7782,
+   "p": 0.0015,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.009249,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3568,
+   "head": 1,
+   "neuron": 496,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8637,
+   "p": 0.01,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.00177,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2230,
+   "head": 0,
+   "neuron": 2230,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8616,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.021882
+   }
+  },
+  {
+   "global": 2198,
+   "head": 0,
+   "neuron": 2198,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6694,
+   "p": 0.0005,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.00257,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 1603,
+   "head": 0,
+   "neuron": 1603,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6685,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.016732,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2247,
+   "head": 0,
+   "neuron": 2247,
+   "concept": "country",
+   "selectivity": 1.0,
+   "null_p95": 0.6825,
+   "p": 0.001,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.026194,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6456,
+   "head": 2,
+   "neuron": 312,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9289,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006327,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 1568,
+   "head": 0,
+   "neuron": 1568,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5778,
+   "p": 0.0005,
+   "fires_on": 12,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.028569,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3344,
+   "head": 1,
+   "neuron": 272,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8022,
+   "p": 0.005,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.01873,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3126,
+   "head": 1,
+   "neuron": 54,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8756,
+   "p": 0.0045,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.011579
+   }
+  },
+  {
+   "global": 322,
+   "head": 0,
+   "neuron": 322,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6544,
+   "p": 0.001,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.018101,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 10141,
+   "head": 3,
+   "neuron": 925,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7545,
+   "p": 0.0005,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005377,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8862,
+   "head": 2,
+   "neuron": 2718,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7269,
+   "p": 0.003,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.058152
+   }
+  },
+  {
+   "global": 9107,
+   "head": 2,
+   "neuron": 2963,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7025,
+   "p": 0.0005,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.011545,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6912,
+   "head": 2,
+   "neuron": 768,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7686,
+   "p": 0.0015,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.013795
+   }
+  },
+  {
+   "global": 8114,
+   "head": 2,
+   "neuron": 1970,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8165,
+   "p": 0.0075,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.003792,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8820,
+   "head": 2,
+   "neuron": 2676,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.9267,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.01265
+   }
+  },
+  {
+   "global": 9512,
+   "head": 3,
+   "neuron": 296,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9364,
+   "p": 0.001,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.002023,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 534,
+   "head": 0,
+   "neuron": 534,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.8259,
+   "p": 0.007,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.001713
+   }
+  },
+  {
+   "global": 8782,
+   "head": 2,
+   "neuron": 2638,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8237,
+   "p": 0.0005,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.014603,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2822,
+   "head": 0,
+   "neuron": 2822,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7283,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.004316,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2861,
+   "head": 0,
+   "neuron": 2861,
+   "concept": "currency",
+   "selectivity": 1.0,
+   "null_p95": 0.914,
+   "p": 0.01249,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0301,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2850,
+   "head": 0,
+   "neuron": 2850,
+   "concept": "country",
+   "selectivity": 1.0,
+   "null_p95": 0.835,
+   "p": 0.0085,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.007744,
+    "institution": 0.0,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2879,
+   "head": 0,
+   "neuron": 2879,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7723,
+   "p": 0.003,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005001,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 10395,
+   "head": 3,
+   "neuron": 1179,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7178,
+   "p": 0.0015,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.009523,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6317,
+   "head": 2,
+   "neuron": 173,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7992,
+   "p": 0.0005,
+   "fires_on": 9,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.031765
+   }
+  },
+  {
+   "global": 6259,
+   "head": 2,
+   "neuron": 115,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6544,
+   "p": 0.0005,
+   "fires_on": 14,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.012913,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 2626,
+   "head": 0,
+   "neuron": 2626,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7841,
+   "p": 0.0025,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006359,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8895,
+   "head": 2,
+   "neuron": 2751,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.7078,
+   "p": 0.001,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.061936
+   }
+  },
+  {
+   "global": 8925,
+   "head": 2,
+   "neuron": 2781,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5738,
+   "p": 0.0005,
+   "fires_on": 15,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.042866,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6402,
+   "head": 2,
+   "neuron": 258,
+   "concept": "action_verb",
+   "selectivity": 1.0,
+   "null_p95": 0.6489,
+   "p": 0.0005,
+   "fires_on": 10,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.0,
+    "action_verb": 0.021465
+   }
+  },
+  {
+   "global": 3674,
+   "head": 1,
+   "neuron": 602,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8007,
+   "p": 0.0075,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.006284,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 8343,
+   "head": 2,
+   "neuron": 2199,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8287,
+   "p": 0.0005,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007383,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5789,
+   "head": 1,
+   "neuron": 2717,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.5939,
+   "p": 0.0005,
+   "fires_on": 14,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.156475,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 1208,
+   "head": 0,
+   "neuron": 1208,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9504,
+   "p": 0.0075,
+   "fires_on": 5,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.005488,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 5978,
+   "head": 1,
+   "neuron": 2906,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.8431,
+   "p": 0.0045,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007026,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 3620,
+   "head": 1,
+   "neuron": 548,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.9029,
+   "p": 0.005,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.001886,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6067,
+   "head": 1,
+   "neuron": 2995,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7522,
+   "p": 0.0025,
+   "fires_on": 6,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.016947,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 6130,
+   "head": 1,
+   "neuron": 3058,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.7412,
+   "p": 0.0015,
+   "fires_on": 7,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.007919,
+    "action_verb": 0.0
+   }
+  },
+  {
+   "global": 250,
+   "head": 0,
+   "neuron": 250,
+   "concept": "institution",
+   "selectivity": 1.0,
+   "null_p95": 0.6921,
+   "p": 0.0005,
+   "fires_on": 11,
+   "means": {
+    "currency": 0.0,
+    "country": 0.0,
+    "institution": 0.00764,
+    "action_verb": 0.0
+   }
+  }
+ ]
+}

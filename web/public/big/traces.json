@@ -1,0 +1,2922 @@
+{
+ "what": "per-token neuron activations (sparse), attention scores and sigma row energy",
+ "source_ckpt": "french_best.pt",
+ "neuron_id": "global id = head * N + n, matching global.xy in field.bin",
+ "config": {
+  "n_layer": 6,
+  "n_embd": 192,
+  "n_head": 4,
+  "N": 3072,
+  "N_total": 12288
+ },
+ "hero": 5,
+ "default_layer": 3,
+ "attn_head": 0,
+ "compression": "gzip",
+ "every_sentence": {
+  "layers": 6,
+  "attention": true,
+  "sigma_energy": true
+ },
+ "attention_scope": "layer 3, head 0 (one layer/head for every sentence)",
+ "measured_active_frac": 0.05129,
+ "corpus_neg_share": 0.34304,
+ "sentences": [
+  {
+   "i": 0,
+   "text": "<F:en>The price was fifty euros and thirty pounds<T:fr>Le prix etait de cinquante euros et trente livres",
+   "T": 104,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 58523,
+     "active_frac": 0.04579
+    },
+    {
+     "layer": 1,
+     "n_active": 54663,
+     "active_frac": 0.04277
+    },
+    {
+     "layer": 2,
+     "n_active": 58865,
+     "active_frac": 0.04606
+    },
+    {
+     "layer": 3,
+     "n_active": 65980,
+     "active_frac": 0.05163
+    },
+    {
+     "layer": 4,
+     "n_active": 70530,
+     "active_frac": 0.05519
+    },
+    {
+     "layer": 5,
+     "n_active": 72411,
+     "active_frac": 0.05666
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    112,
+    114,
+    105,
+    99,
+    101,
+    32,
+    119,
+    97,
+    115,
+    32,
+    102,
+    105,
+    102,
+    116,
+    121,
+    32,
+    101,
+    117,
+    114,
+    111,
+    115,
+    32,
+    97,
+    110,
+    100,
+    32,
+    116,
+    104,
+    105,
+    114,
+    116,
+    121,
+    32,
+    112,
+    111,
+    117,
+    110,
+    100,
+    115,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    101,
+    32,
+    112,
+    114,
+    105,
+    120,
+    32,
+    101,
+    116,
+    97,
+    105,
+    116,
+    32,
+    100,
+    101,
+    32,
+    99,
+    105,
+    110,
+    113,
+    117,
+    97,
+    110,
+    116,
+    101,
+    32,
+    101,
+    117,
+    114,
+    111,
+    115,
+    32,
+    101,
+    116,
+    32,
+    116,
+    114,
+    101,
+    110,
+    116,
+    101,
+    32,
+    108,
+    105,
+    118,
+    114,
+    101,
+    115
+   ],
+   "hero": false,
+   "n_scores": 5356,
+   "neg_share": 0.35101,
+   "sigma_residual": 4.739108590001706e-06
+  },
+  {
+   "i": 1,
+   "text": "<F:en>The dollar strengthened against the yen today<T:fr>Le dollar s'est renforce face au yen aujourd'hui",
+   "T": 105,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 59259,
+     "active_frac": 0.04593
+    },
+    {
+     "layer": 1,
+     "n_active": 56885,
+     "active_frac": 0.04409
+    },
+    {
+     "layer": 2,
+     "n_active": 61722,
+     "active_frac": 0.04784
+    },
+    {
+     "layer": 3,
+     "n_active": 70596,
+     "active_frac": 0.05472
+    },
+    {
+     "layer": 4,
+     "n_active": 74111,
+     "active_frac": 0.05744
+    },
+    {
+     "layer": 5,
+     "n_active": 76258,
+     "active_frac": 0.0591
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    100,
+    111,
+    108,
+    108,
+    97,
+    114,
+    32,
+    115,
+    116,
+    114,
+    101,
+    110,
+    103,
+    116,
+    104,
+    101,
+    110,
+    101,
+    100,
+    32,
+    97,
+    103,
+    97,
+    105,
+    110,
+    115,
+    116,
+    32,
+    116,
+    104,
+    101,
+    32,
+    121,
+    101,
+    110,
+    32,
+    116,
+    111,
+    100,
+    97,
+    121,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    101,
+    32,
+    100,
+    111,
+    108,
+    108,
+    97,
+    114,
+    32,
+    115,
+    39,
+    101,
+    115,
+    116,
+    32,
+    114,
+    101,
+    110,
+    102,
+    111,
+    114,
+    99,
+    101,
+    32,
+    102,
+    97,
+    99,
+    101,
+    32,
+    97,
+    117,
+    32,
+    121,
+    101,
+    110,
+    32,
+    97,
+    117,
+    106,
+    111,
+    117,
+    114,
+    100,
+    39,
+    104,
+    117,
+    105
+   ],
+   "hero": false,
+   "n_scores": 5460,
+   "neg_share": 0.31557,
+   "sigma_residual": 4.656850705941906e-06
+  },
+  {
+   "i": 2,
+   "text": "<F:en>Germany and France signed the bilateral treaty<T:fr>L'Allemagne et la France ont signe le traite bilateral",
+   "T": 112,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 63378,
+     "active_frac": 0.04605
+    },
+    {
+     "layer": 1,
+     "n_active": 58556,
+     "active_frac": 0.04255
+    },
+    {
+     "layer": 2,
+     "n_active": 64469,
+     "active_frac": 0.04684
+    },
+    {
+     "layer": 3,
+     "n_active": 74269,
+     "active_frac": 0.05396
+    },
+    {
+     "layer": 4,
+     "n_active": 78769,
+     "active_frac": 0.05723
+    },
+    {
+     "layer": 5,
+     "n_active": 81868,
+     "active_frac": 0.05949
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    71,
+    101,
+    114,
+    109,
+    97,
+    110,
+    121,
+    32,
+    97,
+    110,
+    100,
+    32,
+    70,
+    114,
+    97,
+    110,
+    99,
+    101,
+    32,
+    115,
+    105,
+    103,
+    110,
+    101,
+    100,
+    32,
+    116,
+    104,
+    101,
+    32,
+    98,
+    105,
+    108,
+    97,
+    116,
+    101,
+    114,
+    97,
+    108,
+    32,
+    116,
+    114,
+    101,
+    97,
+    116,
+    121,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    39,
+    65,
+    108,
+    108,
+    101,
+    109,
+    97,
+    103,
+    110,
+    101,
+    32,
+    101,
+    116,
+    32,
+    108,
+    97,
+    32,
+    70,
+    114,
+    97,
+    110,
+    99,
+    101,
+    32,
+    111,
+    110,
+    116,
+    32,
+    115,
+    105,
+    103,
+    110,
+    101,
+    32,
+    108,
+    101,
+    32,
+    116,
+    114,
+    97,
+    105,
+    116,
+    101,
+    32,
+    98,
+    105,
+    108,
+    97,
+    116,
+    101,
+    114,
+    97,
+    108
+   ],
+   "hero": false,
+   "n_scores": 6216,
+   "neg_share": 0.32851,
+   "sigma_residual": 4.696956239058636e-06
+  },
+  {
+   "i": 3,
+   "text": "<F:en>The European Parliament voted on this resolution<T:fr>Le parlement europeen a vote cette resolution",
+   "T": 105,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 59565,
+     "active_frac": 0.04617
+    },
+    {
+     "layer": 1,
+     "n_active": 56510,
+     "active_frac": 0.0438
+    },
+    {
+     "layer": 2,
+     "n_active": 62092,
+     "active_frac": 0.04812
+    },
+    {
+     "layer": 3,
+     "n_active": 72631,
+     "active_frac": 0.05629
+    },
+    {
+     "layer": 4,
+     "n_active": 81462,
+     "active_frac": 0.06314
+    },
+    {
+     "layer": 5,
+     "n_active": 82178,
+     "active_frac": 0.06369
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    69,
+    117,
+    114,
+    111,
+    112,
+    101,
+    97,
+    110,
+    32,
+    80,
+    97,
+    114,
+    108,
+    105,
+    97,
+    109,
+    101,
+    110,
+    116,
+    32,
+    118,
+    111,
+    116,
+    101,
+    100,
+    32,
+    111,
+    110,
+    32,
+    116,
+    104,
+    105,
+    115,
+    32,
+    114,
+    101,
+    115,
+    111,
+    108,
+    117,
+    116,
+    105,
+    111,
+    110,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    101,
+    32,
+    112,
+    97,
+    114,
+    108,
+    101,
+    109,
+    101,
+    110,
+    116,
+    32,
+    101,
+    117,
+    114,
+    111,
+    112,
+    101,
+    101,
+    110,
+    32,
+    97,
+    32,
+    118,
+    111,
+    116,
+    101,
+    32,
+    99,
+    101,
+    116,
+    116,
+    101,
+    32,
+    114,
+    101,
+    115,
+    111,
+    108,
+    117,
+    116,
+    105,
+    111,
+    110
+   ],
+   "hero": false,
+   "n_scores": 5460,
+   "neg_share": 0.3337,
+   "sigma_residual": 3.402987886147457e-06
+  },
+  {
+   "i": 4,
+   "text": "<F:en>The Commission presented the annual budget report<T:fr>La Commission a presente le rapport budgetaire annuel",
+   "T": 114,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 64499,
+     "active_frac": 0.04604
+    },
+    {
+     "layer": 1,
+     "n_active": 61607,
+     "active_frac": 0.04398
+    },
+    {
+     "layer": 2,
+     "n_active": 67809,
+     "active_frac": 0.04841
+    },
+    {
+     "layer": 3,
+     "n_active": 76964,
+     "active_frac": 0.05494
+    },
+    {
+     "layer": 4,
+     "n_active": 87774,
+     "active_frac": 0.06266
+    },
+    {
+     "layer": 5,
+     "n_active": 88094,
+     "active_frac": 0.06289
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    67,
+    111,
+    109,
+    109,
+    105,
+    115,
+    115,
+    105,
+    111,
+    110,
+    32,
+    112,
+    114,
+    101,
+    115,
+    101,
+    110,
+    116,
+    101,
+    100,
+    32,
+    116,
+    104,
+    101,
+    32,
+    97,
+    110,
+    110,
+    117,
+    97,
+    108,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    114,
+    101,
+    112,
+    111,
+    114,
+    116,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    97,
+    32,
+    67,
+    111,
+    109,
+    109,
+    105,
+    115,
+    115,
+    105,
+    111,
+    110,
+    32,
+    97,
+    32,
+    112,
+    114,
+    101,
+    115,
+    101,
+    110,
+    116,
+    101,
+    32,
+    108,
+    101,
+    32,
+    114,
+    97,
+    112,
+    112,
+    111,
+    114,
+    116,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    97,
+    105,
+    114,
+    101,
+    32,
+    97,
+    110,
+    110,
+    117,
+    101,
+    108
+   ],
+   "hero": false,
+   "n_scores": 6441,
+   "neg_share": 0.31253,
+   "sigma_residual": 3.457390903349733e-06
+  },
+  {
+   "i": 5,
+   "text": "<F:en>The budget was discussed. The budget was approved. The budget will be implemented.<T:fr>Le budget a ete discute. Le budget a ete approuve. Le budget sera mis en oeuvre.",
+   "T": 174,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 96246,
+     "active_frac": 0.04501
+    },
+    {
+     "layer": 1,
+     "n_active": 90709,
+     "active_frac": 0.04242
+    },
+    {
+     "layer": 2,
+     "n_active": 97587,
+     "active_frac": 0.04564
+    },
+    {
+     "layer": 3,
+     "n_active": 107587,
+     "active_frac": 0.05032
+    },
+    {
+     "layer": 4,
+     "n_active": 117236,
+     "active_frac": 0.05483
+    },
+    {
+     "layer": 5,
+     "n_active": 120863,
+     "active_frac": 0.05653
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    119,
+    97,
+    115,
+    32,
+    100,
+    105,
+    115,
+    99,
+    117,
+    115,
+    115,
+    101,
+    100,
+    46,
+    32,
+    84,
+    104,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    119,
+    97,
+    115,
+    32,
+    97,
+    112,
+    112,
+    114,
+    111,
+    118,
+    101,
+    100,
+    46,
+    32,
+    84,
+    104,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    119,
+    105,
+    108,
+    108,
+    32,
+    98,
+    101,
+    32,
+    105,
+    109,
+    112,
+    108,
+    101,
+    109,
+    101,
+    110,
+    116,
+    101,
+    100,
+    46,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    97,
+    32,
+    101,
+    116,
+    101,
+    32,
+    100,
+    105,
+    115,
+    99,
+    117,
+    116,
+    101,
+    46,
+    32,
+    76,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    97,
+    32,
+    101,
+    116,
+    101,
+    32,
+    97,
+    112,
+    112,
+    114,
+    111,
+    117,
+    118,
+    101,
+    46,
+    32,
+    76,
+    101,
+    32,
+    98,
+    117,
+    100,
+    103,
+    101,
+    116,
+    32,
+    115,
+    101,
+    114,
+    97,
+    32,
+    109,
+    105,
+    115,
+    32,
+    101,
+    110,
+    32,
+    111,
+    101,
+    117,
+    118,
+    114,
+    101,
+    46
+   ],
+   "hero": true,
+   "n_scores": 15051,
+   "neg_share": 0.38549,
+   "sigma_residual": 4.8116230573214125e-06
+  },
+  {
+   "i": 6,
+   "text": "<F:en>Thank you very much<T:fr>Merci beaucoup",
+   "T": 45,
+   "layers": [
+    {
+     "layer": 0,
+     "n_active": 26472,
+     "active_frac": 0.04787
+    },
+    {
+     "layer": 1,
+     "n_active": 23367,
+     "active_frac": 0.04226
+    },
+    {
+     "layer": 2,
+     "n_active": 27474,
+     "active_frac": 0.04969
+    },
+    {
+     "layer": 3,
+     "n_active": 31720,
+     "active_frac": 0.05736
+    },
+    {
+     "layer": 4,
+     "n_active": 34384,
+     "active_frac": 0.06218
+    },
+    {
+     "layer": 5,
+     "n_active": 34057,
+     "active_frac": 0.06159
+    }
+   ],
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    97,
+    110,
+    107,
+    32,
+    121,
+    111,
+    117,
+    32,
+    118,
+    101,
+    114,
+    121,
+    32,
+    109,
+    117,
+    99,
+    104,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    77,
+    101,
+    114,
+    99,
+    105,
+    32,
+    98,
+    101,
+    97,
+    117,
+    99,
+    111,
+    117,
+    112
+   ],
+   "hero": false,
+   "n_scores": 990,
+   "neg_share": 0.14747,
+   "sigma_residual": 6.063128239475191e-06
+  }
+ ],
+ "tensors": [
+  {
+   "name": "s0.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    58523
+   ],
+   "offset": 0,
+   "bytes": 117046
+  },
+  {
+   "name": "s0.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    58523
+   ],
+   "offset": 117046,
+   "bytes": 58523
+  },
+  {
+   "name": "s0.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 175569,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 175985,
+   "bytes": 420
+  },
+  {
+   "name": "s0.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    54663
+   ],
+   "offset": 176405,
+   "bytes": 109326
+  },
+  {
+   "name": "s0.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    54663
+   ],
+   "offset": 285731,
+   "bytes": 54663
+  },
+  {
+   "name": "s0.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 340394,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 340810,
+   "bytes": 420
+  },
+  {
+   "name": "s0.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    58865
+   ],
+   "offset": 341230,
+   "bytes": 117730
+  },
+  {
+   "name": "s0.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    58865
+   ],
+   "offset": 458960,
+   "bytes": 58865
+  },
+  {
+   "name": "s0.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 517825,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 518241,
+   "bytes": 420
+  },
+  {
+   "name": "s0.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    65980
+   ],
+   "offset": 518661,
+   "bytes": 131960
+  },
+  {
+   "name": "s0.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    65980
+   ],
+   "offset": 650621,
+   "bytes": 65980
+  },
+  {
+   "name": "s0.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 716601,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 717017,
+   "bytes": 420
+  },
+  {
+   "name": "s0.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    70530
+   ],
+   "offset": 717437,
+   "bytes": 141060
+  },
+  {
+   "name": "s0.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    70530
+   ],
+   "offset": 858497,
+   "bytes": 70530
+  },
+  {
+   "name": "s0.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 929027,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 929443,
+   "bytes": 420
+  },
+  {
+   "name": "s0.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    72411
+   ],
+   "offset": 929863,
+   "bytes": 144822
+  },
+  {
+   "name": "s0.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    72411
+   ],
+   "offset": 1074685,
+   "bytes": 72411
+  },
+  {
+   "name": "s0.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 1147096,
+   "bytes": 416
+  },
+  {
+   "name": "s0.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    105
+   ],
+   "offset": 1147512,
+   "bytes": 420
+  },
+  {
+   "name": "s0.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    5356
+   ],
+   "offset": 1147932,
+   "bytes": 10712
+  },
+  {
+   "name": "s0.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    5356
+   ],
+   "offset": 1158644,
+   "bytes": 10712
+  },
+  {
+   "name": "s0.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    5356
+   ],
+   "offset": 1169356,
+   "bytes": 21424
+  },
+  {
+   "name": "s0.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    104,
+    3072
+   ],
+   "offset": 1190780,
+   "bytes": 319488
+  },
+  {
+   "name": "s0.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    104
+   ],
+   "offset": 1510268,
+   "bytes": 416
+  },
+  {
+   "name": "s1.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    59259
+   ],
+   "offset": 1510684,
+   "bytes": 118518
+  },
+  {
+   "name": "s1.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    59259
+   ],
+   "offset": 1629202,
+   "bytes": 59259
+  },
+  {
+   "name": "s1.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 1688461,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 1688881,
+   "bytes": 424
+  },
+  {
+   "name": "s1.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    56885
+   ],
+   "offset": 1689305,
+   "bytes": 113770
+  },
+  {
+   "name": "s1.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    56885
+   ],
+   "offset": 1803075,
+   "bytes": 56885
+  },
+  {
+   "name": "s1.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 1859960,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 1860380,
+   "bytes": 424
+  },
+  {
+   "name": "s1.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    61722
+   ],
+   "offset": 1860804,
+   "bytes": 123444
+  },
+  {
+   "name": "s1.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    61722
+   ],
+   "offset": 1984248,
+   "bytes": 61722
+  },
+  {
+   "name": "s1.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2045970,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2046390,
+   "bytes": 424
+  },
+  {
+   "name": "s1.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    70596
+   ],
+   "offset": 2046814,
+   "bytes": 141192
+  },
+  {
+   "name": "s1.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    70596
+   ],
+   "offset": 2188006,
+   "bytes": 70596
+  },
+  {
+   "name": "s1.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2258602,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2259022,
+   "bytes": 424
+  },
+  {
+   "name": "s1.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    74111
+   ],
+   "offset": 2259446,
+   "bytes": 148222
+  },
+  {
+   "name": "s1.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    74111
+   ],
+   "offset": 2407668,
+   "bytes": 74111
+  },
+  {
+   "name": "s1.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2481779,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2482199,
+   "bytes": 424
+  },
+  {
+   "name": "s1.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    76258
+   ],
+   "offset": 2482623,
+   "bytes": 152516
+  },
+  {
+   "name": "s1.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    76258
+   ],
+   "offset": 2635139,
+   "bytes": 76258
+  },
+  {
+   "name": "s1.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2711397,
+   "bytes": 420
+  },
+  {
+   "name": "s1.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2711817,
+   "bytes": 424
+  },
+  {
+   "name": "s1.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    5460
+   ],
+   "offset": 2712241,
+   "bytes": 10920
+  },
+  {
+   "name": "s1.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    5460
+   ],
+   "offset": 2723161,
+   "bytes": 10920
+  },
+  {
+   "name": "s1.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 2734081,
+   "bytes": 21840
+  },
+  {
+   "name": "s1.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    105,
+    3072
+   ],
+   "offset": 2755921,
+   "bytes": 322560
+  },
+  {
+   "name": "s1.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 3078481,
+   "bytes": 420
+  },
+  {
+   "name": "s2.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    63378
+   ],
+   "offset": 3078901,
+   "bytes": 126756
+  },
+  {
+   "name": "s2.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    63378
+   ],
+   "offset": 3205657,
+   "bytes": 63378
+  },
+  {
+   "name": "s2.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 3269035,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 3269483,
+   "bytes": 452
+  },
+  {
+   "name": "s2.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    58556
+   ],
+   "offset": 3269935,
+   "bytes": 117112
+  },
+  {
+   "name": "s2.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    58556
+   ],
+   "offset": 3387047,
+   "bytes": 58556
+  },
+  {
+   "name": "s2.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 3445603,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 3446051,
+   "bytes": 452
+  },
+  {
+   "name": "s2.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    64469
+   ],
+   "offset": 3446503,
+   "bytes": 128938
+  },
+  {
+   "name": "s2.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    64469
+   ],
+   "offset": 3575441,
+   "bytes": 64469
+  },
+  {
+   "name": "s2.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 3639910,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 3640358,
+   "bytes": 452
+  },
+  {
+   "name": "s2.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    74269
+   ],
+   "offset": 3640810,
+   "bytes": 148538
+  },
+  {
+   "name": "s2.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    74269
+   ],
+   "offset": 3789348,
+   "bytes": 74269
+  },
+  {
+   "name": "s2.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 3863617,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 3864065,
+   "bytes": 452
+  },
+  {
+   "name": "s2.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    78769
+   ],
+   "offset": 3864517,
+   "bytes": 157538
+  },
+  {
+   "name": "s2.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    78769
+   ],
+   "offset": 4022055,
+   "bytes": 78769
+  },
+  {
+   "name": "s2.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 4100824,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 4101272,
+   "bytes": 452
+  },
+  {
+   "name": "s2.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    81868
+   ],
+   "offset": 4101724,
+   "bytes": 163736
+  },
+  {
+   "name": "s2.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    81868
+   ],
+   "offset": 4265460,
+   "bytes": 81868
+  },
+  {
+   "name": "s2.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 4347328,
+   "bytes": 448
+  },
+  {
+   "name": "s2.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    113
+   ],
+   "offset": 4347776,
+   "bytes": 452
+  },
+  {
+   "name": "s2.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    6216
+   ],
+   "offset": 4348228,
+   "bytes": 12432
+  },
+  {
+   "name": "s2.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    6216
+   ],
+   "offset": 4360660,
+   "bytes": 12432
+  },
+  {
+   "name": "s2.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    6216
+   ],
+   "offset": 4373092,
+   "bytes": 24864
+  },
+  {
+   "name": "s2.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    112,
+    3072
+   ],
+   "offset": 4397956,
+   "bytes": 344064
+  },
+  {
+   "name": "s2.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    112
+   ],
+   "offset": 4742020,
+   "bytes": 448
+  },
+  {
+   "name": "s3.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    59565
+   ],
+   "offset": 4742468,
+   "bytes": 119130
+  },
+  {
+   "name": "s3.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    59565
+   ],
+   "offset": 4861598,
+   "bytes": 59565
+  },
+  {
+   "name": "s3.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4921163,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4921583,
+   "bytes": 424
+  },
+  {
+   "name": "s3.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    56510
+   ],
+   "offset": 4922007,
+   "bytes": 113020
+  },
+  {
+   "name": "s3.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    56510
+   ],
+   "offset": 5035027,
+   "bytes": 56510
+  },
+  {
+   "name": "s3.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5091537,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5091957,
+   "bytes": 424
+  },
+  {
+   "name": "s3.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    62092
+   ],
+   "offset": 5092381,
+   "bytes": 124184
+  },
+  {
+   "name": "s3.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    62092
+   ],
+   "offset": 5216565,
+   "bytes": 62092
+  },
+  {
+   "name": "s3.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5278657,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5279077,
+   "bytes": 424
+  },
+  {
+   "name": "s3.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    72631
+   ],
+   "offset": 5279501,
+   "bytes": 145262
+  },
+  {
+   "name": "s3.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    72631
+   ],
+   "offset": 5424763,
+   "bytes": 72631
+  },
+  {
+   "name": "s3.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5497394,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5497814,
+   "bytes": 424
+  },
+  {
+   "name": "s3.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    81462
+   ],
+   "offset": 5498238,
+   "bytes": 162924
+  },
+  {
+   "name": "s3.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    81462
+   ],
+   "offset": 5661162,
+   "bytes": 81462
+  },
+  {
+   "name": "s3.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5742624,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5743044,
+   "bytes": 424
+  },
+  {
+   "name": "s3.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    82178
+   ],
+   "offset": 5743468,
+   "bytes": 164356
+  },
+  {
+   "name": "s3.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    82178
+   ],
+   "offset": 5907824,
+   "bytes": 82178
+  },
+  {
+   "name": "s3.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5990002,
+   "bytes": 420
+  },
+  {
+   "name": "s3.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5990422,
+   "bytes": 424
+  },
+  {
+   "name": "s3.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    5460
+   ],
+   "offset": 5990846,
+   "bytes": 10920
+  },
+  {
+   "name": "s3.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    5460
+   ],
+   "offset": 6001766,
+   "bytes": 10920
+  },
+  {
+   "name": "s3.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 6012686,
+   "bytes": 21840
+  },
+  {
+   "name": "s3.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    105,
+    3072
+   ],
+   "offset": 6034526,
+   "bytes": 322560
+  },
+  {
+   "name": "s3.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 6357086,
+   "bytes": 420
+  },
+  {
+   "name": "s4.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    64499
+   ],
+   "offset": 6357506,
+   "bytes": 128998
+  },
+  {
+   "name": "s4.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    64499
+   ],
+   "offset": 6486504,
+   "bytes": 64499
+  },
+  {
+   "name": "s4.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 6551003,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 6551459,
+   "bytes": 460
+  },
+  {
+   "name": "s4.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    61607
+   ],
+   "offset": 6551919,
+   "bytes": 123214
+  },
+  {
+   "name": "s4.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    61607
+   ],
+   "offset": 6675133,
+   "bytes": 61607
+  },
+  {
+   "name": "s4.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 6736740,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 6737196,
+   "bytes": 460
+  },
+  {
+   "name": "s4.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    67809
+   ],
+   "offset": 6737656,
+   "bytes": 135618
+  },
+  {
+   "name": "s4.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    67809
+   ],
+   "offset": 6873274,
+   "bytes": 67809
+  },
+  {
+   "name": "s4.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 6941083,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 6941539,
+   "bytes": 460
+  },
+  {
+   "name": "s4.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    76964
+   ],
+   "offset": 6941999,
+   "bytes": 153928
+  },
+  {
+   "name": "s4.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    76964
+   ],
+   "offset": 7095927,
+   "bytes": 76964
+  },
+  {
+   "name": "s4.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 7172891,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 7173347,
+   "bytes": 460
+  },
+  {
+   "name": "s4.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    87774
+   ],
+   "offset": 7173807,
+   "bytes": 175548
+  },
+  {
+   "name": "s4.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    87774
+   ],
+   "offset": 7349355,
+   "bytes": 87774
+  },
+  {
+   "name": "s4.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 7437129,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 7437585,
+   "bytes": 460
+  },
+  {
+   "name": "s4.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    88094
+   ],
+   "offset": 7438045,
+   "bytes": 176188
+  },
+  {
+   "name": "s4.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    88094
+   ],
+   "offset": 7614233,
+   "bytes": 88094
+  },
+  {
+   "name": "s4.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 7702327,
+   "bytes": 456
+  },
+  {
+   "name": "s4.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    115
+   ],
+   "offset": 7702783,
+   "bytes": 460
+  },
+  {
+   "name": "s4.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    6441
+   ],
+   "offset": 7703243,
+   "bytes": 12882
+  },
+  {
+   "name": "s4.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    6441
+   ],
+   "offset": 7716125,
+   "bytes": 12882
+  },
+  {
+   "name": "s4.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    6441
+   ],
+   "offset": 7729007,
+   "bytes": 25764
+  },
+  {
+   "name": "s4.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    114,
+    3072
+   ],
+   "offset": 7754771,
+   "bytes": 350208
+  },
+  {
+   "name": "s4.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    114
+   ],
+   "offset": 8104979,
+   "bytes": 456
+  },
+  {
+   "name": "s5.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    96246
+   ],
+   "offset": 8105435,
+   "bytes": 192492
+  },
+  {
+   "name": "s5.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    96246
+   ],
+   "offset": 8297927,
+   "bytes": 96246
+  },
+  {
+   "name": "s5.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 8394173,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 8394869,
+   "bytes": 700
+  },
+  {
+   "name": "s5.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    90709
+   ],
+   "offset": 8395569,
+   "bytes": 181418
+  },
+  {
+   "name": "s5.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    90709
+   ],
+   "offset": 8576987,
+   "bytes": 90709
+  },
+  {
+   "name": "s5.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 8667696,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 8668392,
+   "bytes": 700
+  },
+  {
+   "name": "s5.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    97587
+   ],
+   "offset": 8669092,
+   "bytes": 195174
+  },
+  {
+   "name": "s5.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    97587
+   ],
+   "offset": 8864266,
+   "bytes": 97587
+  },
+  {
+   "name": "s5.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 8961853,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 8962549,
+   "bytes": 700
+  },
+  {
+   "name": "s5.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    107587
+   ],
+   "offset": 8963249,
+   "bytes": 215174
+  },
+  {
+   "name": "s5.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    107587
+   ],
+   "offset": 9178423,
+   "bytes": 107587
+  },
+  {
+   "name": "s5.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 9286010,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 9286706,
+   "bytes": 700
+  },
+  {
+   "name": "s5.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    117236
+   ],
+   "offset": 9287406,
+   "bytes": 234472
+  },
+  {
+   "name": "s5.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    117236
+   ],
+   "offset": 9521878,
+   "bytes": 117236
+  },
+  {
+   "name": "s5.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 9639114,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 9639810,
+   "bytes": 700
+  },
+  {
+   "name": "s5.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    120863
+   ],
+   "offset": 9640510,
+   "bytes": 241726
+  },
+  {
+   "name": "s5.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    120863
+   ],
+   "offset": 9882236,
+   "bytes": 120863
+  },
+  {
+   "name": "s5.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 10003099,
+   "bytes": 696
+  },
+  {
+   "name": "s5.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    175
+   ],
+   "offset": 10003795,
+   "bytes": 700
+  },
+  {
+   "name": "s5.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    15051
+   ],
+   "offset": 10004495,
+   "bytes": 30102
+  },
+  {
+   "name": "s5.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    15051
+   ],
+   "offset": 10034597,
+   "bytes": 30102
+  },
+  {
+   "name": "s5.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    15051
+   ],
+   "offset": 10064699,
+   "bytes": 60204
+  },
+  {
+   "name": "s5.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    174,
+    3072
+   ],
+   "offset": 10124903,
+   "bytes": 534528
+  },
+  {
+   "name": "s5.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    174
+   ],
+   "offset": 10659431,
+   "bytes": 696
+  },
+  {
+   "name": "s6.L0.idx",
+   "dtype": "<u2",
+   "shape": [
+    26472
+   ],
+   "offset": 10660127,
+   "bytes": 52944
+  },
+  {
+   "name": "s6.L0.val",
+   "dtype": "|u1",
+   "shape": [
+    26472
+   ],
+   "offset": 10713071,
+   "bytes": 26472
+  },
+  {
+   "name": "s6.L0.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 10739543,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L0.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 10739723,
+   "bytes": 184
+  },
+  {
+   "name": "s6.L1.idx",
+   "dtype": "<u2",
+   "shape": [
+    23367
+   ],
+   "offset": 10739907,
+   "bytes": 46734
+  },
+  {
+   "name": "s6.L1.val",
+   "dtype": "|u1",
+   "shape": [
+    23367
+   ],
+   "offset": 10786641,
+   "bytes": 23367
+  },
+  {
+   "name": "s6.L1.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 10810008,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L1.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 10810188,
+   "bytes": 184
+  },
+  {
+   "name": "s6.L2.idx",
+   "dtype": "<u2",
+   "shape": [
+    27474
+   ],
+   "offset": 10810372,
+   "bytes": 54948
+  },
+  {
+   "name": "s6.L2.val",
+   "dtype": "|u1",
+   "shape": [
+    27474
+   ],
+   "offset": 10865320,
+   "bytes": 27474
+  },
+  {
+   "name": "s6.L2.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 10892794,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L2.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 10892974,
+   "bytes": 184
+  },
+  {
+   "name": "s6.L3.idx",
+   "dtype": "<u2",
+   "shape": [
+    31720
+   ],
+   "offset": 10893158,
+   "bytes": 63440
+  },
+  {
+   "name": "s6.L3.val",
+   "dtype": "|u1",
+   "shape": [
+    31720
+   ],
+   "offset": 10956598,
+   "bytes": 31720
+  },
+  {
+   "name": "s6.L3.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 10988318,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L3.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 10988498,
+   "bytes": 184
+  },
+  {
+   "name": "s6.L4.idx",
+   "dtype": "<u2",
+   "shape": [
+    34384
+   ],
+   "offset": 10988682,
+   "bytes": 68768
+  },
+  {
+   "name": "s6.L4.val",
+   "dtype": "|u1",
+   "shape": [
+    34384
+   ],
+   "offset": 11057450,
+   "bytes": 34384
+  },
+  {
+   "name": "s6.L4.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 11091834,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L4.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 11092014,
+   "bytes": 184
+  },
+  {
+   "name": "s6.L5.idx",
+   "dtype": "<u2",
+   "shape": [
+    34057
+   ],
+   "offset": 11092198,
+   "bytes": 68114
+  },
+  {
+   "name": "s6.L5.val",
+   "dtype": "|u1",
+   "shape": [
+    34057
+   ],
+   "offset": 11160312,
+   "bytes": 34057
+  },
+  {
+   "name": "s6.L5.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 11194369,
+   "bytes": 180
+  },
+  {
+   "name": "s6.L5.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 11194549,
+   "bytes": 184
+  },
+  {
+   "name": "s6.attn_i",
+   "dtype": "<u2",
+   "shape": [
+    990
+   ],
+   "offset": 11194733,
+   "bytes": 1980
+  },
+  {
+   "name": "s6.attn_j",
+   "dtype": "<u2",
+   "shape": [
+    990
+   ],
+   "offset": 11196713,
+   "bytes": 1980
+  },
+  {
+   "name": "s6.attn_w",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 11198693,
+   "bytes": 3960
+  },
+  {
+   "name": "s6.sigma_energy",
+   "dtype": "|u1",
+   "shape": [
+    45,
+    3072
+   ],
+   "offset": 11202653,
+   "bytes": 138240
+  },
+  {
+   "name": "s6.sigma_energy_scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 11340893,
+   "bytes": 180
+  }
+ ]
+}

@@ -1,0 +1,700 @@
+{
+ "what": "G* = decoder_x[h]^T @ encoder[h]^T, the standing neuron->neuron synapse matrix",
+ "source_ckpt": "french_best.pt",
+ "provenance": "trained by the author for an earlier Pathway hackathon; disclosed as prior work",
+ "config": {
+  "n_layer": 6,
+  "n_embd": 192,
+  "n_head": 4,
+  "mlp_dim_mult": 64,
+  "dropout": 0.1,
+  "vocab_size": 256
+ },
+ "N_per_head": 3072,
+ "n_neurons_total": 12288,
+ "iteration": 50000,
+ "val_loss": 0.670272696018219,
+ "percentile": 99.0,
+ "edges_per_head": 6000,
+ "seed": 0,
+ "heads": [
+  {
+   "h": 0,
+   "thr": 0.06966777890920639,
+   "n_edges_total": 94050,
+   "modularity": 0.08184213535137162,
+   "n_comms": 1209,
+   "comm_sizes": [
+    261,
+    250,
+    217,
+    215,
+    197,
+    188,
+    152,
+    149,
+    146,
+    98,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "h": 1,
+   "thr": 0.07022745162248611,
+   "n_edges_total": 94077,
+   "modularity": 0.08509175753498036,
+   "n_comms": 1169,
+   "comm_sizes": [
+    268,
+    267,
+    255,
+    239,
+    205,
+    190,
+    187,
+    168,
+    133,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "h": 2,
+   "thr": 0.07850583642721176,
+   "n_edges_total": 94061,
+   "modularity": 0.08020983733137022,
+   "n_comms": 1174,
+   "comm_sizes": [
+    373,
+    264,
+    229,
+    217,
+    206,
+    180,
+    178,
+    131,
+    129,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  },
+  {
+   "h": 3,
+   "thr": 0.0641610324382782,
+   "n_edges_total": 94105,
+   "modularity": 0.08093115902138875,
+   "n_comms": 1241,
+   "comm_sizes": [
+    299,
+    242,
+    235,
+    224,
+    210,
+    198,
+    172,
+    172,
+    88,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ]
+  }
+ ],
+ "layout_report": [
+  {
+   "head": 0,
+   "layout": "graph",
+   "n_placed": 1873,
+   "median_edge_len": 0.8033197658944186,
+   "p90_edge_len": 1.507196650184794,
+   "louvain_silhouette": -0.13117319237430572
+  },
+  {
+   "head": 0,
+   "layout": "semantic",
+   "n_placed": 3072,
+   "median_edge_len": 1.5533808469772339,
+   "p90_edge_len": 2.911773920059204,
+   "louvain_silhouette": -0.11407765746116638
+  },
+  {
+   "head": 1,
+   "layout": "graph",
+   "n_placed": 1912,
+   "median_edge_len": 0.8499302252777069,
+   "p90_edge_len": 1.5513631947388715,
+   "louvain_silhouette": -0.08833863845797407
+  },
+  {
+   "head": 1,
+   "layout": "semantic",
+   "n_placed": 3072,
+   "median_edge_len": 1.6368849277496338,
+   "p90_edge_len": 3.1691551208496094,
+   "louvain_silhouette": -0.09262026846408844
+  },
+  {
+   "head": 2,
+   "layout": "graph",
+   "n_placed": 1907,
+   "median_edge_len": 0.8372535831807972,
+   "p90_edge_len": 1.5416416350450444,
+   "louvain_silhouette": -0.08227666075461046
+  },
+  {
+   "head": 2,
+   "layout": "semantic",
+   "n_placed": 3072,
+   "median_edge_len": 1.6321830749511719,
+   "p90_edge_len": 2.9616472721099854,
+   "louvain_silhouette": -0.07939008623361588
+  },
+  {
+   "head": 3,
+   "layout": "graph",
+   "n_placed": 1840,
+   "median_edge_len": 0.8277769601818793,
+   "p90_edge_len": 1.5245510539103238,
+   "louvain_silhouette": -0.06906972022280371
+  },
+  {
+   "head": 3,
+   "layout": "semantic",
+   "n_placed": 3072,
+   "median_edge_len": 1.516477346420288,
+   "p90_edge_len": 2.9230401515960693,
+   "louvain_silhouette": -0.06948070228099823
+  },
+  {
+   "layout": "global",
+   "head_silhouette": -0.012387341819703579,
+   "n_placed": 12288
+  }
+ ],
+ "tensors": [
+  {
+   "name": "h0.xy_graph",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 0,
+   "bytes": 12288,
+   "box": [
+    [
+     -0.45477867126464844,
+     -0.4613283574581146
+    ],
+    [
+     0.4476941227912903,
+     0.4189843535423279
+    ]
+   ]
+  },
+  {
+   "name": "h0.xy_graph_placed",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 12288,
+   "bytes": 3072
+  },
+  {
+   "name": "h0.xy_semantic",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 15360,
+   "bytes": 12288,
+   "box": [
+    [
+     -42.949867248535156,
+     -33.560691833496094
+    ],
+    [
+     34.40142822265625,
+     30.47620391845703
+    ]
+   ]
+  },
+  {
+   "name": "h0.cluster",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 27648,
+   "bytes": 3072
+  },
+  {
+   "name": "h0.out_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 30720,
+   "bytes": 6144
+  },
+  {
+   "name": "h0.in_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 36864,
+   "bytes": 6144
+  },
+  {
+   "name": "h0.edge_i",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 43008,
+   "bytes": 12000
+  },
+  {
+   "name": "h0.edge_j",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 55008,
+   "bytes": 12000
+  },
+  {
+   "name": "h0.edge_w",
+   "dtype": "<f4",
+   "shape": [
+    6000
+   ],
+   "offset": 67008,
+   "bytes": 24000
+  },
+  {
+   "name": "h1.xy_graph",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 91008,
+   "bytes": 12288,
+   "box": [
+    [
+     -0.4772321581840515,
+     -0.4462166428565979
+    ],
+    [
+     0.491690993309021,
+     0.4168682396411896
+    ]
+   ]
+  },
+  {
+   "name": "h1.xy_graph_placed",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 103296,
+   "bytes": 3072
+  },
+  {
+   "name": "h1.xy_semantic",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 106368,
+   "bytes": 12288,
+   "box": [
+    [
+     -25.847288131713867,
+     -38.535980224609375
+    ],
+    [
+     27.15536880493164,
+     34.263221740722656
+    ]
+   ]
+  },
+  {
+   "name": "h1.cluster",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 118656,
+   "bytes": 3072
+  },
+  {
+   "name": "h1.out_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 121728,
+   "bytes": 6144
+  },
+  {
+   "name": "h1.in_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 127872,
+   "bytes": 6144
+  },
+  {
+   "name": "h1.edge_i",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 134016,
+   "bytes": 12000
+  },
+  {
+   "name": "h1.edge_j",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 146016,
+   "bytes": 12000
+  },
+  {
+   "name": "h1.edge_w",
+   "dtype": "<f4",
+   "shape": [
+    6000
+   ],
+   "offset": 158016,
+   "bytes": 24000
+  },
+  {
+   "name": "h2.xy_graph",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 182016,
+   "bytes": 12288,
+   "box": [
+    [
+     -0.5392900109291077,
+     -0.4797462821006775
+    ],
+    [
+     0.5950552225112915,
+     0.4773057997226715
+    ]
+   ]
+  },
+  {
+   "name": "h2.xy_graph_placed",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 194304,
+   "bytes": 3072
+  },
+  {
+   "name": "h2.xy_semantic",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 197376,
+   "bytes": 12288,
+   "box": [
+    [
+     -43.94191360473633,
+     -37.771087646484375
+    ],
+    [
+     40.44993591308594,
+     36.30283737182617
+    ]
+   ]
+  },
+  {
+   "name": "h2.cluster",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 209664,
+   "bytes": 3072
+  },
+  {
+   "name": "h2.out_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 212736,
+   "bytes": 6144
+  },
+  {
+   "name": "h2.in_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 218880,
+   "bytes": 6144
+  },
+  {
+   "name": "h2.edge_i",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 225024,
+   "bytes": 12000
+  },
+  {
+   "name": "h2.edge_j",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 237024,
+   "bytes": 12000
+  },
+  {
+   "name": "h2.edge_w",
+   "dtype": "<f4",
+   "shape": [
+    6000
+   ],
+   "offset": 249024,
+   "bytes": 24000
+  },
+  {
+   "name": "h3.xy_graph",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 273024,
+   "bytes": 12288,
+   "box": [
+    [
+     -0.47568467259407043,
+     -0.5332245230674744
+    ],
+    [
+     0.5190047025680542,
+     0.5106709599494934
+    ]
+   ]
+  },
+  {
+   "name": "h3.xy_graph_placed",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 285312,
+   "bytes": 3072
+  },
+  {
+   "name": "h3.xy_semantic",
+   "dtype": "<u2",
+   "shape": [
+    3072,
+    2
+   ],
+   "offset": 288384,
+   "bytes": 12288,
+   "box": [
+    [
+     -40.103965759277344,
+     -25.779769897460938
+    ],
+    [
+     31.393461227416992,
+     24.850954055786133
+    ]
+   ]
+  },
+  {
+   "name": "h3.cluster",
+   "dtype": "|u1",
+   "shape": [
+    3072
+   ],
+   "offset": 300672,
+   "bytes": 3072
+  },
+  {
+   "name": "h3.out_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 303744,
+   "bytes": 6144
+  },
+  {
+   "name": "h3.in_deg",
+   "dtype": "<u2",
+   "shape": [
+    3072
+   ],
+   "offset": 309888,
+   "bytes": 6144
+  },
+  {
+   "name": "h3.edge_i",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 316032,
+   "bytes": 12000
+  },
+  {
+   "name": "h3.edge_j",
+   "dtype": "<u2",
+   "shape": [
+    6000
+   ],
+   "offset": 328032,
+   "bytes": 12000
+  },
+  {
+   "name": "h3.edge_w",
+   "dtype": "<f4",
+   "shape": [
+    6000
+   ],
+   "offset": 340032,
+   "bytes": 24000
+  },
+  {
+   "name": "global.xy",
+   "dtype": "<u2",
+   "shape": [
+    12288,
+    2
+   ],
+   "offset": 364032,
+   "bytes": 49152,
+   "box": [
+    [
+     -44.288185119628906,
+     -35.72510528564453
+    ],
+    [
+     39.7307243347168,
+     31.70441436767578
+    ]
+   ]
+  },
+  {
+   "name": "global.head",
+   "dtype": "|u1",
+   "shape": [
+    12288
+   ],
+   "offset": 413184,
+   "bytes": 12288
+  }
+ ]
+}

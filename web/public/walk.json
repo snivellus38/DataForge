@@ -1,0 +1,2355 @@
+{
+ "what": "full per-stage pipeline tensors for the walkthrough (web/loop.html)",
+ "source_ckpt": "french_best.pt",
+ "provenance": "trained by the author for an earlier Pathway hackathon; disclosed as prior work",
+ "deviations_from_reference_bdh": [
+  "adds a learned pos_emb (4096 x D) on top of RoPE",
+  "has no decay term"
+ ],
+ "not_shipped": {
+  "q_roped": "derivable from x + rope_freqs; verified 0.0 max abs error, re-checked in web/test/walk.mjs",
+  "sigma": "every write is rank-one, so the browser accumulates it from x and v",
+  "x_pre": "x_pre = v @ dx_head; the matrix ships instead of its 2.76 MB of outputs, and the derived values are more accurate than the uint8 pack they replace"
+ },
+ "x_pre_derivation_max_rel_err": 0.00020568,
+ "neuron_id": "global id = head * N + n, matching global.xy in field.bin",
+ "config": {
+  "n_layer": 6,
+  "n_embd": 192,
+  "n_head": 4,
+  "N": 3072,
+  "N_total": 12288
+ },
+ "default_layer": 3,
+ "default_head": 0,
+ "compression": "gzip",
+ "flow": {
+  "pool": 256,
+  "head": 0,
+  "leader_k": 6,
+  "rule": "neurons of head 0 -- the traced head, the only one with a derivable x_pre and an accumulated sigma row, so the only one a path can be followed through -- that lead at least one (sentence, iteration, token) step, ordered by corpus firing frequency; the page draws a stable prefix plus the current token's leaders among them",
+  "leader_coverage": 0.8994,
+  "steps_measured": 900,
+  "weights": "flow.dx / flow.dy / flow.enc are decoder_x, decoder_y and encoder restricted to the pool, so every drawn edge is weight x source activation, not a guess"
+ },
+ "corpus": {
+  "n_sentences": 7,
+  "x_active_frac": 0.05129,
+  "y_active_frac": 0.00937,
+  "gate_sparser_by": 5.47,
+  "per_layer": [
+   {
+    "layer": 0,
+    "x_frac": 0.04588,
+    "y_frac": 0.00686
+   },
+   {
+    "layer": 1,
+    "x_frac": 0.04313,
+    "y_frac": 0.00524
+   },
+   {
+    "layer": 2,
+    "x_frac": 0.04718,
+    "y_frac": 0.00698
+   },
+   {
+    "layer": 3,
+    "x_frac": 0.05358,
+    "y_frac": 0.00996
+   },
+   {
+    "layer": 4,
+    "x_frac": 0.05836,
+    "y_frac": 0.01289
+   },
+   {
+    "layer": 5,
+    "x_frac": 0.05959,
+    "y_frac": 0.01431
+   }
+  ],
+  "neg_share_pooled": {
+   "L0H0": 0.59677,
+   "L0H1": 0.51341,
+   "L0H2": 0.6194,
+   "L0H3": 0.58549,
+   "L1H0": 0.39538,
+   "L1H1": 0.54878,
+   "L1H2": 0.31676,
+   "L1H3": 0.56092,
+   "L2H0": 0.38522,
+   "L2H1": 0.50213,
+   "L2H2": 0.27856,
+   "L2H3": 0.55243,
+   "L3H0": 0.34304,
+   "L3H1": 0.41731,
+   "L3H2": 0.26297,
+   "L3H3": 0.48739,
+   "L4H0": 0.32365,
+   "L4H1": 0.37393,
+   "L4H2": 0.26744,
+   "L4H3": 0.44721,
+   "L5H0": 0.31985,
+   "L5H1": 0.36975,
+   "L5H2": 0.27854,
+   "L5H3": 0.44443
+  },
+  "neurons_never_firing": 4561,
+  "n_neuron_token_steps": 55959552
+ },
+ "walk": [
+  {
+   "i": 0,
+   "corpus_index": 6,
+   "text": "<F:en>Thank you very much<T:fr>Merci beaucoup",
+   "T": 45,
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    97,
+    110,
+    107,
+    32,
+    121,
+    111,
+    117,
+    32,
+    118,
+    101,
+    114,
+    121,
+    32,
+    109,
+    117,
+    99,
+    104,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    77,
+    101,
+    114,
+    99,
+    105,
+    32,
+    98,
+    101,
+    97,
+    117,
+    99,
+    111,
+    117,
+    112
+   ],
+   "full_resolution": true,
+   "layers": [
+    {
+     "layer": 0,
+     "x_frac": 0.04787,
+     "y_frac": 0.00815,
+     "mean_active_per_token": 588.3,
+     "n_distinct_neurons": 2703,
+     "jaccard_vs_iter1": 1.0,
+     "neg_share": {
+      "0": 0.43333,
+      "1": 0.46768,
+      "2": 0.50808,
+      "3": 0.53434
+     }
+    },
+    {
+     "layer": 1,
+     "x_frac": 0.04226,
+     "y_frac": 0.00533,
+     "mean_active_per_token": 519.3,
+     "n_distinct_neurons": 4062,
+     "jaccard_vs_iter1": 0.3883,
+     "neg_share": {
+      "0": 0.17879,
+      "1": 0.39899,
+      "2": 0.16364,
+      "3": 0.48081
+     }
+    },
+    {
+     "layer": 2,
+     "x_frac": 0.04969,
+     "y_frac": 0.00761,
+     "mean_active_per_token": 610.5,
+     "n_distinct_neurons": 5168,
+     "jaccard_vs_iter1": 0.3961,
+     "neg_share": {
+      "0": 0.14343,
+      "1": 0.32727,
+      "2": 0.13333,
+      "3": 0.39899
+     }
+    },
+    {
+     "layer": 3,
+     "x_frac": 0.05736,
+     "y_frac": 0.01124,
+     "mean_active_per_token": 704.9,
+     "n_distinct_neurons": 5875,
+     "jaccard_vs_iter1": 0.3883,
+     "neg_share": {
+      "0": 0.14747,
+      "1": 0.25657,
+      "2": 0.11515,
+      "3": 0.31818
+     }
+    },
+    {
+     "layer": 4,
+     "x_frac": 0.06218,
+     "y_frac": 0.01474,
+     "mean_active_per_token": 764.1,
+     "n_distinct_neurons": 6222,
+     "jaccard_vs_iter1": 0.3848,
+     "neg_share": {
+      "0": 0.11616,
+      "1": 0.20202,
+      "2": 0.10202,
+      "3": 0.29798
+     }
+    },
+    {
+     "layer": 5,
+     "x_frac": 0.06159,
+     "y_frac": 0.01521,
+     "mean_active_per_token": 756.8,
+     "n_distinct_neurons": 6206,
+     "jaccard_vs_iter1": 0.3838,
+     "neg_share": {
+      "0": 0.11919,
+      "1": 0.20505,
+      "2": 0.10404,
+      "3": 0.30404
+     }
+    }
+   ],
+   "sigma_residual_rel": 3.35233290579853e-06,
+   "neg_share_default": 0.14747
+  },
+  {
+   "i": 1,
+   "corpus_index": 3,
+   "text": "<F:en>The European Parliament voted on this resolution<T:fr>Le parlement europeen a vote cette resolution",
+   "T": 105,
+   "bytes": [
+    60,
+    70,
+    58,
+    101,
+    110,
+    62,
+    84,
+    104,
+    101,
+    32,
+    69,
+    117,
+    114,
+    111,
+    112,
+    101,
+    97,
+    110,
+    32,
+    80,
+    97,
+    114,
+    108,
+    105,
+    97,
+    109,
+    101,
+    110,
+    116,
+    32,
+    118,
+    111,
+    116,
+    101,
+    100,
+    32,
+    111,
+    110,
+    32,
+    116,
+    104,
+    105,
+    115,
+    32,
+    114,
+    101,
+    115,
+    111,
+    108,
+    117,
+    116,
+    105,
+    111,
+    110,
+    60,
+    84,
+    58,
+    102,
+    114,
+    62,
+    76,
+    101,
+    32,
+    112,
+    97,
+    114,
+    108,
+    101,
+    109,
+    101,
+    110,
+    116,
+    32,
+    101,
+    117,
+    114,
+    111,
+    112,
+    101,
+    101,
+    110,
+    32,
+    97,
+    32,
+    118,
+    111,
+    116,
+    101,
+    32,
+    99,
+    101,
+    116,
+    116,
+    101,
+    32,
+    114,
+    101,
+    115,
+    111,
+    108,
+    117,
+    116,
+    105,
+    111,
+    110
+   ],
+   "full_resolution": true,
+   "layers": [
+    {
+     "layer": 0,
+     "x_frac": 0.04617,
+     "y_frac": 0.00699,
+     "mean_active_per_token": 567.3,
+     "n_distinct_neurons": 2766,
+     "jaccard_vs_iter1": 1.0,
+     "neg_share": {
+      "0": 0.58974,
+      "1": 0.51099,
+      "2": 0.62967,
+      "3": 0.60128
+     }
+    },
+    {
+     "layer": 1,
+     "x_frac": 0.0438,
+     "y_frac": 0.00546,
+     "mean_active_per_token": 538.2,
+     "n_distinct_neurons": 5253,
+     "jaccard_vs_iter1": 0.3968,
+     "neg_share": {
+      "0": 0.4,
+      "1": 0.55495,
+      "2": 0.30714,
+      "3": 0.57289
+     }
+    },
+    {
+     "layer": 2,
+     "x_frac": 0.04812,
+     "y_frac": 0.0075,
+     "mean_active_per_token": 591.4,
+     "n_distinct_neurons": 5966,
+     "jaccard_vs_iter1": 0.3989,
+     "neg_share": {
+      "0": 0.38791,
+      "1": 0.50037,
+      "2": 0.28004,
+      "3": 0.55549
+     }
+    },
+    {
+     "layer": 3,
+     "x_frac": 0.05629,
+     "y_frac": 0.01122,
+     "mean_active_per_token": 691.7,
+     "n_distinct_neurons": 6680,
+     "jaccard_vs_iter1": 0.3912,
+     "neg_share": {
+      "0": 0.3337,
+      "1": 0.41099,
+      "2": 0.26886,
+      "3": 0.49505
+     }
+    },
+    {
+     "layer": 4,
+     "x_frac": 0.06314,
+     "y_frac": 0.01527,
+     "mean_active_per_token": 775.8,
+     "n_distinct_neurons": 7113,
+     "jaccard_vs_iter1": 0.3786,
+     "neg_share": {
+      "0": 0.30641,
+      "1": 0.35641,
+      "2": 0.27491,
+      "3": 0.44084
+     }
+    },
+    {
+     "layer": 5,
+     "x_frac": 0.06369,
+     "y_frac": 0.01687,
+     "mean_active_per_token": 782.6,
+     "n_distinct_neurons": 7180,
+     "jaccard_vs_iter1": 0.3776,
+     "neg_share": {
+      "0": 0.28828,
+      "1": 0.33645,
+      "2": 0.29139,
+      "3": 0.43571
+     }
+    }
+   ],
+   "sigma_residual_rel": 4.141370445708794e-06,
+   "neg_share_default": 0.3337
+  }
+ ],
+ "tensors": [
+  {
+   "name": "rope_freqs",
+   "dtype": "<f4",
+   "shape": [
+    3072
+   ],
+   "offset": 0,
+   "bytes": 12288
+  },
+  {
+   "name": "dx_head",
+   "dtype": "<f2",
+   "shape": [
+    192,
+    3072
+   ],
+   "offset": 12288,
+   "bytes": 1179648,
+   "head": 0
+  },
+  {
+   "name": "fire_count",
+   "dtype": "<u2",
+   "shape": [
+    12288
+   ],
+   "offset": 1191936,
+   "bytes": 24576
+  },
+  {
+   "name": "w0.logits",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    256
+   ],
+   "offset": 1216512,
+   "bytes": 23040
+  },
+  {
+   "name": "w0.L0.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1239552,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L0.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    26472
+   ],
+   "offset": 1256832,
+   "bytes": 52944
+  },
+  {
+   "name": "w0.L0.x.val",
+   "dtype": "|u1",
+   "shape": [
+    26472
+   ],
+   "offset": 1309776,
+   "bytes": 26472
+  },
+  {
+   "name": "w0.L0.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1336248,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L0.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1336432,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L0.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    4506
+   ],
+   "offset": 1336616,
+   "bytes": 9012
+  },
+  {
+   "name": "w0.L0.y.val",
+   "dtype": "|u1",
+   "shape": [
+    4506
+   ],
+   "offset": 1345632,
+   "bytes": 4506
+  },
+  {
+   "name": "w0.L0.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1350144,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L0.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1350328,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L0.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1350512,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L0.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1354472,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L0.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1371752,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L0.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1375712,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L0.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1379672,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L0.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1383632,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L1.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1400912,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L1.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    23367
+   ],
+   "offset": 1418192,
+   "bytes": 46734
+  },
+  {
+   "name": "w0.L1.x.val",
+   "dtype": "|u1",
+   "shape": [
+    23367
+   ],
+   "offset": 1464928,
+   "bytes": 23367
+  },
+  {
+   "name": "w0.L1.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1488296,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L1.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1488480,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L1.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    2947
+   ],
+   "offset": 1488664,
+   "bytes": 5894
+  },
+  {
+   "name": "w0.L1.y.val",
+   "dtype": "|u1",
+   "shape": [
+    2947
+   ],
+   "offset": 1494560,
+   "bytes": 2947
+  },
+  {
+   "name": "w0.L1.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1497512,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L1.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1497696,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L1.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1497880,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L1.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1501840,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L1.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1519120,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L1.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1523080,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L1.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1527040,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L1.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1531000,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L2.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1548280,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L2.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    27474
+   ],
+   "offset": 1565560,
+   "bytes": 54948
+  },
+  {
+   "name": "w0.L2.x.val",
+   "dtype": "|u1",
+   "shape": [
+    27474
+   ],
+   "offset": 1620512,
+   "bytes": 27474
+  },
+  {
+   "name": "w0.L2.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1647992,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L2.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1648176,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L2.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    4207
+   ],
+   "offset": 1648360,
+   "bytes": 8414
+  },
+  {
+   "name": "w0.L2.y.val",
+   "dtype": "|u1",
+   "shape": [
+    4207
+   ],
+   "offset": 1656776,
+   "bytes": 4207
+  },
+  {
+   "name": "w0.L2.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1660984,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L2.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1661168,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L2.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1661352,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L2.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1665312,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L2.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1682592,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L2.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1686552,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L2.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1690512,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L2.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1694472,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1711752,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    31720
+   ],
+   "offset": 1729032,
+   "bytes": 63440
+  },
+  {
+   "name": "w0.L3.x.val",
+   "dtype": "|u1",
+   "shape": [
+    31720
+   ],
+   "offset": 1792472,
+   "bytes": 31720
+  },
+  {
+   "name": "w0.L3.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1824192,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L3.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1824376,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L3.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    6218
+   ],
+   "offset": 1824560,
+   "bytes": 12436
+  },
+  {
+   "name": "w0.L3.y.val",
+   "dtype": "|u1",
+   "shape": [
+    6218
+   ],
+   "offset": 1837000,
+   "bytes": 6218
+  },
+  {
+   "name": "w0.L3.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1843224,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L3.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1843408,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L3.ry.idx",
+   "dtype": "<u2",
+   "shape": [
+    30479
+   ],
+   "offset": 1843592,
+   "bytes": 60958
+  },
+  {
+   "name": "w0.L3.ry.val",
+   "dtype": "|u1",
+   "shape": [
+    30479
+   ],
+   "offset": 1904552,
+   "bytes": 30479
+  },
+  {
+   "name": "w0.L3.ry.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 1935032,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L3.ry.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 1935216,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L3.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1935400,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L3.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1939360,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1956640,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L3.H1.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1960600,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1977880,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L3.H2.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 1981840,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 1999120,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L3.H3.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2003080,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L3.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2020360,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L4.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2037640,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L4.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    34384
+   ],
+   "offset": 2054920,
+   "bytes": 68768
+  },
+  {
+   "name": "w0.L4.x.val",
+   "dtype": "|u1",
+   "shape": [
+    34384
+   ],
+   "offset": 2123688,
+   "bytes": 34384
+  },
+  {
+   "name": "w0.L4.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 2158072,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L4.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 2158256,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L4.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    8149
+   ],
+   "offset": 2158440,
+   "bytes": 16298
+  },
+  {
+   "name": "w0.L4.y.val",
+   "dtype": "|u1",
+   "shape": [
+    8149
+   ],
+   "offset": 2174744,
+   "bytes": 8149
+  },
+  {
+   "name": "w0.L4.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 2182896,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L4.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 2183080,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L4.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2183264,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L4.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2187224,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L4.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2204504,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L4.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2208464,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L4.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2212424,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L4.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2216384,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L5.v",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2233664,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L5.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    34057
+   ],
+   "offset": 2250944,
+   "bytes": 68114
+  },
+  {
+   "name": "w0.L5.x.val",
+   "dtype": "|u1",
+   "shape": [
+    34057
+   ],
+   "offset": 2319064,
+   "bytes": 34057
+  },
+  {
+   "name": "w0.L5.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 2353128,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L5.x.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 2353312,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L5.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    8408
+   ],
+   "offset": 2353496,
+   "bytes": 16816
+  },
+  {
+   "name": "w0.L5.y.val",
+   "dtype": "|u1",
+   "shape": [
+    8408
+   ],
+   "offset": 2370312,
+   "bytes": 8408
+  },
+  {
+   "name": "w0.L5.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    45
+   ],
+   "offset": 2378720,
+   "bytes": 180
+  },
+  {
+   "name": "w0.L5.y.off",
+   "dtype": "<u4",
+   "shape": [
+    46
+   ],
+   "offset": 2378904,
+   "bytes": 184
+  },
+  {
+   "name": "w0.L5.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2379088,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L5.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2383048,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.L5.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2400328,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L5.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2404288,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L5.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    990
+   ],
+   "offset": 2408248,
+   "bytes": 3960
+  },
+  {
+   "name": "w0.L5.dv",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2412208,
+   "bytes": 17280
+  },
+  {
+   "name": "w0.vfinal",
+   "dtype": "<f2",
+   "shape": [
+    45,
+    192
+   ],
+   "offset": 2429488,
+   "bytes": 17280
+  },
+  {
+   "name": "w1.logits",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    256
+   ],
+   "offset": 2446768,
+   "bytes": 53760
+  },
+  {
+   "name": "w1.L0.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 2500528,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L0.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    59565
+   ],
+   "offset": 2540848,
+   "bytes": 119130
+  },
+  {
+   "name": "w1.L0.x.val",
+   "dtype": "|u1",
+   "shape": [
+    59565
+   ],
+   "offset": 2659984,
+   "bytes": 59565
+  },
+  {
+   "name": "w1.L0.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2719552,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L0.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2719976,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L0.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    9020
+   ],
+   "offset": 2720400,
+   "bytes": 18040
+  },
+  {
+   "name": "w1.L0.y.val",
+   "dtype": "|u1",
+   "shape": [
+    9020
+   ],
+   "offset": 2738440,
+   "bytes": 9020
+  },
+  {
+   "name": "w1.L0.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 2747464,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L0.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 2747888,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L0.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 2748312,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L0.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 2770152,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L0.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 2810472,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L0.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 2832312,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L0.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 2854152,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L0.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 2875992,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L1.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 2916312,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L1.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    56510
+   ],
+   "offset": 2956632,
+   "bytes": 113020
+  },
+  {
+   "name": "w1.L1.x.val",
+   "dtype": "|u1",
+   "shape": [
+    56510
+   ],
+   "offset": 3069656,
+   "bytes": 56510
+  },
+  {
+   "name": "w1.L1.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 3126168,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L1.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 3126592,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L1.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    7042
+   ],
+   "offset": 3127016,
+   "bytes": 14084
+  },
+  {
+   "name": "w1.L1.y.val",
+   "dtype": "|u1",
+   "shape": [
+    7042
+   ],
+   "offset": 3141104,
+   "bytes": 7042
+  },
+  {
+   "name": "w1.L1.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 3148152,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L1.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 3148576,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L1.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3149000,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L1.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3170840,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L1.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3211160,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L1.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3233000,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L1.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3254840,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L1.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3276680,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L2.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3317000,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L2.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    62092
+   ],
+   "offset": 3357320,
+   "bytes": 124184
+  },
+  {
+   "name": "w1.L2.x.val",
+   "dtype": "|u1",
+   "shape": [
+    62092
+   ],
+   "offset": 3481504,
+   "bytes": 62092
+  },
+  {
+   "name": "w1.L2.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 3543600,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L2.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 3544024,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L2.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    9672
+   ],
+   "offset": 3544448,
+   "bytes": 19344
+  },
+  {
+   "name": "w1.L2.y.val",
+   "dtype": "|u1",
+   "shape": [
+    9672
+   ],
+   "offset": 3563792,
+   "bytes": 9672
+  },
+  {
+   "name": "w1.L2.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 3573464,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L2.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 3573888,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L2.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3574312,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L2.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3596152,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L2.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3636472,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L2.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3658312,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L2.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 3680152,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L2.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3701992,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 3742312,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    72631
+   ],
+   "offset": 3782632,
+   "bytes": 145262
+  },
+  {
+   "name": "w1.L3.x.val",
+   "dtype": "|u1",
+   "shape": [
+    72631
+   ],
+   "offset": 3927896,
+   "bytes": 72631
+  },
+  {
+   "name": "w1.L3.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4000528,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L3.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4000952,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L3.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    14481
+   ],
+   "offset": 4001376,
+   "bytes": 28962
+  },
+  {
+   "name": "w1.L3.y.val",
+   "dtype": "|u1",
+   "shape": [
+    14481
+   ],
+   "offset": 4030344,
+   "bytes": 14481
+  },
+  {
+   "name": "w1.L3.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4044832,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L3.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4045256,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L3.ry.idx",
+   "dtype": "<u2",
+   "shape": [
+    70227
+   ],
+   "offset": 4045680,
+   "bytes": 140454
+  },
+  {
+   "name": "w1.L3.ry.val",
+   "dtype": "|u1",
+   "shape": [
+    70227
+   ],
+   "offset": 4186136,
+   "bytes": 70227
+  },
+  {
+   "name": "w1.L3.ry.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4256368,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L3.ry.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4256792,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L3.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4257216,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L3.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4279056,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4319376,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L3.H1.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4341216,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4381536,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L3.H2.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4403376,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4443696,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L3.H3.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4465536,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L3.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4505856,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L4.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4546176,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L4.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    81462
+   ],
+   "offset": 4586496,
+   "bytes": 162924
+  },
+  {
+   "name": "w1.L4.x.val",
+   "dtype": "|u1",
+   "shape": [
+    81462
+   ],
+   "offset": 4749424,
+   "bytes": 81462
+  },
+  {
+   "name": "w1.L4.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4830888,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L4.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4831312,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L4.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    19703
+   ],
+   "offset": 4831736,
+   "bytes": 39406
+  },
+  {
+   "name": "w1.L4.y.val",
+   "dtype": "|u1",
+   "shape": [
+    19703
+   ],
+   "offset": 4871144,
+   "bytes": 19703
+  },
+  {
+   "name": "w1.L4.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 4890848,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L4.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 4891272,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L4.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4891696,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L4.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 4913536,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L4.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4953856,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L4.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4975696,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L4.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 4997536,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L4.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 5019376,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L5.v",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 5059696,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L5.x.idx",
+   "dtype": "<u2",
+   "shape": [
+    82178
+   ],
+   "offset": 5100016,
+   "bytes": 164356
+  },
+  {
+   "name": "w1.L5.x.val",
+   "dtype": "|u1",
+   "shape": [
+    82178
+   ],
+   "offset": 5264376,
+   "bytes": 82178
+  },
+  {
+   "name": "w1.L5.x.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5346560,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L5.x.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5346984,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L5.y.idx",
+   "dtype": "<u2",
+   "shape": [
+    21763
+   ],
+   "offset": 5347408,
+   "bytes": 43526
+  },
+  {
+   "name": "w1.L5.y.val",
+   "dtype": "|u1",
+   "shape": [
+    21763
+   ],
+   "offset": 5390936,
+   "bytes": 21763
+  },
+  {
+   "name": "w1.L5.y.scale",
+   "dtype": "<f4",
+   "shape": [
+    105
+   ],
+   "offset": 5412704,
+   "bytes": 420
+  },
+  {
+   "name": "w1.L5.y.off",
+   "dtype": "<u4",
+   "shape": [
+    106
+   ],
+   "offset": 5413128,
+   "bytes": 424
+  },
+  {
+   "name": "w1.L5.H0.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 5413552,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L5.H0.a",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 5435392,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.L5.H1.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 5475712,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L5.H2.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 5497552,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L5.H3.attn",
+   "dtype": "<f4",
+   "shape": [
+    5460
+   ],
+   "offset": 5519392,
+   "bytes": 21840
+  },
+  {
+   "name": "w1.L5.dv",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 5541232,
+   "bytes": 40320
+  },
+  {
+   "name": "w1.vfinal",
+   "dtype": "<f2",
+   "shape": [
+    105,
+    192
+   ],
+   "offset": 5581552,
+   "bytes": 40320
+  },
+  {
+   "name": "flow.ids",
+   "dtype": "<u2",
+   "shape": [
+    256
+   ],
+   "offset": 5621872,
+   "bytes": 512
+  },
+  {
+   "name": "flow.dx",
+   "dtype": "<f2",
+   "shape": [
+    256,
+    192
+   ],
+   "offset": 5622384,
+   "bytes": 98304
+  },
+  {
+   "name": "flow.dy",
+   "dtype": "<f2",
+   "shape": [
+    256,
+    192
+   ],
+   "offset": 5720688,
+   "bytes": 98304
+  },
+  {
+   "name": "flow.enc",
+   "dtype": "<f2",
+   "shape": [
+    256,
+    192
+   ],
+   "offset": 5818992,
+   "bytes": 98304
+  },
+  {
+   "name": "lm_head",
+   "dtype": "<f2",
+   "shape": [
+    192,
+    256
+   ],
+   "offset": 5917296,
+   "bytes": 98304
+  }
+ ]
+}
