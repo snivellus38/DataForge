@@ -853,3 +853,100 @@ change every token, so a slot-held pin silently jumped to a different neuron whi
 to be the one clicked. Every 192-tick column is selectable too ("click any node" has to mean any).
 
 `npm test` is **228 checks** across the same twelve gates.
+
+### 2026-09-06 — Session 5 (Opus 5) — from "built" to "submittable"
+
+**The artifact was done; the submission was not.** Read `Pathway_PS.md` against the repo: the gap
+was almost entirely paperwork plus three cheap scored fixes. `npm test` is **12 gates / 235
+checks**, plus a 13th check deliberately kept outside it.
+
+**FOUR SESSIONS OF WORK WERE UNCOMMITTED.** 56 dirty entries; `origin/main` was still serving the
+retired 8-act essay, while "a public source code repository" is a required deliverable. Sessions
+4, 4b, 4c and 4d existed on one disk only. Now five commits, pushed, sliced by unit (export
+pipeline / FIELD / LOOP / PRICE / handoff). **Push at the end of every session** — this is the
+cheapest possible way to lose everything.
+
+**`index.html` is a real front door now, not a redirect.** The track scores "audience definition,
+prerequisites, learning objectives" BY NAME and there were **zero occurrences of any of the three**
+across all pages — they had nowhere to go, because the journey's first stop is frozen. The door
+carries the full claim, who it is for, three prerequisites, three objectives, the live/ours/cited
+split, and three cards. It deliberately has **no `.sitenav`**: that nav is a three-link control
+asserted byte-identical across pages and the frozen field.css copy cannot gain a fourth link, so
+the door is the way in, not a fourth destination.
+
+**Only TWO primary papers were cited, and the README's other two were out of window.** The track
+wants >=3 from **2022-2026 cited beside technical claims**; Katharopoulos 2020 and Schlag 2021 do
+not count. Four added, each verified against its actual arXiv entry:
+- **DeltaNet 2406.06484** on the capacity slide — its abstract replaces *"the additive update in
+  linear transformers"* with the delta rule and reports that more effective at associative recall.
+  That additive update IS BDH's write, so our 1/pi ceiling is why the alternative exists. The most
+  load-bearing citation available for the claim's second clause.
+- **HRM 2506.21734 + TRM 2510.04871** beside the zero-parameter-update claim (the optimization
+  route). TRM reports 8% on ARC-AGI-2 — that is TRM's, and must never get attached to BDH-CQ.
+- **TTT layers 2407.04620** as the design-space contrast.
+`wiring.mjs` now asserts >=3 in-window papers with >=2 outside the Sources paragraph.
+
+**The one-page summary exists** — `docs/concept-summary.md` + `build_summary.py`
+(`npm run summary`), 855 words, two-column A4, **one page**. Three build traps, each producing a
+wrong-looking document that no test catches:
+- Edge's **new** headless writes no PDF for `--print-to-pdf`, and **old** headless **detaches** —
+  both return 0. Wait for the file to appear and stop growing; never trust the exit code.
+- `.foot` must **not** be `column-span: all`. A spanner at the end of a `column-fill: auto`
+  multicol opens a second page in Chromium even with room left in column two. Measured: 2 pages
+  spanning, 1 page not, identical content.
+- The equation rendered as **literal asterisks** — a subscript is a word character, so the
+  emphasis regex's lookbehind rejected the markers around it. Only rasterising the page found it.
+  The build now fails on any emphasis marker surviving conversion (code spans excluded, `G*` is a
+  real name).
+
+**MOBILE: `msedge --headless=old --window-size=W --screenshot` RENDERS AND CAPTURES AT DIFFERENT
+WIDTHS.** It produced a convincing image of a completely clipped page whose layout was fine, and
+two fixes were made against that phantom before it was caught. Measure with
+`getBoundingClientRect` over CDP; screenshot only to judge whether the result *reads* well.
+Three more traps from the same afternoon, all in `research/check_mobile.py`'s docstring:
+- **`overflow-x: hidden` on html/body is a gag, not a fix.** It makes `scrollWidth` equal the
+  viewport however far elements stick out, so any narrow-viewport check passes on a broken page.
+  I added it as belt-and-braces and removed it for exactly that reason.
+- **`scrollWidth` vs `innerWidth` is not sufficient.** On shrink-to-fit the browser *widens the
+  layout viewport and zooms out*, so both grow together and agree perfectly on a page rendering at
+  82%. loop.html laid out at **473px on a 390px screen** and reported "ok". Compare against the
+  **requested device width**.
+- The CDP browser **cached the stylesheet across edits**, so correct fixes reported as no-ops.
+  `Network.setCacheDisabled`, always.
+
+**TWO STALE `python -m http.server 8080` PROCESSES FROM EARLIER SESSIONS WERE ANSWERING AHEAD OF
+`serve.py`.** Neither `Cache-Control: no-store` nor the `.gz` -> `application/octet-stream` pin was
+on the wire, and I briefly concluded both features were broken. They are not; serve.py is correct.
+Item 33 says curl before believing an edit failed — **also check who is answering**:
+`netstat -ano | grep :8080`, then match the PID. `allow_reuse_address` lets a second server bind
+the same port and lose the race silently.
+
+**THE LOOP was genuinely broken on phones, and the flow diagram needed the opposite of shrinking.**
+`.stage-head` is a nowrap flex row and the sentence `<select>` sizes to its longest option
+(299px), so head + gap + select could not fit 358px and pushed the layout to 473px. Separately,
+`flow.js` centres a 124px header on each of eight columns, so it needs **~960px** before headers
+collide; handed 358px it drew all eight headings on top of each other. Squeezing it smaller does
+not make it smaller, it makes it wrong — so below 992px the host **keeps its design width and
+`.panes` scrolls sideways**, with a `.narrowtip` saying so on screen. Desktop unchanged (at 1400px
+the tip is `display:none` and the diagram is 1060px).
+All four pages are clean at **390, 360 and 320px**. `npm run test:mobile` proves it and is verified
+to discriminate (deleting the breakpoint fails it with "SHRUNK TO FIT"). It is **not** in
+`npm test` on purpose: jsdom has no layout engine and cannot answer this at all, and a unit suite
+should not require a browser and a server.
+
+**Also done:** README rewritten (it claimed six gates and described the retired essay);
+`docs/defense.md` written for the live-defense criterion — every on-screen number mapped to its
+script, a ten-step trace of one token, what each control will do before you click it, and the five
+likeliest challenges with counter-evidence; a `LICENSE` file added (the README claimed MIT with no
+licence present); `plan.md` marked HISTORICAL rather than retro-fitted, since a plan rewritten to
+match what happened stops being evidence of what was decided in advance; `vercel.json` +
+`.vercelignore` added.
+
+**STILL OPEN — one blocker, and it needs the user:**
+1. **Nothing is deployed.** `vercel login && vercel --prod`; config is in place, root is `web/`.
+   **Then verify on the live origin, not locally:**
+   `curl -sI <url>/public/big/traces.bin.gz | grep -i "content-type\|content-encoding"`. A
+   transport-level `Content-Encoding: gzip` would hand the loader already-inflated bytes and both
+   big pages would fail to boot. Put the URL in the README (it says *pending*) and on the door.
+2. Nobody has opened the pages in a **real, non-headless** browser at desktop size this session —
+   the visual checks here were headless screenshots and CDP measurements.
