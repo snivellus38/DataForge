@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Loop &mdash; one iteration of a Dragon Hatchling, opened up</title>
+<meta name="description" content="Step through every stage of an 8M-parameter BDH as it translates English into French: the ReLU that makes it sparse, the rotation that makes its scores negative, and the state it writes one rank-one update at a time.">
+<link rel="stylesheet" href="src/theme.css">
+<link rel="stylesheet" href="src/loop.css">
+<body>
+
+<nav class="sitenav" aria-label="Sections of this artifact">
+  <a href="field.html">The field</a>
+  <a href="loop.html" aria-current="page">The loop</a>
+  <a href="price.html">The price</a>
+  <span class="spacer"></span>
+  <span class="mark"><b>&sigma;</b>&ensp;demonstrations are weights</span>
+</nav>
+
+<main class="loop" id="loop">
+
+  <!-- ── narration rail ──────────────────────────────────────────────────────────────────── -->
+  <aside class="rail" id="rail">
+    <p class="eyebrow" id="r-eyebrow">Dragon Hatchling &middot; 7,962,624 parameters</p>
+    <p class="stopno"><b id="r-no">0</b><span>of 7</span></p>
+    <h1 id="r-title">One block, run six times</h1>
+    <div class="rail-body" id="r-body"></div>
+    <p class="rail-nav">
+      <button id="r-prev" class="stepper" aria-label="Previous stop">&larr;</button>
+      <button id="r-next" class="stepper" aria-label="Next stop">&rarr;</button>
+      <span class="hint">or click any box in the diagram</span>
+    </p>
+    <!-- Live narration for the current stop. Stop 0's flow diagram used to carry its sampling
+         disclosure and its four counters BELOW the canvas, inside the stage, which cost the
+         diagram about 130px of height on every screen. The rail is where this page's prose and
+         caveats already live, and it had the room. -->
+    <div class="rail-live" id="r-live" hidden>
+      <p class="flow-note" id="p0-note"></p>
+      <dl class="counters two" id="p0-stats"></dl>
+    </div>
+  </aside>
+
+  <!-- ── stage ───────────────────────────────────────────────────────────────────────────── -->
+  <section class="stage" id="stage" aria-live="polite">
+
+    <div class="stage-head">
+      <h2 id="s-h">The whole block</h2>
+      <div class="stage-tools" id="s-tools">
+        <label class="tool"><span>sentence</span>
+          <select id="s-sent"></select></label>
+        <label class="tool"><span>iteration</span>
+          <select id="s-layer"></select></label>
+        <label class="tool" id="tool-head"><span>head</span>
+          <select id="s-head"></select></label>
+      </div>
+    </div>
+
+    <div class="panes" id="panes">
+
+      <!-- 0 · the whole block ------------------------------------------------------------ -->
+      <div class="pane pane-flow" data-stop="0" hidden>
+        <div class="flow" id="p0-flow"></div>
+      </div>
+
+      <!-- 1 · into neuron space ---------------------------------------------------------- -->
+      <div class="pane" data-stop="1" hidden>
+        <div class="row2">
+          <figure class="fig">
+            <figcaption>before &mdash; <b id="p1-pre-n">3072</b> pre-activations, signed
+              <span class="mini">blue negative &middot; red positive</span></figcaption>
+            <canvas id="p1-pre" aria-label="Pre-activation values for one head, signed"></canvas>
+          </figure>
+          <figure class="fig">
+            <figcaption>after the ReLU &mdash; <b id="p1-post-n">&mdash;</b> survive
+              <span class="mini">everything below zero became exactly zero</span></figcaption>
+            <canvas id="p1-post" aria-label="Post-ReLU activations for one head"></canvas>
+          </figure>
+        </div>
+        <div class="split">
+          <dl class="counters" id="p1-stats"></dl>
+          <figure class="fig tight">
+            <figcaption>active fraction per iteration <span class="mini">whole corpus</span></figcaption>
+            <canvas id="p1-curve" aria-label="Active fraction by iteration"></canvas>
+          </figure>
+        </div>
+      </div>
+
+      <!-- 2 · the rotation --------------------------------------------------------------- -->
+      <div class="pane" data-stop="2" hidden>
+        <div class="row2 rot">
+          <figure class="fig">
+            <figcaption>one token&rsquo;s neuron pairs, before and after rotation
+              <span class="mini">amber before &middot; blue after</span></figcaption>
+            <canvas id="p2-wheel" aria-label="Neuron pairs before and after RoPE"></canvas>
+          </figure>
+          <div class="explain" id="p2-explain"></div>
+        </div>
+        <dl class="counters" id="p2-stats"></dl>
+      </div>
+
+      <!-- 3 · the score matrix ------------------------------------------------------------ -->
+      <div class="pane" data-stop="3" hidden>
+        <div class="row2 scores">
+          <figure class="fig">
+            <figcaption>causal scores <span class="mini" id="p3-cap">hover a cell</span></figcaption>
+            <canvas id="p3-mx" aria-label="Causal attention score matrix"></canvas>
+          </figure>
+          <div class="side">
+            <div class="readout" id="p3-read"></div>
+            <label class="check"><input type="checkbox" id="p3-softmax">
+              <span>put a softmax on this row</span></label>
+            <p class="note" id="p3-note"></p>
+            <dl class="counters two" id="p3-stats"></dl>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 · the state ------------------------------------------------------------------- -->
+      <div class="pane" data-stop="4" hidden>
+        <div class="row2 sigma">
+          <figure class="fig">
+            <figcaption id="p4-cap">&sigma; after <b id="p4-t">0</b> tokens
+              <span class="mini">3072 neurons &times; 192 dims</span></figcaption>
+            <canvas id="p4-sigma" aria-label="The sigma state"></canvas>
+          </figure>
+          <div class="side">
+            <div class="eqbox">
+              <span class="eqline"><b>&sigma;</b><sub>t</sub> = <b>&sigma;</b><sub>t&minus;1</sub>
+                + rope(x)<sub>t</sub> &otimes; v<sub>t</sub></span>
+              <span class="eqline dim">a<sub>t</sub> = <b>&sigma;</b><sub>t</sub><sup>&#8868;</sup>
+                rope(x)<sub>t</sub></span>
+            </div>
+            <label class="check"><input type="checkbox" id="p4-delta">
+              <span>show only this token&rsquo;s write</span></label>
+            <dl class="counters two" id="p4-stats"></dl>
+            <p class="note" id="p4-note"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 · the gate --------------------------------------------------------------------- -->
+      <div class="pane" data-stop="5" hidden>
+        <figure class="fig">
+          <figcaption>what the read-out wants &mdash; ReLU(D<sub>y</sub>a)</figcaption>
+          <canvas id="p5-want" aria-label="ReLU of the decoder_y projection"></canvas>
+        </figure>
+        <figure class="fig">
+          <figcaption>what is already firing &mdash; x</figcaption>
+          <canvas id="p5-fire" aria-label="Current activations"></canvas>
+        </figure>
+        <figure class="fig">
+          <figcaption>their product &mdash; <b id="p5-n">&mdash;</b> neurons reach the residual</figcaption>
+          <canvas id="p5-and" aria-label="The gated output"></canvas>
+        </figure>
+        <dl class="counters four" id="p5-stats"></dl>
+      </div>
+
+      <!-- 6 · six iterations ---------------------------------------------------------------- -->
+      <div class="pane" data-stop="6" hidden>
+        <div class="row2">
+          <figure class="fig">
+            <figcaption>overlap with iteration 1 <span class="mini">Jaccard, same neurons</span></figcaption>
+            <canvas id="p6-jac" aria-label="Jaccard overlap by iteration"></canvas>
+          </figure>
+          <figure class="fig">
+            <figcaption>neurons firing per token</figcaption>
+            <canvas id="p6-act" aria-label="Active neurons per token by iteration"></canvas>
+          </figure>
+        </div>
+        <dl class="counters four" id="p6-stats"></dl>
+        <p class="door"><a href="field.html">See all 12,288 at once in THE FIELD &rarr;</a></p>
+      </div>
+
+      <!-- 7 · the next byte ----------------------------------------------------------------- -->
+      <div class="pane" data-stop="7" hidden>
+        <figure class="fig">
+          <figcaption>next-byte distribution <span class="mini">top 12 of 256</span></figcaption>
+          <canvas id="p7-bars" aria-label="Next byte probabilities"></canvas>
+        </figure>
+        <dl class="counters four" id="p7-stats"></dl>
+        <p class="note" id="p7-note"></p>
+      </div>
+
+    </div>
+
+    <!-- ── the diagram, always on screen ──────────────────────────────────────────────────── -->
+    <div class="diagram-host" id="diagram" aria-label="Pipeline diagram"></div>
+  </section>
+
+  <!-- ── transport ───────────────────────────────────────────────────────────────────────── -->
+  <footer class="transport">
+    <button id="play" class="play" aria-label="Play">&#9654;</button>
+    <input id="scrub" type="range" min="0" max="1" value="0" aria-label="Token">
+    <div class="strip" id="strip" aria-label="Sentence bytes; click one to jump there"></div>
+  </footer>
+
+</main>
+
+<div id="boot" class="boot"><p>Loading the model&rsquo;s own numbers&hellip;<br>
+  <span class="mini">3.3 MB of stage tensors from an 8M-parameter BDH</span></p></div>
+<noscript><div class="boot"><p>This page replays a trained model stage by stage. It needs JavaScript.</p></div></noscript>
+
+<script type="module" src="src/loop.js"></script>

@@ -1,0 +1,111 @@
+/* SHARED CHROME for the two new pages (loop.html, index.html).
+
+   The :root block below is a DELIBERATE DUPLICATE of the one in field.css. field.html is frozen
+   at the user's instruction -- "exactly as it is" -- and that page is not just its HTML, it is
+   every file it loads. Hoisting these tokens into one shared file would have meant editing
+   field.css, which would have changed the shipped bytes of a finished page to save forty lines
+   here. web/test/frozen.mjs enforces that trade the other way round.
+
+   If a token changes, change it in BOTH places on purpose, or not at all. */
+:root {
+  color-scheme: dark;
+  --ground: #100f0e;
+  --ink: #f3f1ec;
+  --ink2: #a8a49c;
+  --ink3: #6f6b64;
+  --rule: rgba(255, 255, 255, .10);
+  --glass: rgba(20, 19, 18, .72);
+  --hot: #e0872a;
+  --cool: #3987e5;
+  --warm: #d95926;
+  --good: #199e70;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --serif: ui-serif, Charter, "Iowan Old Style", Georgia, serif;
+}
+
+* { box-sizing: border-box; }
+/* Must precede any rule that sets `display` on a hideable element: an author rule beats the UA
+   stylesheet's [hidden]{display:none}, and field.html once shipped with a permanent overlay
+   because of exactly this. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 14px/1.55 var(--sans);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── the three-page nav ──────────────────────────────────────────────────────────────────────
+   Deliberately IDENTICAL to field.html's `.pagenav` (field.css) -- same pill geometry, same
+   colours, same solid-amber current page, same top-LEFT position. It is the one control that
+   appears on all three pages, so it is the one thing that must not shift or restyle between
+   them: a toggle that moves is a toggle you have to find again.
+
+   The declarations are duplicated rather than shared for the reason at the top of this file --
+   field.css is frozen and hoisting them would edit it. Change them in BOTH places, or neither.
+
+   The only difference is the wordmark, which the field does not need (its HUD says what the
+   page is one line below the nav) and these two do; it sits after the spacer, on the right,
+   so it never pushes the links off the left edge. */
+.sitenav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  display: flex; align-items: center; gap: 3px;
+  padding: 9px 16px;
+  background: linear-gradient(var(--ground) 55%, transparent);
+  font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+}
+.sitenav a {
+  color: var(--ink2); text-decoration: none;
+  padding: 5px 9px; border-radius: 999px; border: 1px solid var(--rule);
+  background: rgba(255, 255, 255, .03);
+}
+.sitenav a:hover { color: var(--ink); background: rgba(255, 255, 255, .10); }
+.sitenav a[aria-current="page"] {
+  color: var(--ground); background: var(--hot); border-color: var(--hot); font-weight: 600;
+}
+.sitenav a.away::after { content: " ↗"; color: var(--ink3); }
+.sitenav .spacer { flex: 1; }
+.sitenav .mark { color: var(--ink3); letter-spacing: .13em; font-size: 11px; }
+.sitenav .mark b { color: var(--hot); font-weight: 600; }
+/* The three links are the payload; the wordmark is decoration and goes first when space runs
+   out, rather than wrapping the bar onto a second line over the content. */
+@media (max-width: 620px) { .sitenav .mark { display: none; } }
+
+/* ── primitives shared by both pages ─────────────────────────────────────────────────────── */
+.eyebrow {
+  margin: 0 0 10px; font-size: 10.5px; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink3);
+}
+.note { margin: 9px 0 0; font-size: 11px; line-height: 1.5; color: var(--ink3); }
+.mono { font-family: var(--mono); }
+.sym { font-family: var(--serif); font-style: italic; }
+
+.counters { margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.counters div { margin: 0; }
+.counters dt { font-size: 10px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink3); }
+.counters dd { margin: 2px 0 0; }
+.counters b { display: block; font-size: 19px; font-weight: 600; font-family: var(--mono); }
+.counters span { display: block; font-size: 10.5px; color: var(--ink3); }
+.counters.two { grid-template-columns: repeat(2, 1fr); }
+.counters.four { grid-template-columns: repeat(4, 1fr); }
+
+/* evidence tagging. Every number on these pages is one of these, and says so. */
+.tag {
+  display: inline-block; font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink3);
+  vertical-align: middle;
+}
+.tag.live { color: #8fd6b4; border-color: rgba(25, 158, 112, .45); }
+.tag.replay { color: #f0b26a; border-color: rgba(224, 135, 42, .40); }
+.tag.ours { color: #8cbdf0; border-color: rgba(57, 135, 229, .40); }
+
+button, select, input { font: inherit; }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible {
+  outline: 2px solid var(--hot); outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
