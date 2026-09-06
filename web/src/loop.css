@@ -203,6 +203,48 @@ body { height: 100dvh; overflow: hidden; }
   .stage { padding: 16px 16px 0; }
 }
 
+/* ── phones ──────────────────────────────────────────────────────────────────────────────────
+   Measured at a 390px viewport: the page laid out at 472px and the browser shrank the whole
+   thing to fit, so every label rendered at ~82%. The cause was not the diagram -- `.stage-head`
+   is a nowrap flex row, and the sentence <select> sizes itself to its longest option (299px),
+   so the heading plus a 20px gap plus that select could not fit 358px of content box and pushed
+   the body wider than the screen. Everything else inherited the width from there.
+
+   The diagram itself is left to scroll inside .panes rather than being shrunk: it is eight
+   columns of real values, and squeezing it into 358px would make it unreadable rather than
+   small. The narrow-screen note in loop.html says so, per "no hidden limits". */
+@media (max-width: 700px) {
+  .stage-head { flex-wrap: wrap; align-items: flex-start; gap: 10px; }
+  .stage-head h2 { font-size: 17px; }
+  .stage-tools { width: 100%; flex-wrap: wrap; gap: 8px; }
+  .tool { flex: 1 1 150px; min-width: 0; }
+  .tool select { width: 100%; max-width: 100%; }
+}
+
+/* ── the flow diagram below its design width ────────────────────────────────────────────────
+   flow.js centres a 124px header on each of eight columns, so the columns need >= 7 * 124 px of
+   plot plus 22 left and ~66 right inset -- about 960px -- before the headers stop colliding.
+   Below that, measure() was handed the container's width and drew the whole diagram into it, so
+   at 390px the eight headers overlapped into one unreadable line of text.
+
+   Squeezing it smaller does not make it smaller, it makes it wrong. So the host keeps its design
+   width and .panes scrolls it sideways instead, and .narrowtip says that on screen rather than
+   leaving the reader to discover a diagram that runs off the edge. */
+.narrowtip {
+  display: none;
+  margin: 0 0 10px; padding: 9px 11px;
+  border: 1px solid rgba(224, 135, 42, .34); border-left-width: 2px; border-radius: 6px;
+  background: rgba(224, 135, 42, .06);
+  font-size: 11.5px; line-height: 1.5; color: var(--ink2);
+}
+.narrowtip b { color: var(--hot); font-weight: 600; }
+
+@media (max-width: 992px) {
+  .panes { overflow-x: auto; }
+  .flow { min-width: 960px; }
+  .narrowtip { display: block; }
+}
+
 /* ── the flow diagram (stop 0) ───────────────────────────────────────────────────────────────
    A layered node-link view of one token's whole pass. The host is the positioning context for
    three stacked layers: a canvas that paints edges and dots, a DOM layer of column headers and

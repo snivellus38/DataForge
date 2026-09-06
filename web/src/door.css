@@ -16,6 +16,7 @@
   max-width: 1080px;
   margin: 0 auto;
   padding: 26px 22px 40px;
+  overflow-wrap: break-word;
 }
 
 /* ── masthead ─────────────────────────────────────────────────────────────────────────────── */
@@ -35,11 +36,21 @@
 .claim h1 {
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(30px, 5.4vw, 54px);
+  /* The floor matters more than the ceiling. At a 30px floor the hard break below forced the
+     line "Demonstrations are weights" to ~400px, which set the BODY's scroll width at 390px and
+     clipped every other element on the page -- it read as "the whole layout is broken" when only
+     one line was too wide. */
+  font-size: clamp(25px, 6.2vw, 54px);
   line-height: 1.08;
   letter-spacing: -.015em;
   font-weight: 500;
 }
+/* The break is a typographic nicety for a wide screen, not structure. Below the breakpoint the
+   headline wraps wherever it needs to.
+   The markup keeps a real space after the <br>: with the break shown, a leading space at the
+   start of a line is collapsed away, but with it hidden that space is the only thing separating
+   "weights" from "you". Without it the headline read "weightsyou write at inference time". */
+@media (max-width: 620px) { .claim h1 br.wide { display: none; } }
 .claim h1 em { font-style: italic; color: var(--hot); }
 
 /* The falsifiable sentence, in full. The track asks for one sentence a learner can test, so it

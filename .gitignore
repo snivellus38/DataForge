@@ -21,3 +21,8 @@ research/runs/*.pt
 # These are the author's own prior work and are disclosed as such in the README; they are
 # excluded here for size, not for provenance.
 trained_model_things/
+
+# leftover from an earlier run of research/check_mobile.py, which now uses a temp dir.
+# Windows keeps file locks on a browser profile after exit, so this can be undeletable
+# for a while; ignoring it rather than fighting it.
+research/__mobile_profile/
