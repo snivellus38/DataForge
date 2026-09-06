@@ -12,9 +12,9 @@ Three pages, two models we can run, one claim that takes sixty seconds to falsif
 
 <sup>**THE FIELD.** Every dot is one of the 12,288 neurons in an 8M-parameter BDH we trained,
 laid out by its position in the model's own synapse graph. Amber is activation at the current
-byte. The clip switches sentence, colour mode and layout, then opens the six-iteration view.
-The dark region on the right is not a rendering artifact — it is the ~38% of neurons that the
-weights alone predict will never fire.</sup>
+byte. The clip moves through the views: one iteration, then all six at once, recoloured by
+synapse count and by graph community, then back. The dark region is not a rendering artifact —
+it is the 38.7% of neurons that the weights alone predict will never fire.</sup>
 
 ---
 
@@ -130,8 +130,8 @@ readouts move between frames.</sup>
 
 ![The eight stops of the walkthrough, with the persistent architecture diagram below](docs/media/loop-walkthrough.gif)
 
-<sup>**The eight stops.** Shown here at the RoPE stop, where the polar plot draws one token's
-neuron pairs before and after rotation: every un-rotated key sits in the non-negative quadrant
+<sup>**The eight stops.** One of them is the RoPE stop, whose polar plot draws a single token's
+neuron pairs before and after rotation: every un-rotated key sits inside the non-negative quadrant
 because it just came out of a ReLU, and `111 of 3,072` rotated components have gone below zero.
 σ on this page is not shipped — it is accumulated in your browser from the model's own rank-one
 writes, and a gate proves the accumulation is right by breaking it two ways.</sup>
