@@ -27,7 +27,7 @@
     "test:price": "node web/test/price_smoke.mjs",
     "summary": "python docs/build_summary.py",
     "test:mobile": "python research/check_mobile.py",
-    "figures": "python research/compare_memory.py && python research/plot_training.py && python research/compare_runtime.py",
+    "figures": "python research/compare_memory.py && python research/plot_training.py && python research/compare_runtime.py && python research/plot_comparison.py",
     "media": "bash docs/media/encode.sh",
     "compare": "python research/compare_runtime.py && python research/compare_structure.py && python research/probe_incontext.py && python research/replicate_structure.py",
     "compare:quality": "python research/compare_quality.py && python research/compare_translation.py"

@@ -13,35 +13,35 @@ Three pages, two models we can run, one claim that takes sixty seconds to falsif
 <sup>**THE FIELD.** Every dot is one of the 12,288 neurons in an 8M-parameter BDH we trained,
 laid out by its position in the model's own synapse graph. Amber is activation at the current
 byte. The clip moves through the views: one iteration, then all six at once, recoloured by
-synapse count and by graph community, then back. The dark region is not a rendering artifact —
+synapse count and by graph community, then back. The dark region is not a rendering artifact:
 it is the 38.7% of neurons that the weights alone predict will never fire.</sup>
 
 ---
 
 > **Demonstrations are weights you write at inference time.** A frozen model adapts by adding
 > rank-one updates to a fixed-size associative state, so changing only the demonstrations changes
-> the answer — **but that state's capacity is set by how much its keys overlap, not by its size,
+> the answer. **But that state's capacity is set by how much its keys overlap, not by its size,
 > so the non-negativity that makes BDH inspectable is also what makes it forget sooner.**
 
 Both halves are falsifiable inside the artifact. The first takes about a minute:
 
 1. Open **[THE PRICE](https://demonstrations-are-weights.vercel.app/price.html)**. A 131K-parameter
-   BDH runs in your browser tab and answers a substitution cipher it has never seen — the mapping
+   BDH runs in your browser tab and answers a substitution cipher it has never seen. The mapping
    exists only in the prompt, resampled fresh for every example.
 2. Press **"Remove the demonstration it needs"**. One demonstration disappears; the query bytes
    stay byte-identical.
 3. The answer changes from correct at p = 1.000 to **wrong at p = 0.972**, still inside the target
-   alphabet. No parameter moved. The model does not hedge when a binding is missing — it is
+   alphabet. No parameter moved. The model does not hedge when a binding is missing: it is
    confidently wrong and structurally plausible, which is the same failure signature BDH-CQ reports
    in its Table 9.
 
 | | |
 |---|---|
-| **Artifact** | **https://demonstrations-are-weights.vercel.app** — opens without sign-in |
+| **Artifact** | **https://demonstrations-are-weights.vercel.app**, opens without sign-in |
 | **One-page summary** | [`docs/concept-summary.pdf`](docs/concept-summary.pdf) |
-| **Defense sheet** | [`docs/defense.md`](docs/defense.md) — every on-screen number mapped to the script that makes it |
+| **Defense sheet** | [`docs/defense.md`](docs/defense.md): every on-screen number mapped to the script that makes it |
 | **Run locally** | `npm run dev` → http://localhost:8080 |
-| **Tests** | `npm test` — 12 gates, 236 checks, no GPU and no network |
+| **Tests** | `npm test`: 12 gates, 236 checks, no GPU and no network |
 
 Submitted to **DataForge 2026, Pathway track ("Explain the Frontier")**, on the concept of
 **test-time adaptation: optimization versus context**.
@@ -49,12 +49,12 @@ Submitted to **DataForge 2026, Pathway track ("Explain the Frontier")**, on the 
 ## Contents
 
 - [Who this is for](#who-this-is-for)
-- [What you are looking at](#what-you-are-looking-at) — the three pages
+- [What you are looking at](#what-you-are-looking-at): the three pages
 - [The idea, in three steps](#the-idea-in-three-steps)
-- [Where this sits](#where-this-sits) — against Transformers, and what constant memory trades
-- [What we measured](#what-we-measured) — six results, each with its script and its caveat
+- [Where this sits](#where-this-sits): against Transformers, and what constant memory trades
+- [What we measured](#what-we-measured): six results, each with its script and its caveat
 - [The two models](#the-two-models)
-- [Against a transformer](#against-a-transformer) — cost, structure, bits/byte, replication
+- [What BDH buys, measured](#what-bdh-buys-measured): cost, sparsity, bits/byte, replication
 - [How it is built](#how-it-is-built)
 - [The test suite, and what each gate caught](#the-test-suite-and-what-each-gate-caught)
 - [Reproducing](#reproducing)
@@ -66,10 +66,11 @@ Submitted to **DataForge 2026, Pathway track ("Explain the Frontier")**, on the 
 
 A data scientist or ML engineer who can read a Transformer diagram and has not yet met a
 post-Transformer architecture. No BDH background is assumed, and nothing needs a GPU, an install,
-or a sign-in — the models run in the browser tab.
+or a sign-in: the models run in the browser tab.
 
-**Prerequisites.** Attention as a matrix product (that `QKᵀV` is three multiplications — you need
-not have implemented one); what a KV cache is and why it grows; that softmax normalises across a
+**Prerequisites.** Attention as a matrix product (that `QKᵀV` is three multiplications, though
+you need not have implemented one); what a KV cache is and why it grows; that softmax normalises
+across a
 whole row.
 
 **Learning objectives.** After using the artifact a learner can:
@@ -85,7 +86,7 @@ whole row.
 Three pages, in order. [`index.html`](web/index.html) is the front door and states the above on
 screen.
 
-### 1. THE FIELD — what does a whole model look like while it is thinking?
+### 1. THE FIELD: what does a whole model look like while it is thinking?
 
 12,288 neurons in hand-rolled WebGL2, positioned by a force-directed layout over the model's own
 standing synapse graph. Playback scrubs through the sentence; you can pan, zoom, and click any
@@ -96,24 +97,24 @@ neuron to pin it and draw its synapses.
 <sup>**Six iterations of one operator, not six layers.** BDH is weight-tied: `encoder`,
 `decoder_x` and `decoder_y` are built once and reused, so `n_layer` is an iteration count. Here the
 same weights are applied six times to the same sentence, at the same byte. The neuron count rises
-across the tiles while the overlap with iteration 1 falls and then settles — the shared operator
+across the tiles while the overlap with iteration 1 falls and then settles. The shared operator
 *recruits*, then converges. The tile labels carry the overlap, because six similar-looking clouds
 without it teach nothing.</sup>
 
 ![The same six tiles playing: as the sentence advances, every tile's neuron count and overlap figure updates live](docs/media/field_all_six_iterations.gif)
 
-<sup>**The same view, playing — which is what makes it evidence.** A still shows one token, and
+<sup>**The same view, playing, which is what makes it evidence.** A still shows one token, and
 the fair objection to the tiles above is that their numbers could be a single lucky sample. Watch
 the labels instead of the clouds: every count and every overlap recomputes as playback advances,
 and the shape survives it. Two frames a few seconds apart read `593 · 597 · 732 · 697 · 769 · 807`
 neurons lit at 40% → 30% overlap with iteration 1, and `542 · 555 · 633 · 748 · 822 · 803` at
 41% → 29%. On both, and on the frames between, the count is higher at iteration 6 than at
-iteration 1 while the overlap never rises — the operator keeps bringing new neurons in and the
+iteration 1 while the overlap never rises. The operator keeps bringing new neurons in and the
 population it is working with keeps drifting away from where it started. Neither trend is strictly
 monotonic step to step, which is why the claim is about the run and not about any one pair of
 tiles. The bright cluster on the left fires in all six on every frame; the interior is what fills
-in. That difference — neurons the model always uses, against neurons it recruits on later
-passes — is only visible in motion.</sup>
+in. That difference, between neurons the model always uses and neurons it recruits on later
+passes, is only visible in motion.</sup>
 
 ![Causal attention drawn as arcs, with negative scores shown as a distinct hue](docs/media/field-attention-arcs.gif)
 
@@ -122,7 +123,7 @@ before they meet, so scores between distant tokens can go negative and cancel ea
 the corpus **34.3% of causal scores are negative** (14.7%–38.5% per sentence). The page computes
 the per-sentence figure live and prints the pooled one beside it.</sup>
 
-### 2. THE LOOP — what actually happens inside one iteration?
+### 2. THE LOOP: what actually happens inside one iteration?
 
 Eight stops through a single block, over a persistent architecture diagram that stays on screen
 the whole way.
@@ -130,15 +131,15 @@ the whole way.
 ![The flow diagram: eight columns from input byte to next-byte distribution, every edge a real number](docs/media/loop-flow-diagram.gif)
 
 <sup>**Stop 0: the whole block, as eight columns.** `byte → v* → Dₓ → ReLU x → σ read-out a* →
-Dᵧ⊙x y → E + Δv → lm_head`. Every edge's width and colour is `weight × source activation` — the
-actual term that source contributes to that target — read from the shipped tensors, not
+Dᵧ⊙x y → E + Δv → lm_head`. Every edge's width and colour is `weight × source activation`, the
+actual term that source contributes to that target, read from the shipped tensors, not
 illustrated. The column headers carry the live counts: `95.1% below zero` after `Dₓ`,
 `626 firing · 5.09%` after the ReLU, `117 firing · 0.95%` after the gate. Fewer than one neuron in
 a hundred reaches the residual.</sup>
 
 ![Clicking a neuron traces its path forward and backward across the diagram](docs/media/loop-neuron-trace.gif)
 
-<sup>**Click any node and it traces.** Not just the edges touching it — the full path in both
+<sup>**Click any node and it traces.** Not just the edges touching it: the full path in both
 directions to the ends of the graph, brightness by hop, everything off the path in a hueless grey
 so colour keeps meaning sign. The card reports how far it reached: `3 direct · 10 on its path,
 across 6 of 8 columns`. The clip also steps the iteration selector, which is why the sparsity
@@ -149,10 +150,10 @@ readouts move between frames.</sup>
 <sup>**The eight stops.** One of them is the RoPE stop, whose polar plot draws a single token's
 neuron pairs before and after rotation: every un-rotated key sits inside the non-negative quadrant
 because it just came out of a ReLU, and `111 of 3,072` rotated components have gone below zero.
-σ on this page is not shipped — it is accumulated in your browser from the model's own rank-one
+σ on this page is not shipped. It is accumulated in your browser from the model's own rank-one
 writes, and a gate proves the accumulation is right by breaking it two ways.</sup>
 
-### 3. THE PRICE — what is the claim, and what does it cost?
+### 3. THE PRICE: what is the claim, and what does it cost?
 
 A twelve-slide deck. The 131K model runs live here: the forward pass, σ, the
 parallel↔recurrent residual, the three ablation toggles, and the capacity sweep are all computed
@@ -177,11 +178,11 @@ outₜ  =  σₜᵀ rope(Q)ₜ
 
 This is not an approximation. The official MIT `bdh.py` run both ways agrees to
 **2.8 × 10⁻¹⁴ in float64** ([`research/verify_equivalence.py`](research/verify_equivalence.py)).
-Each demonstration you put in the prompt is literally a rank-one update to a weight matrix — which
+Each demonstration you put in the prompt is literally a rank-one update to a weight matrix, which
 is why the claim is not a metaphor.
 
-**3. The obvious intuition about *why* is wrong.** BDH makes three unusual choices — no softmax,
-`Q = K`, and a ReLU that forces activations non-negative — and it is tempting to assume all three
+**3. The obvious intuition about *why* is wrong.** BDH makes three unusual choices (no softmax,
+`Q = K`, and a ReLU that forces activations non-negative), and it is tempting to assume all three
 buy the constant-size state. Ablate them one at a time and only one does. That is the hinge the
 whole artifact turns on, and it is a one-click experiment on THE PRICE.
 
@@ -191,14 +192,14 @@ The honest positioning first, then the measurement.
 
 | | What adapts at inference | State per extra token | What you can inspect | Runs here? |
 |---|---|---|---|---|
-| **Decoder-only Transformer** (GPT-style) | the context window | K and V per layer — **grows linearly** | attention maps | — |
-| **Linear attention / DeltaNet** | a recurrent state | **constant**; DeltaNet replaces the additive write with a delta rule | the state, in principle | — |
-| **BDH** (public, MIT) | a recurrent state σ, written rank-one per token | **constant** | sparse activations **and a standing synapse graph** | **yes — we train and run it** |
-| **BDH-CQ** | a recurrent state, general update `U_θ` | constant; dimensions undisclosed | nothing published | no — no public weights or API |
-| **HRM / TRM** | the **weights** — a backward pass per task | no context state of this kind | — | no — cited only |
+| **Decoder-only Transformer** (GPT-style) | the context window | K and V per layer, **growing linearly** | attention maps | |
+| **Linear attention / DeltaNet** | a recurrent state | **constant**; DeltaNet replaces the additive write with a delta rule | the state, in principle | |
+| **BDH** (public, MIT) | a recurrent state σ, written rank-one per token | **constant** | sparse activations **and a standing synapse graph** | **yes, we train and run it** |
+| **BDH-CQ** | a recurrent state, general update `U_θ` | constant; dimensions undisclosed | nothing published | no public weights or API |
+| **HRM / TRM** | the **weights**, via a backward pass per task | no context state of this kind | | cited only |
 
 The comparison that matters is against a decoder-only Transformer, because that is the one where
-both architectures are doing the same job — decoding one token at a time, carrying whatever they
+both architectures are doing the same job: decoding one token at a time, carrying whatever they
 need from what came before. That comparison is exact, and it is the next section.
 
 ### What constant memory buys, and what it costs
@@ -207,7 +208,7 @@ need from what came before. That comparison is exact, and it is the next section
 the context length, σ is the same size. What that guarantee costs is a fixed premium at short
 context, and the honest version of the claim says which side of the line a given model sits on.
 [`research/compare_memory.py`](research/compare_memory.py) computes both from the two configs this
-repo ships — no weights and no torch required, so it runs on a clean clone.
+repo ships, with no weights and no torch required, so it runs on a clean clone.
 
 | Model | KV cache, same D/L/H | BDH state σ | Crossover | At its own context |
 |---|---|---|---|---|
@@ -229,7 +230,7 @@ crossover at `N·H = N_total`, twice as far out.
 
 Below the crossover you are paying the premium for the guarantee; above it you are collecting on
 it, and the gap keeps widening because one curve is flat and the other is not. Both of our models
-are trained below their own line — a 12,288-neuron model wants contexts past 6,144 bytes to start
+are trained below their own line. A 12,288-neuron model wants contexts past 6,144 bytes to start
 banking the trade, and ours was trained at 512. That is a statement about the checkpoints we have,
 not about the architecture: the line moves with `N_total`, and it is the only quantity that sets it.
 
@@ -238,13 +239,13 @@ not about the architecture: the line moves with `N_total`, and it is the only qu
 Everything below is produced by a named script in this repo. Nothing is quoted from memory, and
 nothing on any page is typed in by hand.
 
-### 1. The parallel↔recurrent equivalence is exact — and only one choice is load-bearing
+### 1. The parallel↔recurrent equivalence is exact, and only one choice is load-bearing
 
 `research/verify_equivalence.py` · `npm run test:equivalence` · live on THE PRICE
 
 | Check | Result |
 |---|---|
-| float64 residual, parallel vs recurrent | `2.8e-14` — exact |
+| float64 residual, parallel vs recurrent | `2.8e-14`, exact |
 | Browser JS vs PyTorch logits | `5.2e-7` worst relative, argmax agreement 100% |
 | `Q ≠ K` | equivalence **survives** (`1.7e-5`) |
 | no ReLU | equivalence **survives** (`1.6e-5`) |
@@ -268,7 +269,7 @@ both rows; the only difference between them is the ReLU on the keys:
 | **non-negative keys** (BDH) | 100% | 99% | 94% | 75% | 48% | 23% | 14% | 10% |
 | **signed keys** (counterfactual) | 100% | 100% | 100% | 100% | 100% | 100% | 99% | 96% |
 
-The counterfactual is what makes this a mechanism rather than a curve — same state, same size,
+The counterfactual is what makes this a mechanism rather than a curve: same state, same size,
 same rank bound, one ReLU removed. Mean pairwise cosine is **+0.320** for ReLU'd keys against
 **−0.000** for signed, and +0.320 is not noise: it is analytic, **1/π = 0.3183** for rectified
 Gaussians. Non-negative vectors cannot be near-orthogonal, so they interfere. At k = 128 the signed
@@ -276,7 +277,7 @@ state still retrieves 100% and the non-negative one 48%.
 
 That is the price of the thing the architecture is for. The same ReLU that puts these keys in the
 positive orthant is what makes activations sparse and readable, what makes `G*` a graph you can
-draw, and what makes a synapse interpretable as a synapse — results 3, 4 and 6 below all rest on
+draw, and what makes a synapse interpretable as a synapse. Results 3, 4 and 6 below all rest on
 it. A model that spends its capacity this way is buying something specific with it.
 
 Careful with the attribution, both directions: **that non-negativity buys interpretability is the
@@ -284,7 +285,7 @@ Dragon Hatchling paper's claim**, and it is cited to them. **That it caps capaci
 measurement.** The ceiling is a known property of the whole linear-attention family rather than
 anything peculiar to BDH: DeltaNet ([2406.06484](https://arxiv.org/abs/2406.06484)) replaces "the
 additive update in linear transformers" with a delta rule and reports it more effective at
-associative recall — and that additive update is precisely BDH's write. Our contribution is the
+associative recall, and that additive update is precisely BDH's write. Our contribution is the
 constant, and the counterfactual that isolates the cause.
 
 ### 3. Structure predicts function: `G*` says which neurons stay silent, from the weights alone
@@ -302,14 +303,14 @@ with **no data whatsoever**. Yet on 7 sentences of real French:
 - Firing is brutally concentrated: the top 1% of neurons account for **19.3%** of all firing.
 
 Two things were added later that decide how much weight this can carry, and both are in
-[Against a transformer](#against-a-transformer): a **shuffled null** puts the same prediction at
+[What BDH buys, measured](#what-bdh-buys-measured): a **shuffled null** puts the same prediction at
 **MCC -0.001**, so +0.944 is a fact about `G*` and not about base rates; and the independently
 trained **Portuguese** sibling reproduces it at **+0.908**, so it is a fact about the architecture
 and not about one run.
 
 It is also the one picture a Transformer does not offer. The nearest analogue,
 `W_out[l] @ W_in[l+1]`, is a map between *two different* neuron populations rather than one shared
-one, and at the same p99 threshold only **0.1%** of GPT-2's MLP neurons are isolated in it — so
+one, and at the same p99 threshold only **0.1%** of GPT-2's MLP neurons are isolated in it, so
 there is almost nothing for isolation to predict. `G*` exists because BDH is weight-tied and its
 attention is a bilinear form over a single neuron basis. That is why THE FIELD is laid out on `G*`
 rather than on an embedding projection, and it is why the hero image has a dark region: that is the
@@ -323,12 +324,12 @@ threshold moves.
 
 `research/plot_training.py`, from the training run's own telemetry
 
-Nothing in the objective encourages sparsity — no L1 term, no k-winners-take-all, no threshold.
+Nothing in the objective encourages sparsity: no L1 term, no k-winners-take-all, no threshold.
 The only structural pressure is the ReLU. The curve that comes out has a shape worth reading:
 
 ![Neuron activity across training: 49.9% at init, collapsing to 3.11%, then climbing back to 5.09% as loss falls](docs/media/sparsity-emergence.png)
 
-- At initialisation **49.9%** of neurons are active — exactly what a ReLU on roughly symmetric
+- At initialisation **49.9%** of neurons are active, exactly what a ReLU on roughly symmetric
   pre-activations gives you. Half of everything, on for no reason.
 - By iteration 2,500 it has collapsed to **3.11%**. The network's first move is to switch most of
   itself off.
@@ -336,7 +337,7 @@ The only structural pressure is the ReLU. The curve that comes out has a shape w
   The end state is not the sparsest one it ever visited; it is the sparsest one it can afford at
   that loss.
 - The gate `y = ReLU(Dᵧ a) ⊙ x` tracks the same shape an order of magnitude lower, ending near
-  **0.92%** — an AND of two sparse conditions.
+  **0.92%**, an AND of two sparse conditions.
 
 The endpoint corroborates a number this repo measures independently. The training probe lands at
 5.09% on three sentences through the training run's own instrumentation; our export pipeline, a
@@ -365,15 +366,15 @@ what the precondition is actually doing:
 | merged, RoPE rebuilt at the new width | 1261.6 | 1171.5 | 45,443 |
 | control: paper recipe, `E` scaled by ½ | 563.8 | 524.7 | 20,298 |
 
-The merged model emits `iiiiiiii`. It is **not** a RoPE bug — concatenating the frequency buffer
-exactly as the paper says still collapses. It is **not** a magnitude bug — halving `E` halves the
+The merged model emits `iiiiiiii`. It is **not** a RoPE bug: concatenating the frequency buffer
+exactly as the paper says still collapses. It is **not** a magnitude bug: halving `E` halves the
 logits exactly, halves the loss, and changes nothing about the output.
 
 What is left is the precondition, and ruling the other two causes out is what turns it from an
 assumption into a result: **concatenation along `n` is structurally well defined, but a neuron's
 *meaning* is only shared between models descended from one initialisation.** The paper's Table 2
 reports 0.39–1.45 for forked models and we have no base to fork from, so this says nothing against
-that result — it measures what the shared initialisation was carrying. We say so on the page, too.
+that result. It measures what the shared initialisation was carrying. We say so on the page, too.
 
 ### 6. Concept selectivity, measured against a permutation null
 
@@ -385,21 +386,21 @@ Our first pass at this reported 200 neurons at selectivity 1.0 with nothing to c
 permutation null** (labels shuffled, activations held fixed, 2,000 draws): 7,040 neurons fire at
 all, **2,692 beat their own 95th percentile** against ~352 expected by chance (7.65×), and **1,836
 survive Benjamini–Hochberg at 5% FDR**. Null p95 runs 0.59–0.93 for the top neurons, which is why
-the number needed the null to mean anything — and 1,836 neurons clearing it is the version of the
+the number needed the null to mean anything, and 1,836 neurons clearing it is the version of the
 claim that holds up.
 
 ## The two models
 
 Both are ours and both run. Neither is an official BDH model, and neither is BDH-CQ.
 
-### 8M translation BDH — Europarl, byte-level, trained from scratch
+### 8M translation BDH: Europarl, byte-level, trained from scratch
 
 An English→French byte-level BDH: 6 layers × D=192 × 4 heads, N=3,072 per head → **12,288 neurons,
 7,962,624 parameters**, a vocabulary of 256 raw bytes and no tokenizer of any kind. It is the
-substrate for nearly everything in this repo — the field's 12,288 dots, `G*`, the 5.13% sparsity,
+substrate for nearly everything in this repo: the field's 12,288 dots, `G*`, the 5.13% sparsity,
 the negative attention scores, the flow diagram's edge values. Trained for 50,000 iterations at
 32,768 tokens per step (**1.64 B tokens**) on one A100 in roughly 50 minutes, to **val loss 0.670
-nats/byte — 0.967 bits per byte**.
+nats/byte, or 0.967 bits per byte**.
 
 It translates. Greedy decodes from `<F:en>{source}<T:fr>`, straight out of `french_best.pt`:
 
@@ -413,18 +414,18 @@ It translates. Greedy decodes from `<F:en>{source}<T:fr>`, straight out of `fren
 | The budget was discussed at length yesterday | Le budget a été discuté hier *lors de la discussion de la prochaine session* |
 
 The last two are the honest half of the picture and they are worth reading closely. Agreement,
-gender, elision and accents are right throughout — at 8M parameters, from raw bytes, with no
-tokenizer — and then the sentence runs out of grounding and completes itself with fluent
+gender, elision and accents are right throughout, at 8M parameters, from raw bytes, with no
+tokenizer, and then the sentence runs out of grounding and completes itself with fluent
 parliamentary filler: `avant la fin de l'année` becomes `avant l'avenir de l'année prochaine`. The
 failure is fluent rather than garbled, which is the same signature the artifact teaches on THE
-PRICE — when the state does not hold the binding, the model does not hedge.
+PRICE: when the state does not hold the binding, the model does not hedge.
 
 | | |
 |---|---|
-| Parameters | **7,962,624** — and there are no per-layer weights |
-| Layers (`n_layer`) | 6 — an **iteration count of one shared operator**, not depth |
+| Parameters | **7,962,624**, with no per-layer weights |
+| Layers (`n_layer`) | 6, an **iteration count of one shared operator**, not depth |
 | Width | `D` 192 · 4 heads · `N` 3,072/head → **12,288 neurons** |
-| Vocabulary | 256 — raw bytes |
+| Vocabulary | 256 raw bytes |
 | Data | Europarl v7 en–fr, interleaved as `<F:en>{source}<T:fr>{target}`, 95/5 split |
 | Context · batch | 512 bytes · 32 × 2 accumulation = 32,768 tokens/step |
 | Schedule | 50,000 iters, AdamW, lr 1e-3 → 1e-4 cosine, 1,000 warm-up, wd 0.1, clip 1.0 |
@@ -433,13 +434,13 @@ PRICE — when the state does not hold the binding, the model does not hedge.
 
 Weight tying is why the parameter count is what it is: `encoder`, `decoder_x` and `decoder_y` are
 built once and reused inside `for L in range(n_layer)`, so the total is `3·H·D·N + 2·vocab·D` with
-no `n_layer` term anywhere. Six "layers" is one operator applied six times — which maps onto
+no `n_layer` term anywhere. Six "layers" is one operator applied six times, which maps onto
 BDH-CQ's Eq. (3) `H_{r+1} = F_θ(H_r, S_K)`, and is why the artifact can show all six iterations of
 the *same* weights side by side.
 
 Two deviations from reference BDH, inherited from the checkpoint and stated wherever its numbers
 appear on screen: a **learned positional embedding** (`pos_emb`, 4096 × D) on top of RoPE, and **no
-decay term**. Everything else is faithful in the respects the artifact depends on — weight-tied,
+decay term**. Everything else is faithful in the respects the artifact depends on: weight-tied,
 `Q = K = ReLU(D_x · LN(v))`, `V = LN(v)`, no softmax, strictly causal `tril(-1)`, RoPE inside
 attention.
 
@@ -453,16 +454,16 @@ the weights are GitHub Release assets, because 96 MB files do not belong in a cl
 gh release download v1.0-models -p 'french_best.pt' -D models/checkpoints/
 ```
 
-### 131K cipher BDH — trained here, runs in your browser
+### 131K cipher BDH: trained here, runs in your browser
 
 Trained by [`research/train.py`](research/train.py) on an in-context substitution cipher
 ([`research/cipher_task.py`](research/cipher_task.py)) that resamples a **fresh bijection per
 example**, so the mapping exists only in the prompt. The only way to answer is to read it out of
 the recurrent state. Source symbols render as shapes and targets as colours, which makes the task
-a visual miniature of BDH-CQ §6.3 — a fresh colour permutation defined entirely by demonstrations.
+a visual miniature of BDH-CQ §6.3, a fresh colour permutation defined entirely by demonstrations.
 
 Exported to fp16 (`web/public/model.bin`, 257 KB) and re-implemented as a hand-written forward
-pass in plain typed arrays ([`web/src/bdh.js`](web/src/bdh.js)) — 20–85 ms per forward, no WebGPU
+pass in plain typed arrays ([`web/src/bdh.js`](web/src/bdh.js)) at 20–85 ms per forward, no WebGPU
 needed. Parity against PyTorch: **5.2e-7 worst relative logit error** with every argmax agreeing.
 
 Accuracy, trained on k ∈ [2,12] with a 48-symbol alphabet (chance = 2.1%):
@@ -475,123 +476,109 @@ Accuracy, trained on k ∈ [2,12] with a 48-symbol alphabet (chance = 2.1%):
 99% at k = 16 when measured directly. Conflating the two is a factual error, and the artifact
 teaches them as separate lessons on separate slides.
 
-## Against a transformer
+## What BDH buys, measured
 
-Everything below is measured by a script in this repo, on the models this repo ships, and written
-to `research/runs/*.json` so the tables cannot drift from what was run.
+Five results on the 8M model. Every number below is produced by a script in this repo and written
+to `research/runs/*.json`, so the tables cannot drift from what was actually run.
 
-**Read this first, because it governs every number in the section.** We did not train a control.
-A parameter-matched Transformer on the same bytes at the same budget is the experiment that would
-isolate an architecture's contribution, and we did not have the GPU time for it. So the baselines
-here are *public pretrained models* — other people's, on other data, at other scales, with other
-tokenizers. **None of this is an ablation and none of it says BDH is better than a Transformer.**
-What each comparison is good for is stated where it appears, and the two that carry real weight are
-the ones needing no baseline at all: an exact cost model, and a within-model null.
+One thing worth saying once, before the numbers. We did not train a parameter-matched Transformer
+on the same bytes at the same budget, so the public models here are reference points rather than
+controls, and no row of them isolates an architecture's contribution by itself. Two of the five
+results need no baseline at all: an exact cost model, and a null drawn from BDH's own weights.
 
-### 1. What it costs to run — measured, not derived
+### It carries a fixed state, and past 6,144 bytes that is the cheaper one
 
 `research/compare_runtime.py`
 
-`BigBDH.forward` is the *parallel* form: it re-reads the whole prefix every call, which is the same
-cost profile as the thing it is meant to beat. Timing that would have measured the wrong object, so
-this script first builds the **recurrent** decode at 8M scale — σ of shape `N × D` per layer and
-head, read then written one rank-one update at a time — and checks it against the parallel forward:
+BDH's attention has an exact recurrent form, and it now runs at 8M scale: a state `σ` of shape
+`N × D` per layer and head, read once and written once per token, with no prefix to revisit. It
+reproduces the parallel forward the model was trained with.
 
 | | |
 |---|---|
-| recurrent vs parallel, worst relative logit error | **5.96e-7** (float32) |
-| negative control: the write moved before the read | 5.3e-1 — **897,000× worse** |
+| recurrent decode against the parallel forward | **5.96e-7** worst relative logit error, float32 |
+| the same step with the write moved before the read | 5.3e-1, or **897,000× worse** |
 
-The control is the point. `tril(-1)` is strictly causal, so token *t* attends to *s < t* and not to
-itself; a tolerance that would accept the wrong order proves nothing. With the recurrence verified,
-the cost model becomes measurable rather than arithmetic:
+The second row is what makes the first one mean something. `tril(-1)` is strictly causal, so token
+*t* attends to everything before it and never to itself, and a tolerance loose enough to accept the
+wrong order would prove nothing.
+
+Running that way, the cost of decoding becomes measurable rather than derived.
 
 | context | 64 | 512 | 4,096 | 8,192 | 16,384 |
 |---|---|---|---|---|---|
-| KV cache, same D/L/H (fp16) | 0.3 MB | 2.4 MB | 18.9 MB | 37.8 MB | **75.5 MB** |
-| BDH state σ | 28.3 MB | 28.3 MB | 28.3 MB | **28.3 MB** | **28.3 MB** |
+| KV cache, same D/L/H, fp16 | 0.3 MB | 2.4 MB | 18.9 MB | 37.8 MB | **75.5 MB** |
+| BDH state `σ` | 28.3 MB | 28.3 MB | 28.3 MB | **28.3 MB** | **28.3 MB** |
 
-![Measured: the KV cache grows while BDH's state stays flat, crossing where the arithmetic says it will](docs/media/runtime-crossover.png)
+![The KV cache grows without bound while BDH's state stays flat, crossing where the arithmetic says it will](docs/media/runtime-crossover.png)
 
-`compare_memory.py` predicts the crossover at `N_total/2 = 6,144`; the measured curves cross between
-4,096 and 8,192, the first sampled point past it. **The arithmetic survives measurement.**
+`compare_memory.py` puts the crossover at `N_total / 2 = 6,144` bytes from the architecture alone,
+with `D`, `L` and the dtype all cancelling. The measured curves cross between 4,096 and 8,192, the
+first sampled point past it. The arithmetic survives measurement.
 
-**The latency half reports a null, and the script says so on its own output.** At `D = 192` with
-four heads of 48 dimensions, one decode step is a few MFLOP — far too little to occupy a GPU — so
-both models sit on a floor of kernel-launch overhead, and per-token time is flat for *both* —
-across a **256-fold** increase in context it changes by ×0.97 for BDH and ×1.02 for the Transformer
-(4.5–5.4 ms and 2.9–3.2 ms respectively). The predicted compute crossover at `N_total` is simply
-not observable at this model size on this hardware. What
-the numbers do support is the shape: BDH's per-token cost does not depend on context because it has
-no prefix to re-read, and below the crossover it pays a premium in time for the same reason it pays
-one in bytes — it moves its whole 28.3 MB state on every token however little context there is.
-`recurrent_step` is a readable reference implementation, not a tuned kernel; do not quote it as a
-throughput benchmark.
+Latency at this scale is a null and is reported as one. Per-token time is flat for both models
+across a 256-fold increase in context: ×0.97 for BDH and ×1.02 for the Transformer, at 4.5 to
+5.4 ms and 2.9 to 3.2 ms. At `D = 192` a single decode step is a few MFLOP, too little to occupy a
+GPU, so both sit on a kernel-launch floor and the predicted compute crossover at `N_total` is not
+visible on this hardware. The recurrent step is a readable reference implementation rather than a
+tuned kernel.
 
-Getting that null to be *stable* took three tries and is worth recording. Timing one step measures
-Python, not the model, so each point times 32 consecutive tokens and divides. Latency is
-contaminated upwards only, so the estimator is the **minimum** over repetitions rather than the
-median — on a laptop GPU the median is largely a picture of the thermal state. And a single sweep
-is still not enough: one pass reported the last context as **3.4× faster** than the first, which is
-nonsense, so each point is the minimum of three independent sweeps. The figure plots only the
-memory panel, because a flat-but-noisy curve on a log axis reads as structure that is not there.
-
-### 2. What you can see inside it — with a null, and with a contrast
+### Almost all of it is switched off, and the weights predict which parts
 
 `research/compare_structure.py`
 
-**The definitional trap first, because getting it wrong would be a cheap win.** BDH's `x = ReLU(·)`
-produces exact zeros, so "active" is unambiguous. GPT-2's MLP uses GELU, which is *never* exactly
-zero — so any comparison has to name its predicate. All three are reported:
+BDH's `x = ReLU(·)` produces exact zeros. GPT-2's MLP uses GELU, which never does, so "active" has
+to mean a magnitude before the two are comparable at all. On the one predicate common to both, BDH
+computes in a regime **17.5× sparser**.
 
-| | exactly zero | > 0 | **above 1% of that token's peak** |
+| | exactly zero | above zero | **above 1% of that token's peak** |
 |---|---|---|---|
 | **8M BDH**, on the French it generates | 94.8% | 5.17% | **4.93%** |
 | **GPT-2** (124M), on English | 0.1% | 16.2% | **86.3%** |
 | **GPT-2**, on the same French | 0.0% | 14.1% | **87.5%** |
 
-The third column is the honest one, and the gap on it is **17×**. The third row is the robustness
-check: GPT-2's density barely moves between English and French, so the contrast is not an artifact
-of measuring each model on different text. BDH's `> 0` figure lands at 5.17% against the
-**5.13%** this repo reports elsewhere — a fourth code path on a different corpus, agreeing to four
-hundredths of a percentage point.
+![Two grids of 10,000 cells: 493 lit for BDH against 8,629 for GPT-2](docs/media/sparsity-grid.png)
 
-**Does structure predict function?** `G* = Dₓᵀ Eᵀ` is computed from the weights with no data at all,
-and isolation in it predicts which neurons never fire on real text at **MCC +0.940**. What licenses
-that claim is the null, not the baseline:
+The third row is a robustness check. GPT-2's density barely moves between English and French, so
+the contrast belongs to the architectures rather than to the text each model was handed. BDH's own
+"above zero" figure lands at 5.17% against the **5.13%** this repo reports elsewhere, a fourth
+independent code path agreeing to four hundredths of a percentage point.
+
+Sparsity is half of it. The other half is that you can say in advance which parts stay dark.
+`G* = Dₓᵀ Eᵀ` is computed from the weights with no data whatsoever, and isolation in that graph
+predicts which neurons never fire on real French.
 
 | | MCC | isolated share |
 |---|---|---|
-| **BDH**, `G*` isolation → silence | **+0.940** | 38.7% |
-| **BDH, shuffled null** (200 draws, degrees permuted) | **−0.001** (p95 +0.013) | — |
-| GPT-2, `W_out[l] @ W_in[l+1]` isolation → silence | −0.004 | **0.1%** |
+| **BDH**, `G*` isolation against silence | **+0.940** | 38.7% |
+| the same prediction with degrees shuffled, 200 draws | **−0.001** (p95 +0.013) | |
+| GPT-2, `W_out[l] @ W_in[l+1]` isolation against silence | −0.004 | **0.1%** |
 
-The null collapsing to zero is what makes +0.940 a fact about `G*` rather than about base rates.
+The shuffled null is what turns +0.940 into a fact about `G*` rather than a fact about base rates,
+and it needs no baseline to draw.
 
-**The GPT-2 row is not a defeat for GPT-2 and must not be reported as one.** Look at its isolated
-share: at the same p99 threshold, **0.1%** of its MLP neurons are disconnected, so there is almost
-nothing for isolation to predict. That is the actual finding, and it is structural rather than
-numerical. `G*` exists because BDH is **weight-tied** — one neuron population, the same matrices
-every iteration — and because its attention is a bilinear form over that one basis. A Transformer's
-layer *l* and layer *l+1* hold *different* neurons, and its token mixing runs through a softmax
-computed from the data that is nowhere in the weights. The question "which neurons will never fire,
-from the weights alone" is well posed for one architecture and not for the other. That is what
-weight-tying buys, and it is the strongest claim in this section.
+The GPT-2 row is not a scoreboard, and the number to read in it is 0.1%, not −0.004. At the same
+threshold almost none of its MLP neurons are disconnected, so isolation has nothing to predict.
+That difference is structural. `G*` exists because BDH is **weight-tied**: one neuron population,
+the same three matrices at every iteration, and an attention that is a bilinear form over that
+single basis. A Transformer's layer *l* and layer *l+1* hold different neurons, and its token
+mixing runs through a softmax computed from the data rather than stored in the weights. "Which
+neurons will never fire, from the weights alone" is a question you can put to one architecture and
+not to the other.
 
-### 3. What it knows — bits per byte, on two sets
+### At 8M it reads held-out Europarl better than a 560M model
 
 `research/compare_quality.py`
 
-Loss has always been quoted here as 0.670 nats/byte, which is comparable to nothing, because every
-other model reports loss per token under its own tokenizer. **Bits per byte is tokenizer-agnostic**,
-so every model below is measured on the same text, in the same 480-character windows, scored on the
-second half of each window, divided by the same UTF-8 byte count, and — after the mistake described
-below — run in the same numerical regime.
+Loss here was always quoted as 0.670 nats/byte, a figure comparable to nothing, because every other
+model reports loss per token under its own tokenizer. Bits per byte is tokenizer-agnostic. Every
+model below sees the same text in the same 480-character windows, is scored on the second half of
+each window, is divided by the same UTF-8 byte count, and runs in the same numerical regime.
 
-Two evaluation sets, because one would be misleading. Two confounds run in opposite directions and
-both are named: our model is a **specialist** trained on exactly the in-domain format, which
-flatters us there; and Europarl v7 is old and public, so it is plausibly inside the public models'
-**pretraining data**, which flatters them.
+Two evaluation sets, because one would mislead. Two confounds run in opposite directions and both
+are named. Our model is a specialist trained on exactly the in-domain format, which flatters us
+there. Europarl v7 is old and public, so it is plausibly inside the public models' pretraining
+data, which flatters them.
 
 | model | params | in-domain (held-out Europarl) | out-of-domain (French prose) |
 |---|---|---|---|
@@ -600,116 +587,128 @@ flatters us there; and Europarl v7 is old and public, so it is plausibly inside 
 | SmolLM2-135M | 135M | 1.245 | 1.696 |
 | GPT-2 | 124M | 1.693 | 2.168 |
 
-<sup>bits per byte, lower is better; ~29,400 and ~30,600 scored bytes per model, agreeing within
-0.2% across models because the windows are cut on character boundaries and the scored span is
+<sup>bits per byte, lower is better; roughly 29,400 and 30,600 scored bytes per model, agreeing
+within 0.2% across models because windows are cut on character boundaries and the scored span is
 mapped through each tokenizer's own offsets</sup>
 
-![Bits per byte against parameters. Each model is one vertical line; its length is the generalisation gap](docs/media/efficiency-frontier.png)
+![Bits per byte against parameters. Each model is one vertical line whose length is its generalisation gap](docs/media/efficiency-frontier.png)
 
-**In domain we are first, at one seventieth of the parameters of the model behind us.** Our 8M
-byte-level BDH reads held-out Europarl at **0.904 bits/byte** against BLOOM-560m's 0.974, GPT-2's
-1.693 and SmolLM2-135M's 1.245 — a model trained for about 50 minutes on one A100, with no
-tokenizer, ahead of one 70× its size.
+**In domain it comes first, ahead of a model seventy times its size.** Held-out Europarl at
+**0.904 bits/byte** against BLOOM-560m's 0.974, SmolLM2-135M's 1.245 and GPT-2's 1.693, from a
+model with no tokenizer and about 50 minutes of training on one A100 behind it.
 
-**Out of domain we are last, and by a lot.** On French prose from a different century and genre,
-with no `<F:en>` tags, we read 2.876 against BLOOM's 1.266. That vertical line on the chart is the
-whole story: **a 3.2× specialisation gap**, the largest of the four models by a wide margin. It is
-what a 50-minute specialist buys and what it costs, and it is why the in-domain win is quoted with
-the second column beside it rather than alone. Without that column the first one is not evidence,
-it is a setup.
+**Out of domain it comes last, by a wide margin.** On French prose from a different century and
+genre, with no `<F:en>` tags, it reads 2.876 against BLOOM's 1.266. Each model is one vertical line
+on the chart and the length of that line is its generalisation gap: ours is **3.2×** where the
+other three sit between 1.28× and 1.36×. That is what a 50-minute specialist buys and what it
+costs, and it is why the first column is never quoted without the second. Alone, the first column
+is a setup rather than a finding.
 
-**A finding that came out of getting this wrong, and it matters for anyone reproducing us.**
-The first run measured our model in fp32 and the public models in fp16, which is not a comparison.
-Fixing it surfaced something real: **this checkpoint scores 10% better in bf16 than in fp32** —
-0.671 against 0.748 nats/byte on the identical data, far too large for rounding. BDH's attention
-scores are unnormalised (`Q·Qᵀ`, no softmax, magnitudes in the hundreds), and the model was trained
-under bf16 autocast, so it has adapted to that arithmetic. The bf16 figure reproduces the training
-run's logged 0.6703 to **0.0007 nats**. Every row above is therefore bf16, for every model.
+One technical curiosity travels with these numbers, because anyone reproducing them will meet it.
+**This checkpoint scores about 10% better in bf16 than in fp32**, 0.671 against 0.748 nats/byte on
+identical data, which is far too large a gap to be rounding. BDH's attention scores are
+unnormalised, `Q·Qᵀ` with no softmax and magnitudes in the hundreds, and the model trained under
+bf16 autocast, so it has adapted to that arithmetic. The bf16 figure reproduces the training run's
+logged 0.6703 to within 0.0007 nats. Every row above is bf16, for every model.
 
-Two more things the script does that are easy to get wrong, both disclosed in its docstring: the
-out-of-domain text has typographic quotes folded to ASCII and Gutenberg's 70-column wrapping
-unwrapped, because otherwise most of the penalty is our model meeting `U+2019` for the first time,
-which measures character set rather than genre; and in-domain windows are drawn from 20 scattered
-offsets across the whole 34.5 MB split but **never span two of them**, since a window straddling a
-seam carries context from an unrelated part of the corpus into its scored half. That flaw was worth
-0.083 bits/byte while it was in. (An earlier run also scored the **table of contents** at 10.04
-bits/byte, worse than uniform over 256 bytes. If a byte-level number comes out above 8, look at
-your text before believing your model.)
+**And it translates.** On 162 held-out sentence pairs, greedy-decoded from `<F:en>{source}<T:fr>`,
+it scores **chrF 36.16** and BLEU 8.25. `Helsinki-NLP/opus-mt-en-fr`, a 75M encoder-decoder built
+for this exact language pair, scores **47.19** and 18.00. It is the better translator and the gap
+is real.
 
-### 4. How long a fixed state holds a binding
+| English | 8M BDH (ours) | opus-mt (75M) | reference |
+|---|---|---|---|
+| I should like to thank the Commission **for listening**. | Je voudrais remercier la Commission **pour le travail qu'elle a réalisé**. | Je voudrais remercier la Commission d'avoir écouté. | ...pour son attention. |
+| I spoke to **Mr Monti** outside. | J'ai par conséquent parlé de **M. Martin Martínez**. | J'ai parlé à M. Monti dehors. | J'ai parlé à M. Monti dehors. |
+| This is **not the first time** we find ourselves debating this subject. | Ce n'est pas le premier **débat qui nous a été dit ce soir**. | Ce n'est pas la première fois que nous débattons de ce sujet. | En effet, ce n'est pas la première fois... |
+
+What the outputs show is worth more than the score. The French is grammatical: agreement, gender,
+elision and accents are right throughout, produced from raw bytes with no tokenizer at all. What
+fails is grounding. The sentence stays fluent and stays parliamentary while drifting off its
+source, and a name the state does not hold becomes a different, entirely plausible name. That is
+the same failure signature THE PRICE is built around, and the same one BDH-CQ reports in its
+Table 9, where 89.7% of failures still have correct output dimensions. A model that is confidently
+wrong in the right shape is a far better thing to study than one that emits noise.
+
+### The state holds a binding, and loses it the way a fixed state must
 
 `research/probe_incontext.py`
 
-The capacity result in result 2 above writes synthetic keys into a synthetic σ. This asks the same
-question *through the trained model*: show it a span, put *d* bytes of filler in between, show the
-span again, and measure how many bits it saved. Against a **matched control** — the identical
-sequence with an unrelated span in the first slot, so the measured span sits at the same position
-after the same filler, and only its earlier presence differs.
+Result 2 above writes synthetic keys into a synthetic `σ`. This asks the same question through the
+trained model: show it a span, put *d* bytes of filler in between, show the span again, and measure
+how many bits it saved. Against a matched control, which is the identical sequence with an
+unrelated span in the first slot, so the measured span sits at the same position after the same
+filler and only its earlier presence differs.
 
 | filler between the two occurrences | 0 | 64 | 128 | 256 | 384 |
 |---|---|---|---|---|---|
 | in-distribution text spans | 0.070 | 0.081 | 0.067 | 0.069 | **0.043** |
 | random byte spans | −0.113 | −0.004 | 0.022 | 0.007 | 0.041 |
 
-<sup>bits/byte saved on the repeat; 40 trials per cell, standard errors 0.01–0.09</sup>
+<sup>bits/byte saved on the repeat; 40 trials per cell, standard errors 0.01 to 0.09</sup>
 
 ![In-context gain against distance, with the flat line an exact KV cache would hold](docs/media/incontext-recall.png)
 
-Two readings, and the second is the more interesting.
+On text the gain is small but consistently positive, **7 of 8 distances at more than two standard
+errors**, and it decays with distance. That is a fixed state holding something and gradually losing
+it. A softmax Transformer's line here is flat by construction, because a KV cache keeps every past
+key exactly at any distance inside its window, which is precisely what it is buying with the memory
+curve in the first result. That reference needs no baseline run to draw.
 
-- On text the gain is small but **consistently positive — 7 of 8 distances at more than two
-  standard errors** — and it decays with distance, which is a fixed state holding something and
-  gradually losing it. A softmax Transformer's line here is **flat by construction**: a KV cache
-  keeps every past key exactly, at any distance inside the window, which is precisely what it is
-  buying with the memory curve in §1. That reference needs no baseline run to draw.
-- On **random** spans the gain is indistinguishable from zero at every distance. This model has not
-  learned a general copy mechanism — nothing in translating Europarl rewards reproducing an
-  arbitrary byte string, and it did not learn to. **In-context retrieval is a trained capability,
-  not a free consequence of having a recurrent state.** That is why the 131K cipher model, whose
-  task cannot be solved any other way, reads its bindings straight out of context and this one does
-  not. It is also a caveat this project's own headline has to carry: demonstrations are weights
-  *in a model trained to use them that way*.
+On **random** spans the gain is indistinguishable from zero at every distance, and that is the more
+interesting half. This model has not learned a general copy mechanism: nothing in translating
+Europarl rewards reproducing an arbitrary byte string, and it did not learn to. **In-context
+retrieval is a trained capability, not a free consequence of having a recurrent state.** It is why
+the 131K cipher model, whose task cannot be solved any other way, reads its bindings straight out
+of context while this one does not, and it is a condition this project's own headline has to carry:
+demonstrations are weights *in a model trained to use them that way*.
 
-### 5. Does any of it replicate?
+### An independently trained sibling reproduces it
 
 `research/replicate_structure.py`
 
-Every structural number above was measured on one checkpoint. The control was in the same directory
-the whole time: the **Portuguese** sibling is the same architecture and recipe on a different
-language pair, from a different initialisation, for a different number of iterations — and it
-shares no weights with the French model, which is what the failed merge in result 5 established.
+Every structural number above was measured on one checkpoint, and the control was in the same
+directory the whole time. The **Portuguese** model is the same architecture and the same recipe on
+a different language pair, from a different initialisation, for a different number of iterations,
+and it shares no weights with the French one, which is exactly what the failed merge in result 5
+established.
+
+![Every measurement on the Portuguese model as a multiple of the French one, against a line at parity](docs/media/replication-dumbbell.png)
 
 | | French (50k iters) | Portuguese (40k iters) |
 |---|---|---|
-| **weights only** — no data involved | | |
+| **weights only**, no data involved | | |
 | neurons with no synapse in `G*` | 38.7% | 34.6% |
 | max out-degree, head 0 | 749 | 718 |
 | neurons carrying half the edge endpoints | 13.4% | 13.9% |
-| **weights and data** — each on its own output | | |
+| **weights and data**, each on its own output | | |
 | `x` active | 5.18% | 4.90% |
 | `y` active, the gate | **0.97%** | **0.98%** |
 | negative causal scores at L3/H0 | 35.3% | 48.0% |
-| ...across iterations 1 → 6 | 58% → 35% | 56% → 39% |
+| across iterations 1 to 6 | 58% to 35% | 56% to 39% |
 | neurons never firing | 36.8% | 31.7% |
 | **MCC(isolated, silent)** | **+0.940** | **+0.908** |
 | P(silent given isolated) | 93.9% | 89.8% |
 
-The heavy tail, the gate's ~1%, the fall in negativity across iterations and the silence prediction
-all reproduce. **These are properties of the architecture, not of one training run.** Two caveats
-travel with the lower half of the table: the two models are measured on different text, because
-each is measured on what it generates rather than on the other's language; and `G*`'s edge budget is
-identical by construction (377,488 for both), because the threshold is a percentile — only the
-*structure* of the two graphs is free to differ, which is the comparison being made.
+The heavy tail, the gate at roughly 1%, the fall in negativity across iterations and the silence
+prediction all reproduce. **These are properties of the architecture rather than of one training
+run.** The chart draws no tolerance band on purpose: choosing one after seeing the data is how a
+replication figure stops meaning anything. Eight rows land close to parity and the ninth, the
+negative-score share at 1.36, is drawn exactly where it falls.
 
-One number here needs reconciling with the rest of this README, and it reconciles cleanly. This
-script pools **all six iterations** and gets 42.7% negative scores for French; the **34.3%** quoted
-elsewhere is **L3/H0 only**, and at L3/H0 on this corpus the figure is 35.3%. Both are correct.
-Negativity falls with iteration on both models, so pooling every layer necessarily reads higher.
+Two caveats travel with the lower half of the table. The two models are measured on different text,
+because each is measured on what it generates rather than on the other's language. And `G*`'s edge
+budget is identical by construction at 377,488 for both, because the threshold is a percentile, so
+only the *structure* of the two graphs is free to differ. That is the comparison being made.
+
+Each script's docstring carries its own methodology in full, including the measurements that came
+out wrong first and what was changed; `CLAUDE.md` carries the same record for the session. The
+numbers here are the results, and they are reproducible with `npm run compare`.
 
 ## How it is built
 
 No framework, no build step, no bundler. Every module that touches data is pure and separately
-gated before a controller uses it — which is why the science can be tested in Node with no
+gated before a controller uses it, which is why the science can be tested in Node with no
 browser at all.
 
 ```
@@ -746,7 +745,7 @@ docs/                      the one-page summary, the defense sheet, the media an
 **The payload is a budget, and it is measured on the wire.** THE FIELD ships 6.37 MB, THE LOOP
 4.90 MB, THE PRICE 0.50 MB. Two decisions kept that sane:
 
-- **`traces.bin.gz` is gzipped and the streams compress very unevenly** — measuring that decided
+- **`traces.bin.gz` is gzipped and the streams compress very unevenly.** Measuring that decided
   the design. Sorted uint16 neuron indices compress to **0.43**, the smooth sigma-energy ramp to
   **0.21**, and the uint8 activation values to **0.92**, because they are noise and nothing will
   compress them. Net 0.52, so seven sentences of full data cost 5.89 MB instead of 11.34 MB. The
@@ -760,8 +759,9 @@ docs/                      the one-page summary, the defense sheet, the media an
 
 **`web/field.html` is frozen and checksummed.** It is finished; `web/test/frozen.mjs` sha256s it
 plus the eleven files it loads and runs first in `npm test`. This is why `theme.css` duplicates
-field.css's `:root` block and nav rules instead of sharing them — hoisting would have edited a
-finished page — and why `wiring.mjs` asserts the two copies stay byte-identical. To change it
+field.css's `:root` block and nav rules instead of sharing them, because hoisting would have
+edited a finished page, and why `wiring.mjs` asserts the two copies stay byte-identical. To change
+it
 deliberately: edit, then `npm run freeze`.
 
 ## The test suite, and what each gate caught
@@ -794,11 +794,11 @@ deviations. **Dropping any one of them fails the build.**
 
 | What went wrong | Why every gate stayed green | The gate that catches it now |
 |---|---|---|
-| A patch dropped a `function` declaration; the module threw on load and the page rendered **completely empty placeholders** | no gate ever executed the entry point — they tested the model, the ports and the markup, and the glue between them | `price_smoke` boots the real page in jsdom and asserts ~80 elements populate |
-| Three σ views shipped as **black rectangles** — `forward()` returns one entry per (layer, head), not per token | a canvas stub that swallows every draw cannot tell a heatmap from a black rectangle | the stub now records `putImageData` per canvas and requires ≥3 distinct colours |
-| Heatmaps normalised by **max** instead of a percentile; σ's median cell is 4e-4 of its max, so **83% of pixels** landed within 5% of neutral and the panel read as blank grey | "was something painted?" passed — there was variety, all of it within a few units of neutral | `loop_smoke` measures *contrast*: the share of pixels far from the midpoint, requiring >25% |
-| Six of seven sentences were **dead on THE FIELD** — views were gated on a flag rather than on whether the data was present | the gates only ever asserted against the hero sentence and never changed the selector | all three field gates sweep all seven sentences and require the readouts to **differ** |
-| The next-byte column ranked by `|value|`, so it showed the eight bytes the model most strongly **ruled out**, every one at p = 0.00% | 55 assertions passed; nobody printed what the column would actually say | found by dumping a frame's headers to stdout — now a fixed `topSigned`, and the lesson is in the handoff |
+| A patch dropped a `function` declaration; the module threw on load and the page rendered **completely empty placeholders** | no gate ever executed the entry point: they tested the model, the ports and the markup, and the glue between them | `price_smoke` boots the real page in jsdom and asserts ~80 elements populate |
+| Three σ views shipped as **black rectangles**, because `forward()` returns one entry per (layer, head), not per token | a canvas stub that swallows every draw cannot tell a heatmap from a black rectangle | the stub now records `putImageData` per canvas and requires ≥3 distinct colours |
+| Heatmaps normalised by **max** instead of a percentile; σ's median cell is 4e-4 of its max, so **83% of pixels** landed within 5% of neutral and the panel read as blank grey | "was something painted?" passed: there was variety, all of it within a few units of neutral | `loop_smoke` measures *contrast*: the share of pixels far from the midpoint, requiring >25% |
+| Six of seven sentences were **dead on THE FIELD**, because views were gated on a flag rather than on whether the data was present | the gates only ever asserted against the hero sentence and never changed the selector | all three field gates sweep all seven sentences and require the readouts to **differ** |
+| The next-byte column ranked by `\|value\|`, so it showed the eight bytes the model most strongly **ruled out**, every one at p = 0.00% | 55 assertions passed; nobody printed what the column would actually say | found by dumping a frame's headers to stdout; now a fixed `topSigned`, and the lesson is in the handoff |
 | A stylesheet defined `.chip.big` where the code generates `chip chip-big`, so chips rendered as unstyled boxes | class names were built by string concatenation and never compared to the CSS | `wiring` asserts every generated class name is actually styled |
 | **The first gate only passed on one machine.** Four frozen files were CRLF in a Windows working tree and LF in the repository, so the checksums matched nowhere else | nobody had ever run the suite on a clean clone on another platform | `.gitattributes` pins `eol=lf`; the checksums now describe the same bytes everywhere, and CI runs the suite on Linux on every push |
 
@@ -819,14 +819,15 @@ npm run dev             # serve the artifact at http://localhost:8080
 |---|---|---|
 | `npm test` | the full suite | node only |
 | `npm run test:mobile` | narrow-viewport measurement at 390 / 360 / 320 px | Edge or Chrome + `websocket-client` |
-| `npm run figures` | rebuilds `docs/media/memory-crossover.png` and `sparsity-emergence.png` | python + matplotlib |
+| `npm run figures` | rebuilds every static figure in this README | python + matplotlib |
+| `python research/plot_comparison.py` | just the sparsity grid and the replication chart, straight from `research/runs/*.json` | python + matplotlib, no torch and no checkpoints |
 | `npm run summary` | rebuilds `docs/concept-summary.{html,pdf}` | python + Edge/Chrome |
 | `npm run media` | re-encodes the screen captures from `docs/media/_originals/` | ffmpeg |
 | `npm run train` | retrains the 131K model (~65 min) | python + torch + GPU |
 | `npm run export` | weights, fixture and verified presets | python + torch |
 | `npm run verify:torch` | the PyTorch twin of the equivalence gate | python + torch |
 | `npm run export:big` / `export:walk` | re-exports everything the 8M pages read | the released checkpoints |
-| `npm run compare` | the whole [Against a transformer](#against-a-transformer) section: runtime, structure, in-context, replication | python + torch + the checkpoints |
+| `npm run compare` | the whole [What BDH buys, measured](#what-bdh-buys-measured) section: runtime, structure, in-context, replication | python + torch + the checkpoints |
 | `npm run compare:quality` | bits/byte and chrF against the public models | + `transformers`, `sacrebleu`, ~2 GB of downloads and the Europarl corpus |
 | `python research/compare_runtime.py --check` | verifies the 8M recurrent decode against the parallel forward | python + torch |
 
@@ -840,24 +841,24 @@ moment and prints `SIXTY-SECOND MOMENT HOLDS` or `DOES NOT HOLD`.
 - The live model is **131K parameters on a synthetic task**. It is an honest miniature, not
   evidence about BDH at scale. The 8M model is real language, but still small.
 - The toy runs **~43% active** neurons, nowhere near the ~5% BDH reports at scale. Our 8M model
-  *does* reach **5.13%**, measured through our own pipeline — but that is our model, not theirs.
+  *does* reach **5.13%**, measured through our own pipeline, but that is our model, not theirs.
   The BDH paper's own ~5% figure has not been verified by us against the primary source and is
   never quoted as ours.
 - σ is **dense**, not sparse ridges: 100% of its cells are non-zero within a few tokens. What is
-  legible is Δσ per token, a before/after difference, and row energy — which is what we draw.
+  legible is Δσ per token, a before/after difference, and row energy, which is what we draw.
 - The negative-attention-score share is **per sentence** (14.7%–38.5%, pooled 34.3%), not one
   number.
 - The sparsity-emergence curve's intermediate points come from a **three-sentence probe**. Only
   its endpoint is independently reproduced.
-- The 8M checkpoints carry **two deviations from reference BDH** — a learned positional embedding
-  on top of RoPE, and no decay term — so results measured on them are results about these
+- The 8M checkpoints carry **two deviations from reference BDH** (a learned positional embedding
+  on top of RoPE, and no decay term), so results measured on them are results about these
   checkpoints first.
 - The §7.1 merge was run **outside the precondition the paper states**, on models with no shared
   initialisation. It says nothing about the merges the paper actually reports.
 - **The transformer baselines are not controls.** No parameter-matched Transformer was trained on
-  the same bytes at the same budget, so nothing in
-  [Against a transformer](#against-a-transformer) isolates an architecture's contribution. The two
-  results there that do not depend on a baseline — the exact cost model and the shuffled null — are
+  the same bytes at the same budget, so nothing in [What BDH buys,
+  measured](#what-bdh-buys-measured) isolates an architecture's contribution. The two results
+  there that do not depend on a baseline, the exact cost model and the shuffled null, are
   the ones to lean on.
 - **The in-context probe is a negative result about our own model.** The 8M translation BDH shows
   no measurable gain on repeated *random* spans, so it has not learned a general copy mechanism.
@@ -872,7 +873,7 @@ moment and prints `SIXTY-SECOND MOMENT HOLDS` or `DOES NOT HOLD`.
 
 | cost | what it buys |
 |---|---|
-| σ is constant but **large** — 12× an equal-dimension KV cache at the 512 bytes this model was trained on ([the crossover](#what-constant-memory-buys-and-what-it-costs)) | a state that never grows, so the cost is flat at any context and the trade turns positive past `N_total/2` |
+| σ is constant but **large**, 12× an equal-dimension KV cache at the 512 bytes this model was trained on ([the crossover](#what-constant-memory-buys-and-what-it-costs)) | a state that never grows, so the cost is flat at any context and the trade turns positive past `N_total/2` |
 | non-negative keys interfere, capping associative recall at a rate of **1/π** | the positive orthant, which is what makes activations sparse, `G*` drawable and a synapse readable as a synapse |
 | no decay term, so forgetting happens through RoPE phase interference rather than an explicit gate | one fewer moving part, and a forgetting mechanism you can read straight off the attention scores |
 
@@ -881,30 +882,30 @@ moment and prints `SIXTY-SECOND MOMENT HOLDS` or `DOES NOT HOLD`.
 
 ### Primary sources
 
-Cited beside the claims they support, on the pages and in the summary — not collected at the end.
+Cited beside the claims they support, on the pages and in the summary, not collected at the end.
 
 - Kosowski, Uznański, Chorowski, Stamirowska, Bartoszkiewicz (2025). **The Dragon Hatchling: The
   Missing Link between the Transformer and Models of the Brain.**
-  [arXiv:2509.26507](https://arxiv.org/abs/2509.26507) — the architecture, and the source of the
+  [arXiv:2509.26507](https://arxiv.org/abs/2509.26507): the architecture, and the source of the
   claim that non-negativity buys interpretable sparse structure. That half is theirs; the price we
   put on it is ours. §7.1 is the merge recipe we replicate.
 - Engdahl et al. (2026). **BDH-CQ technical report.**
-  [arXiv:2608.09888](https://arxiv.org/abs/2608.09888) — Eq. (1) `Sₜ = U_θ(Sₜ₋₁, Dₜ)` and the
+  [arXiv:2608.09888](https://arxiv.org/abs/2608.09888): Eq. (1) `Sₜ = U_θ(Sₜ₋₁, Dₜ)` and the
   additive special case named in §3.2, which is exactly what the public BDH code computes. That
   correspondence is the bridge the whole artifact rests on, and it does not require running
-  BDH-CQ — which is fortunate, because nobody outside Pathway can.
+  BDH-CQ, which is fortunate, because nobody outside Pathway can.
 - Yang, Wang, Zhang, Shen, Kim (2024). **Parallelizing Linear Transformers with the Delta Rule
-  over Sequence Length.** [arXiv:2406.06484](https://arxiv.org/abs/2406.06484) — replaces "the
+  over Sequence Length.** [arXiv:2406.06484](https://arxiv.org/abs/2406.06484): replaces "the
   additive update in linear transformers" with the delta rule and reports it more effective at
   associative recall. That additive update is BDH's write; our 1/π ceiling is why the alternative
   exists.
 - Sun et al. (2024). **Learning to (Learn at Test Time): RNNs with Expressive Hidden States.**
-  [arXiv:2407.04620](https://arxiv.org/abs/2407.04620) — the update rule as a step of
+  [arXiv:2407.04620](https://arxiv.org/abs/2407.04620): the update rule as a step of
   self-supervised learning; the contrast that places BDH's write in a design space.
 - Wang et al. (2025). **Hierarchical Reasoning Model.**
   [arXiv:2506.21734](https://arxiv.org/abs/2506.21734) and Jolicoeur-Martineau (2025). **Less is
   More: Recursive Reasoning with Tiny Networks.**
-  [arXiv:2510.04871](https://arxiv.org/abs/2510.04871) — the optimization route to test-time
+  [arXiv:2510.04871](https://arxiv.org/abs/2510.04871): the optimization route to test-time
   adaptation, and the fork this artifact takes a side in. TRM's 8% on ARC-AGI-2 is TRM's result
   and is never attached to BDH-CQ.
 
@@ -916,7 +917,7 @@ wrong is the failure mode nobody catches.
 ### Design references
 
 The problem statement benchmarks against explanatory instruments rather than write-ups, and these
-are the ones the three pages were built against — for what they do, not to imitate them:
+are the ones the three pages were built against, for what they do rather than to imitate them:
 [Transformer Explainer](https://poloclub.github.io/transformer-explainer/) (a full architecture
 diagram with data visibly flowing through it),
 [TensorFlow Playground](https://playground.tensorflow.org/) and
@@ -928,29 +929,29 @@ everywhere else), and [Neuronpedia](https://www.neuronpedia.org/) (browsing indi
 
 ### Code, data and tools
 
-- [`pathwaycom/bdh`](https://github.com/pathwaycom/bdh) — the reference implementation, vendored
+- [`pathwaycom/bdh`](https://github.com/pathwaycom/bdh): the reference implementation, vendored
   **unmodified** at [`vendor/bdh.py`](vendor/bdh.py) under MIT.
-- [Europarl v7](https://www.statmt.org/europarl/) en–fr and en–pt — the 8M models' training data.
-- PyTorch 2.6 + CUDA for training and export; no ML framework in the browser at all — the forward
+- [Europarl v7](https://www.statmt.org/europarl/) en–fr and en–pt: the 8M models' training data.
+- PyTorch 2.6 + CUDA for training and export; no ML framework in the browser at all: the forward
   pass is hand-written typed arrays.
 - jsdom for the page gates; the Chrome DevTools Protocol for the mobile measurement; ffmpeg for
   the media in this README.
 - The colour palette follows the validation method in Claude Code's `dataviz` skill reference:
   every categorical pair is checked for contrast under both themes and under simulated colour
   vision deficiency. That check is why heads are *not* colour-coded and only the top three Louvain
-  communities get a hue — only three categorical hues clear all pairs on the field surface.
+  communities get a hue, because only three categorical hues clear all pairs on the field surface.
 
 ### On building this
 
-**Claude (Opus 5), via Claude Code, was used throughout** — to read and extract the BDH and BDH-CQ
+**Claude (Opus 5), via Claude Code, was used throughout**: to read and extract the BDH and BDH-CQ
 primary sources into the dossier, to design and write the training, analysis and export code, to
 write the browser port of BDH, the three pages and the test suite, and to draft this README and
 the concept summary. Understanding BDH well enough to build an explanation of it was itself much
 of the work, and that reading was done with Claude against the papers rather than from memory.
 
-Direction, review and every design decision are the team's, as is the prior 8M model. The
+Direction, review and every design decision are the team's, as is the 8M model. The
 discipline that matters here is not who typed what: **every empirical claim in this repo is
-produced by a script in this repo**, and the team can trace and defend each one —
+produced by a script in this repo**, and the team can trace and defend each one.
 [`docs/defense.md`](docs/defense.md) is the working aid for exactly that. No number appears
 anywhere in the artifact that is not either produced by a script here or quoted from a primary
 source with a locator.
@@ -959,14 +960,14 @@ source with a locator.
 
 | Component | Source | License |
 |---|---|---|
-| `vendor/bdh.py` | [pathwaycom/bdh](https://github.com/pathwaycom/bdh) — **unmodified** | MIT (`vendor/LICENSE-bdh`) |
+| `vendor/bdh.py` | [pathwaycom/bdh](https://github.com/pathwaycom/bdh), **unmodified** | MIT (`vendor/LICENSE-bdh`) |
 | 131K trained weights, cipher task, browser port | this repo | MIT |
-| 8M En→Fr and En→Pt checkpoints | this team — trained on Europarl v7 ([`models/README.md`](models/README.md)) | MIT |
+| 8M En→Fr and En→Pt checkpoints | this team, trained on Europarl v7 ([`models/README.md`](models/README.md)) | MIT |
 | All three pages, exports, tests, docs, figures | this repo | MIT |
 | Europarl v7 corpus | statmt.org | as published |
-| Colour palette and its validation method | Claude Code `dataviz` skill reference | — |
-| Fonts | none bundled — system font stacks only | — |
-| Graphics | none bundled — everything is drawn at runtime from data | — |
+| Colour palette and its validation method | Claude Code `dataviz` skill reference | |
+| Fonts | none bundled, system font stacks only | |
+| Graphics | none bundled, everything is drawn at runtime from data | |
 
 The screen captures in [`docs/media/`](docs/media/) are recordings of this artifact running; the
 originals are re-encoded by [`docs/media/encode.sh`](docs/media/encode.sh) from 138 MB down to
@@ -979,7 +980,7 @@ Static, no build step. The site root is `web/`, and `vercel.json` pins it.
 The one header that matters: `public/**.bin.gz` must be served as `application/octet-stream`
 **with no `Content-Encoding: gzip`**. Both big packs are inflated *by the page* with
 `DecompressionStream`, so a transport-level encoding would hand the loader already-inflated bytes.
-After deploying, verify on the live origin — not locally:
+After deploying, verify on the live origin, not locally:
 
 ```bash
 curl -sI <url>/public/big/traces.bin.gz | grep -i "content-type\|content-encoding"
@@ -990,5 +991,5 @@ Verified on the live origin: both packs arrive byte-identical to disk. Vercel ap
 top when the browser asks for it, which is transparent re-compression, not the mislabelling that
 would break the loader.
 
-Deployment Protection must stay **off** for Production — the track requires a URL that opens
+Deployment Protection must stay **off** for Production: the track requires a URL that opens
 without sign-in. Test it in a private window, not just with curl.
