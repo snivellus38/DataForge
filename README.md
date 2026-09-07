@@ -99,6 +99,21 @@ across the tiles while the overlap with iteration 1 falls and then settles — t
 *recruits*, then converges. The tile labels carry the overlap, because six similar-looking clouds
 without it teach nothing.</sup>
 
+![The same six tiles playing: as the sentence advances, every tile's neuron count and overlap figure updates live](docs/media/field_all_six_iterations.gif)
+
+<sup>**The same view, playing — which is what makes it evidence.** A still shows one token, and
+the fair objection to the tiles above is that their numbers could be a single lucky sample. Watch
+the labels instead of the clouds: every count and every overlap recomputes as playback advances,
+and the shape survives it. Two frames a few seconds apart read `593 · 597 · 732 · 697 · 769 · 807`
+neurons lit at 40% → 30% overlap with iteration 1, and `542 · 555 · 633 · 748 · 822 · 803` at
+41% → 29%. On both, and on the frames between, the count is higher at iteration 6 than at
+iteration 1 while the overlap never rises — the operator keeps bringing new neurons in and the
+population it is working with keeps drifting away from where it started. Neither trend is strictly
+monotonic step to step, which is why the claim is about the run and not about any one pair of
+tiles. The bright cluster on the left fires in all six on every frame; the interior is what fills
+in. That difference — neurons the model always uses, against neurons it recruits on later
+passes — is only visible in motion.</sup>
+
 ![Causal attention drawn as arcs, with negative scores shown as a distinct hue](docs/media/field-attention-arcs.gif)
 
 <sup>**Attention as arcs.** BDH has no decay term. What makes it forget is that RoPE rotates keys
