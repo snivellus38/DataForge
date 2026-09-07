@@ -1,0 +1,48 @@
+{
+  "window_chars": 480,
+  "sets": [
+    "out-of-domain (French prose)"
+  ],
+  "not_a_controlled_comparison": "Public models trained by other people on other data at other scales. This gives context for our number, not evidence about architectures. Two confounds run in opposite directions: our model is a specialist on the in-domain set, and Europarl v7 is old and public so it may be inside their pretraining data.",
+  "models": {
+    "8M BDH (ours)": {
+      "params": 7962624,
+      "bpb": {
+        "out-of-domain (French prose)": 3.0832
+      },
+      "scored_bytes": {
+        "out-of-domain (French prose)": 20434
+      }
+    },
+    "gpt2": {
+      "why_in_the_set": "the canonical reference point",
+      "bpb": {
+        "out-of-domain (French prose)": 2.1452
+      },
+      "params": 124439808,
+      "scored_bytes": {
+        "out-of-domain (French prose)": 20311
+      }
+    },
+    "HuggingFaceTB/SmolLM2-135M": {
+      "why_in_the_set": "a modern small model, so the frontier is not all 2019",
+      "bpb": {
+        "out-of-domain (French prose)": 1.686
+      },
+      "params": 134515008,
+      "scored_bytes": {
+        "out-of-domain (French prose)": 20305
+      }
+    },
+    "bigscience/bloom-560m": {
+      "why_in_the_set": "multilingual, genuinely trained on French",
+      "bpb": {
+        "out-of-domain (French prose)": 1.2155
+      },
+      "params": 559214592,
+      "scored_bytes": {
+        "out-of-domain (French prose)": 20242
+      }
+    }
+  }
+}

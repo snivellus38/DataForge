@@ -1,0 +1,246 @@
+{
+  "percentile": 99.0,
+  "sources": [
+    "The price was fifty euros and thirty pounds",
+    "The dollar strengthened against the yen today",
+    "Converting francs to marks was expensive",
+    "Germany and France signed the bilateral treaty",
+    "Sweden and Finland proposed a new allocation",
+    "The European Parliament voted against this resolution",
+    "The budget was discussed at length yesterday"
+  ],
+  "models": {
+    "french": {
+      "checkpoint": "models/checkpoints/french_best.pt",
+      "iterations": 50000,
+      "val_loss": 0.670272696018219,
+      "params": 7962624,
+      "config": {
+        "n_layer": 6,
+        "n_embd": 192,
+        "n_head": 4,
+        "N": 3072,
+        "N_total": 12288
+      },
+      "corpus_bytes": 813,
+      "activations": {
+        "x_active": 0.05176295089773814,
+        "y_active": 0.009739182271380006,
+        "x_active_per_iteration": [
+          0.04571,
+          0.04328,
+          0.04757,
+          0.05432,
+          0.05919,
+          0.0605
+        ],
+        "y_active_per_iteration": [
+          0.00691,
+          0.00532,
+          0.00721,
+          0.01037,
+          0.01354,
+          0.01508
+        ],
+        "neuron_token_slots": 59940864,
+        "neg_score_share_pooled": 0.42683085744070887,
+        "neg_score_share_per_iteration": [
+          0.5815,
+          0.4562,
+          0.4366,
+          0.3859,
+          0.3518,
+          0.3491
+        ],
+        "neg_score_share_L3H0": 0.3526826278976396,
+        "neg_score_share_per_sentence": [
+          0.4276,
+          0.417,
+          0.4279,
+          0.4267,
+          0.4037,
+          0.4379,
+          0.4354
+        ],
+        "causal_scores": 1135752,
+        "silent_fraction": 0.3681640625
+      },
+      "graph": {
+        "per_head": [
+          {
+            "head": 0,
+            "edges": 94372,
+            "threshold": 0.06966777890920639,
+            "isolated_share": 0.3902994791666667,
+            "max_out_degree": 749,
+            "neurons_carrying_half_the_endpoints": 0.1335
+          },
+          {
+            "head": 1,
+            "edges": 94372,
+            "threshold": 0.07022745162248611,
+            "isolated_share": 0.3776041666666667,
+            "max_out_degree": 842,
+            "neurons_carrying_half_the_endpoints": 0.1318
+          },
+          {
+            "head": 2,
+            "edges": 94372,
+            "threshold": 0.07850583642721176,
+            "isolated_share": 0.3792317708333333,
+            "max_out_degree": 756,
+            "neurons_carrying_half_the_endpoints": 0.1104
+          },
+          {
+            "head": 3,
+            "edges": 94372,
+            "threshold": 0.0641610324382782,
+            "isolated_share": 0.4010416666666667,
+            "max_out_degree": 876,
+            "neurons_carrying_half_the_endpoints": 0.1436
+          }
+        ],
+        "edges_total": 377488,
+        "isolated_share": 0.3870442708333333
+      },
+      "silence_prediction": {
+        "mcc": 0.9402,
+        "p_silent_given_isolated": 0.9388,
+        "base_rate_silent": 0.3682,
+        "mean_degree_silent": 0.53,
+        "mean_degree_firing": 96.93,
+        "confusion": {
+          "tp": 4465,
+          "fp": 291,
+          "fn": 59,
+          "tn": 7473
+        }
+      },
+      "samples": [
+        "Le prix de la production et de la consommation de trois prix",
+        "La rencontre de la proposition de la Commission est close.",
+        "Proc\u00c3\u00a9dure de conversion aux march\u00c3\u00a9s financiers",
+        "Allemand et France ont sign\u00c3\u00a9 le trait\u00c3\u00a9 de Lisbonne",
+        "Suppression de la Su\u00c3\u00a8de et de la Finlande",
+        "Le Parlement europ\u00c3\u00a9en a vot\u00c3\u00a9 contre cette r\u00c3\u00a9solution",
+        "Le budget a \u00c3\u00a9t\u00c3\u00a9 discut\u00c3\u00a9 hier lors de la discussion de la prochaine session"
+      ]
+    },
+    "portuguese": {
+      "checkpoint": "models/checkpoints/portuguese_best.pt",
+      "iterations": 38000,
+      "val_loss": 0.6931711554527282,
+      "params": 7962624,
+      "config": {
+        "n_layer": 6,
+        "n_embd": 192,
+        "n_head": 4,
+        "N": 3072,
+        "N_total": 12288
+      },
+      "corpus_bytes": 972,
+      "activations": {
+        "x_active": 0.048972075313643115,
+        "y_active": 0.009781016352844936,
+        "x_active_per_iteration": [
+          0.03959,
+          0.04214,
+          0.04439,
+          0.05141,
+          0.05735,
+          0.05895
+        ],
+        "y_active_per_iteration": [
+          0.00661,
+          0.00594,
+          0.00726,
+          0.01036,
+          0.01344,
+          0.01507
+        ],
+        "neuron_token_slots": 71663616,
+        "neg_score_share_pooled": 0.45398178143668083,
+        "neg_score_share_per_iteration": [
+          0.5556,
+          0.5136,
+          0.4694,
+          0.411,
+          0.384,
+          0.3903
+        ],
+        "neg_score_share_L3H0": 0.4804291615894433,
+        "neg_score_share_per_sentence": [
+          0.4462,
+          0.4594,
+          0.4441,
+          0.4496,
+          0.4506,
+          0.4633,
+          0.4596
+        ],
+        "causal_scores": 1615056,
+        "silent_fraction": 0.31730143229166663
+      },
+      "graph": {
+        "per_head": [
+          {
+            "head": 0,
+            "edges": 94372,
+            "threshold": 0.08372660726308823,
+            "isolated_share": 0.3069661458333333,
+            "max_out_degree": 718,
+            "neurons_carrying_half_the_endpoints": 0.1387
+          },
+          {
+            "head": 1,
+            "edges": 94372,
+            "threshold": 0.08717186748981476,
+            "isolated_share": 0.4075520833333333,
+            "max_out_degree": 608,
+            "neurons_carrying_half_the_endpoints": 0.1087
+          },
+          {
+            "head": 2,
+            "edges": 94372,
+            "threshold": 0.07639860361814499,
+            "isolated_share": 0.3199869791666667,
+            "max_out_degree": 909,
+            "neurons_carrying_half_the_endpoints": 0.1598
+          },
+          {
+            "head": 3,
+            "edges": 94372,
+            "threshold": 0.07786954939365387,
+            "isolated_share": 0.3502604166666667,
+            "max_out_degree": 824,
+            "neurons_carrying_half_the_endpoints": 0.1445
+          }
+        ],
+        "edges_total": 377488,
+        "isolated_share": 0.34619140625
+      },
+      "silence_prediction": {
+        "mcc": 0.9079,
+        "p_silent_given_isolated": 0.898,
+        "base_rate_silent": 0.3173,
+        "mean_degree_silent": 0.9,
+        "mean_degree_firing": 89.58,
+        "confusion": {
+          "tp": 3820,
+          "fp": 434,
+          "fn": 79,
+          "tn": 7955
+        }
+      },
+      "samples": [
+        "A pre\u00c3\u00a7os dos pre\u00c3\u00a7os e dos pre\u00c3\u00a7os dos produtos agr\u00c3\u00adcolas",
+        "O refor\u00c3\u00a7o do controlo do alargamento do processo de reforma est\u00c3\u00a1 a ser alargado cont",
+        "Assunto: Estados de pa\u00c3\u00adses terceiros foram aprovados pelo Conselho Europeu",
+        "Alem\u00c3\u00a3 e a Alemanha e a Alemanha estavam a tratar o tratamento de mercadorias",
+        "A Presid\u00c3\u00aancia e a Comiss\u00c3\u00a3o prop\u00c3\u00b5em uma nova altera\u00c3\u00a7\u00c3\u00a3o de altera\u00c3\u00a7\u00c3\u00b5es<F",
+        "O Parlamento Europeu votou contra esta resolu\u00c3\u00a7\u00c3\u00a3o contra este relat\u00c3\u00b3rio.",
+        "O or\u00c3\u00a7amento foi discutido na altura de algumas das principais orienta\u00c3\u00a7\u00c3\u00b5es de acol"
+      ]
+    }
+  }
+}

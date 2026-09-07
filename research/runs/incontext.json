@@ -1,0 +1,189 @@
+{
+  "checkpoint": "models\\checkpoints\\french_best.pt",
+  "span_bytes": 24,
+  "trials_per_distance": 40,
+  "seed": 0,
+  "distances": [
+    0,
+    16,
+    32,
+    64,
+    128,
+    192,
+    256,
+    384
+  ],
+  "reference": "A softmax Transformer with a KV cache retrieves an exact copy of every past key and value at any distance inside its window, so its reference line here is flat by construction, at the price of a cache that grows without bound.",
+  "results": {
+    "text": [
+      {
+        "distance": 0,
+        "nll_control": 1.701,
+        "nll_repeat": 1.6524,
+        "gain_nats": 0.0486,
+        "gain_bits": 0.0701,
+        "gain_stderr_bits": 0.0862,
+        "trials": 40
+      },
+      {
+        "distance": 16,
+        "nll_control": 1.6355,
+        "nll_repeat": 1.5891,
+        "gain_nats": 0.0465,
+        "gain_bits": 0.067,
+        "gain_stderr_bits": 0.0334,
+        "trials": 40
+      },
+      {
+        "distance": 32,
+        "nll_control": 1.6513,
+        "nll_repeat": 1.5967,
+        "gain_nats": 0.0547,
+        "gain_bits": 0.0789,
+        "gain_stderr_bits": 0.012,
+        "trials": 40
+      },
+      {
+        "distance": 64,
+        "nll_control": 1.5857,
+        "nll_repeat": 1.5299,
+        "gain_nats": 0.0558,
+        "gain_bits": 0.0805,
+        "gain_stderr_bits": 0.0161,
+        "trials": 40
+      },
+      {
+        "distance": 128,
+        "nll_control": 2.0267,
+        "nll_repeat": 1.9804,
+        "gain_nats": 0.0463,
+        "gain_bits": 0.0667,
+        "gain_stderr_bits": 0.0106,
+        "trials": 40
+      },
+      {
+        "distance": 192,
+        "nll_control": 1.7018,
+        "nll_repeat": 1.6633,
+        "gain_nats": 0.0385,
+        "gain_bits": 0.0556,
+        "gain_stderr_bits": 0.0109,
+        "trials": 40
+      },
+      {
+        "distance": 256,
+        "nll_control": 1.5313,
+        "nll_repeat": 1.4834,
+        "gain_nats": 0.0479,
+        "gain_bits": 0.0691,
+        "gain_stderr_bits": 0.0134,
+        "trials": 40
+      },
+      {
+        "distance": 384,
+        "nll_control": 1.8252,
+        "nll_repeat": 1.7957,
+        "gain_nats": 0.0295,
+        "gain_bits": 0.0426,
+        "gain_stderr_bits": 0.0089,
+        "trials": 40
+      }
+    ],
+    "random": [
+      {
+        "distance": 0,
+        "nll_control": 6.2497,
+        "nll_repeat": 6.3281,
+        "gain_nats": -0.0784,
+        "gain_bits": -0.1131,
+        "gain_stderr_bits": 0.0603,
+        "trials": 40
+      },
+      {
+        "distance": 16,
+        "nll_control": 6.5889,
+        "nll_repeat": 6.6154,
+        "gain_nats": -0.0266,
+        "gain_bits": -0.0383,
+        "gain_stderr_bits": 0.0239,
+        "trials": 40
+      },
+      {
+        "distance": 32,
+        "nll_control": 7.2926,
+        "nll_repeat": 7.3011,
+        "gain_nats": -0.0086,
+        "gain_bits": -0.0124,
+        "gain_stderr_bits": 0.0159,
+        "trials": 40
+      },
+      {
+        "distance": 64,
+        "nll_control": 6.8563,
+        "nll_repeat": 6.8589,
+        "gain_nats": -0.0026,
+        "gain_bits": -0.0038,
+        "gain_stderr_bits": 0.0222,
+        "trials": 40
+      },
+      {
+        "distance": 128,
+        "nll_control": 8.0931,
+        "nll_repeat": 8.0779,
+        "gain_nats": 0.0152,
+        "gain_bits": 0.0219,
+        "gain_stderr_bits": 0.0187,
+        "trials": 40
+      },
+      {
+        "distance": 192,
+        "nll_control": 7.2349,
+        "nll_repeat": 7.214,
+        "gain_nats": 0.0209,
+        "gain_bits": 0.0302,
+        "gain_stderr_bits": 0.0127,
+        "trials": 40
+      },
+      {
+        "distance": 256,
+        "nll_control": 7.2463,
+        "nll_repeat": 7.2411,
+        "gain_nats": 0.0052,
+        "gain_bits": 0.0075,
+        "gain_stderr_bits": 0.0108,
+        "trials": 40
+      },
+      {
+        "distance": 384,
+        "nll_control": 7.4255,
+        "nll_repeat": 7.397,
+        "gain_nats": 0.0285,
+        "gain_bits": 0.0411,
+        "gain_stderr_bits": 0.0163,
+        "trials": 40
+      }
+    ]
+  },
+  "retention_vs_distance_0": {
+    "text": [
+      1.0,
+      0.956,
+      1.126,
+      1.148,
+      0.951,
+      0.793,
+      0.986,
+      0.608
+    ],
+    "random": [
+      1.0,
+      0.339,
+      0.11,
+      0.034,
+      -0.194,
+      -0.267,
+      -0.066,
+      -0.363
+    ]
+  }
+}

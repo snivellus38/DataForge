@@ -39,3 +39,8 @@ docs/media/_originals/
 research/__mobile_profile/
 
 .vercel
+
+# Corpora fetched by the comparison scripts: Europarl v7 (~200 MB, rebuilt by the same
+# 95/5 split the training notebook used) and one public-domain French text. Both are
+# downloads, not sources -- research/compare_quality.py fetches them on demand.
+data/
