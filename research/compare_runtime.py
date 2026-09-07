@@ -242,6 +242,8 @@ def main():
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--max-ctx", type=int, default=16384)
     ap.add_argument("--reps", type=int, default=9)
+    ap.add_argument("--sweeps", type=int, default=3,
+                    help="independent timing sweeps per point; the minimum of them is reported")
     ap.add_argument("--run", type=int, default=32,
                     help="tokens generated per timed run; the per-token figure is the quotient")
     ap.add_argument("--bytes", type=int, default=2, help="bytes per scalar for the memory model")
@@ -295,7 +297,8 @@ def main():
             for i in range(K):
                 recurrent_step(model, cfg, tok, T + i, sigma)
 
-        bdh_ms = 1e3 * time_min(bdh_run, args.reps, args.device) / K
+        bdh_ms = min(1e3 * time_min(bdh_run, args.reps, args.device) / K
+                     for _ in range(args.sweeps))
 
         nxt = torch.randint(0, 256, (1, 1), device=args.device)
         dh = D // H
@@ -314,7 +317,8 @@ def main():
                     base(nxt, cache)                             # cache grows, as it does in use
 
         cache = fresh_cache()
-        tf_ms = 1e3 * time_min(lambda: tf_run(fresh_cache()), args.reps, args.device) / K
+        tf_ms = min(1e3 * time_min(lambda: tf_run(fresh_cache()), args.reps, args.device) / K
+                    for _ in range(args.sweeps))
         del cache
 
         b = args.bytes
@@ -386,33 +390,25 @@ def plot(rows, mem_star, cmp_star, device, path):
     import matplotlib.pyplot as plt
 
     T = [r["context"] for r in rows]
-    fig, ax = plt.subplots(1, 2, figsize=(11, 4.2))
-    ax[0].plot(T, [r["kv_cache_mb"] for r in rows], "o-", label="Transformer KV cache")
-    ax[0].plot(T, [r["bdh_state_mb"] for r in rows], "s-", label="BDH state $\\sigma$")
-    ax[0].axvline(mem_star, ls="--", lw=1, color="0.5")
-    ax[0].annotate("$T^*=N_{total}/2$\n= %d" % mem_star, (mem_star, ax[0].get_ylim()[1] * 0.02),
-                   fontsize=8, ha="right", color="0.35")
-    ax[0].set_title("State size, per generated token")
-    ax[0].set_ylabel("MB (fp16)")
-
-    ax[1].plot(T, [r["transformer_ms_per_token"] for r in rows], "o-", label="Transformer + KV cache")
-    ax[1].plot(T, [r["bdh_ms_per_token"] for r in rows], "s-", label="BDH recurrent step")
-    ax[1].axvline(cmp_star, ls="--", lw=1, color="0.5")
-    ax[1].annotate("$T^*=N_{total}$\n= %d" % cmp_star, (cmp_star, ax[1].get_ylim()[0]),
-                   fontsize=8, ha="right", color="0.35")
-    ax[1].set_title("Latency, one token at a time (overhead-bound at this size)")
-    ax[1].set_ylabel("ms per token")
-
-    for a in ax:
-        a.set_xscale("log", base=2)
-        a.set_yscale("log")
-        a.set_xlabel("context length (bytes already generated)")
-        a.grid(alpha=0.25, which="both", lw=0.5)
-        a.legend(fontsize=8, frameon=False)
-    fig.suptitle("Measured on %s — the Transformer is random-init at the same D/L/H, because decode "
-                 "cost depends on shape, not weights. Left is exact; right is dominated by "
-                 "kernel-launch overhead at D=192: read the shapes, not the milliseconds."
-                 % device, fontsize=8, y=1.02)
+    fig, ax0 = plt.subplots(figsize=(7.4, 4.3))
+    ax0.plot(T, [r["kv_cache_mb"] for r in rows], "o-", label="Transformer KV cache")
+    ax0.plot(T, [r["bdh_state_mb"] for r in rows], "s-", label="BDH state $\\sigma$")
+    ax0.axvline(mem_star, ls="--", lw=1, color="0.5")
+    ax0.annotate("crossover  $T^*=N_{total}/2$ = %d" % mem_star, (mem_star * 0.92, 0.45),
+                 fontsize=8, ha="right", va="bottom", color="0.35")
+    ax0.set_title("State carried per generated token", fontsize=11)
+    ax0.set_ylabel("MB (fp16)")
+    ax0.set_xscale("log", base=2)
+    ax0.set_yscale("log")
+    ax0.set_xlabel("context length (bytes already generated)")
+    ax0.grid(alpha=0.25, which="both", lw=0.5)
+    ax0.legend(fontsize=9, frameon=False, loc="upper left")
+    fig.text(0.5, -0.03,
+             "Measured on %s. The Transformer is random-init at the same D/L/H, because state size "
+             "depends on shape, not weights.\nLatency is measured too and is NOT plotted: at D=192 "
+             "both models are launch-overhead-bound, so per-token time is flat for both and the "
+             "compute crossover is not observable — see runtime.json."
+             % device, ha="center", fontsize=7.5, color="0.35")
     fig.tight_layout()
     fig.savefig(path, dpi=150, bbox_inches="tight")
 

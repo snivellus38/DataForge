@@ -21,72 +21,72 @@
       64,
       16384
     ],
-    "bdh": 0.994,
-    "transformer": 0.983
+    "bdh": 0.972,
+    "transformer": 1.023
   },
   "latency_is_overhead_bound": true,
   "caveat": "At D=192/H=4 one decode step is a few MFLOP, so both models sit on a kernel-launch overhead floor and the predicted compute crossover at N_total is not observable on this hardware. The memory half is exact; the latency half supports only the SHAPE of the curves. recurrent_step is a readable reference implementation, not a tuned kernel.",
   "rows": [
     {
       "context": 64,
-      "bdh_ms_per_token": 5.5123,
-      "transformer_ms_per_token": 3.4184,
+      "bdh_ms_per_token": 4.6306,
+      "transformer_ms_per_token": 3.1243,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 0.29
     },
     {
       "context": 128,
-      "bdh_ms_per_token": 5.4363,
-      "transformer_ms_per_token": 3.4256,
+      "bdh_ms_per_token": 4.6456,
+      "transformer_ms_per_token": 2.9694,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 0.59
     },
     {
       "context": 256,
-      "bdh_ms_per_token": 4.8403,
-      "transformer_ms_per_token": 3.7206,
+      "bdh_ms_per_token": 5.07,
+      "transformer_ms_per_token": 2.9402,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 1.18
     },
     {
       "context": 512,
-      "bdh_ms_per_token": 5.0477,
-      "transformer_ms_per_token": 3.7017,
+      "bdh_ms_per_token": 4.5406,
+      "transformer_ms_per_token": 3.1285,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 2.36
     },
     {
       "context": 1024,
-      "bdh_ms_per_token": 4.639,
-      "transformer_ms_per_token": 3.4744,
+      "bdh_ms_per_token": 4.9124,
+      "transformer_ms_per_token": 3.0788,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 4.72
     },
     {
       "context": 2048,
-      "bdh_ms_per_token": 4.677,
-      "transformer_ms_per_token": 3.6293,
+      "bdh_ms_per_token": 4.8628,
+      "transformer_ms_per_token": 3.1879,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 9.44
     },
     {
       "context": 4096,
-      "bdh_ms_per_token": 4.6613,
-      "transformer_ms_per_token": 3.8029,
+      "bdh_ms_per_token": 4.7665,
+      "transformer_ms_per_token": 3.1229,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 18.87
     },
     {
       "context": 8192,
-      "bdh_ms_per_token": 5.4338,
-      "transformer_ms_per_token": 3.4431,
+      "bdh_ms_per_token": 5.3537,
+      "transformer_ms_per_token": 2.8964,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 37.75
     },
     {
       "context": 16384,
-      "bdh_ms_per_token": 5.4796,
-      "transformer_ms_per_token": 3.3612,
+      "bdh_ms_per_token": 4.4988,
+      "transformer_ms_per_token": 3.1959,
       "bdh_state_mb": 28.31,
       "kv_cache_mb": 75.5
     }

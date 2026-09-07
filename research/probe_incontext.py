@@ -232,8 +232,8 @@ def plot(results, dists, path):
         ax.errorbar(dists, g, yerr=e, marker=marker, capsize=2,
                     label="%s spans" % ("in-distribution text" if kind == "text" else "random byte"))
     ax.axhline(0, lw=1, color="0.6")
-    ax.annotate("no benefit from having seen the span", (dists[-1], 0), fontsize=8,
-                ha="right", va="bottom", color="0.45")
+    ax.annotate("no benefit from having seen the span", (dists[1], 0.004), fontsize=8,
+                ha="left", va="bottom", color="0.45")
     g0 = results["text"][0]["gain_bits"]
     ax.axhline(g0, ls="--", lw=1, color="0.5")
     ax.annotate("an exact KV cache would hold its line flat,\nfor a cache that grows without bound",

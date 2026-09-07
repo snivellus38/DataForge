@@ -269,6 +269,10 @@ def plot(rows, sets, path):
             ax.annotate(l.split("/")[-1], (x, y), fontsize=7, xytext=(4, 4),
                         textcoords="offset points")
     ax.set_xscale("log")
+    # Point labels are drawn to the right of their marker, so the frame needs room at both ends or
+    # the smallest and largest models lose their names to the edge.
+    xs_all = [r["params"] for r in rows.values() if r.get("params")]
+    ax.set_xlim(min(xs_all) / 2.2, max(xs_all) * 3.2)
     ax.set_xlabel("parameters")
     ax.set_ylabel("bits per byte (lower is better)")
     ax.set_title("Same bytes, same windows, one script — our 8M against public models",

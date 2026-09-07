@@ -518,14 +518,23 @@ the cost model becomes measurable rather than arithmetic:
 
 **The latency half reports a null, and the script says so on its own output.** At `D = 192` with
 four heads of 48 dimensions, one decode step is a few MFLOP — far too little to occupy a GPU — so
-both models sit on a floor of kernel-launch overhead, and per-token time is flat for *both*
-(×0.99 for BDH and ×0.98 for the Transformer across a 256-fold increase in context). The predicted
-compute crossover at `N_total` is simply not observable at this model size on this hardware. What
+both models sit on a floor of kernel-launch overhead, and per-token time is flat for *both* —
+across a **256-fold** increase in context it changes by ×0.97 for BDH and ×1.02 for the Transformer
+(4.5–5.4 ms and 2.9–3.2 ms respectively). The predicted compute crossover at `N_total` is simply
+not observable at this model size on this hardware. What
 the numbers do support is the shape: BDH's per-token cost does not depend on context because it has
 no prefix to re-read, and below the crossover it pays a premium in time for the same reason it pays
 one in bytes — it moves its whole 28.3 MB state on every token however little context there is.
 `recurrent_step` is a readable reference implementation, not a tuned kernel; do not quote it as a
 throughput benchmark.
+
+Getting that null to be *stable* took three tries and is worth recording. Timing one step measures
+Python, not the model, so each point times 32 consecutive tokens and divides. Latency is
+contaminated upwards only, so the estimator is the **minimum** over repetitions rather than the
+median — on a laptop GPU the median is largely a picture of the thermal state. And a single sweep
+is still not enough: one pass reported the last context as **3.4× faster** than the first, which is
+nonsense, so each point is the minimum of three independent sweeps. The figure plots only the
+memory panel, because a flat-but-noisy curve on a log axis reads as structure that is not there.
 
 ### 2. What you can see inside it — with a null, and with a contrast
 
