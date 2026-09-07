@@ -1,0 +1,70 @@
+{
+  "pairs": 162,
+  "source": "data/en-fr/val.bin -- the notebook's own 95/5 split, never trained on",
+  "baseline_chosen_before_running": "Helsinki-NLP/opus-mt-en-fr",
+  "caveat": "Our model has no end-of-sequence token: it ends a translation by starting the next <F:en> example, and a run-on when it fails to is punished by chrF about as hard as a wrong translation. Not corrected for.",
+  "scores": {
+    "8M BDH (ours)": {
+      "params": 7962624,
+      "chrf": 36.16,
+      "bleu": 8.25,
+      "mean_output_bytes": 124.1
+    },
+    "Helsinki-NLP/opus-mt-en-fr": {
+      "params": 75133952,
+      "chrf": 47.19,
+      "bleu": 18.0,
+      "mean_output_bytes": 111.9
+    }
+  },
+  "samples": [
+    {
+      "en": "We have tabled an amendment to this effect and hope the House will support us.",
+      "ours": "Nous avons approuv\u00c3\u00a9 un amendement et nous avons soutenu cet effort de soutien.",
+      "baseline": "Nous avons d\u00e9pos\u00e9 un amendement \u00e0 cet effet et esp\u00e9rons que l'Assembl\u00e9e nous soutiendra.",
+      "reference": "Nous avons introduit un amendement \u00c3\u00a0 cet effet et nous esp\u00c3\u00a9rons que l'Assembl\u00c3\u00a9e nous soutiendra."
+    },
+    {
+      "en": "I wish to make just one oral amendment tomorrow.",
+      "ours": "Je voudrais souhaiter un amendement oral \u00c3\u00a0 l'amendement oral.",
+      "baseline": "Je ne voudrais faire qu'un seul amendement oral demain.",
+      "reference": "Je voudrais juste introduire un amendement oral demain."
+    },
+    {
+      "en": "I should like to thank the Commission for listening.",
+      "ours": "Je voudrais remercier la Commission pour le travail qu'elle a r\u00c3\u00a9alis\u00c3\u00a9.",
+      "baseline": "Je voudrais remercier la Commission d'avoir \u00e9cout\u00e9.",
+      "reference": "Je voudrais remercier la Commission pour son attention."
+    },
+    {
+      "en": "I spoke to Mr Monti outside.",
+      "ours": "J'ai par cons\u00c3\u00a9quent parl\u00c3\u00a9 de M. Martin Mart\u00c3\u00adnez.",
+      "baseline": "J'ai parl\u00e9 \u00e0 M. Monti dehors.",
+      "reference": "J'ai parl\u00c3\u00a9 \u00c3\u00a0 M. Monti dehors."
+    },
+    {
+      "en": "I have another engagement now and I know he will understand my reason for leaving.",
+      "ours": "J'ai un engagement et j'ai un engagement \u00c3\u00a0 m'assurer qu'il sera mis en \u00c5\u0093uvre pour la raison de mon engagement.",
+      "baseline": "J'ai un autre engagement maintenant et je sais qu'il comprendra ma raison de partir.",
+      "reference": "J'ai une autre obligation maintenant et je sais qu'il comprendra la raison pour laquelle je quitte l'Assembl\u00c3\u00a9e."
+    },
+    {
+      "en": "I am very grateful to Mr Tappin for incorporating many of our conclusions into his report.",
+      "ours": "Je suis tr\u00c3\u00a8s reconnaissant de notre conclusion de notre conclusion dans son rapport.",
+      "baseline": "Je suis tr\u00e8s reconnaissant \u00e0 M. Tappin d'avoir int\u00e9gr\u00e9 un grand nombre de nos conclusions dans son rapport.",
+      "reference": "J'en profite d'ailleurs pour remercier chaleureusement mon coll\u00c3\u00a8gue Tappin d'avoir repris bon nombre de nos conclusions dans son rapport."
+    },
+    {
+      "en": "This is not the first time we find ourselves debating this subject.",
+      "ours": "Ce n'est pas le premier d\u00c3\u00a9bat qui nous a \u00c3\u00a9t\u00c3\u00a9 dit ce soir.",
+      "baseline": "Ce n'est pas la premi\u00e8re fois que nous d\u00e9battons de ce sujet.",
+      "reference": "En effet, ce n'est pas la premi\u00c3\u00a8re fois que nous avons \u00c3\u00a0 nous exprimer sur ce th\u00c3\u00a8me."
+    },
+    {
+      "en": "We for our part are convinced that 'soft law' is not enough.",
+      "ours": "Nous sommes convaincus que le droit de la part de l'Union europ\u00c3\u00a9enne n'est pas convaincu.",
+      "baseline": "Pour notre part, nous sommes convaincus que la \"loi douce\" ne suffit pas.",
+      "reference": "Nous sommes pour notre part convaincus que la soft law ne suffira pas \u00c3\u00a0 elle seule."
+    }
+  ]
+}

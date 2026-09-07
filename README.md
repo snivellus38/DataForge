@@ -585,47 +585,56 @@ weight-tying buys, and it is the strongest claim in this section.
 Loss has always been quoted here as 0.670 nats/byte, which is comparable to nothing, because every
 other model reports loss per token under its own tokenizer. **Bits per byte is tokenizer-agnostic**,
 so every model below is measured on the same text, in the same 480-character windows, scored on the
-second half of each window, and divided by the same UTF-8 byte count.
+second half of each window, divided by the same UTF-8 byte count, and — after the mistake described
+below — run in the same numerical regime.
 
 Two evaluation sets, because one would be misleading. Two confounds run in opposite directions and
 both are named: our model is a **specialist** trained on exactly the in-domain format, which
 flatters us there; and Europarl v7 is old and public, so it is plausibly inside the public models'
 **pretraining data**, which flatters them.
 
-| model | params | out-of-domain (French prose) |
-|---|---|---|
-| **8M BDH (ours)** | **8.0M** | 3.083 |
-| GPT-2 | 124M | 2.145 |
-| SmolLM2-135M | 135M | 1.686 |
-| BLOOM-560m | 560M | **1.216** |
+| model | params | in-domain (held-out Europarl) | out-of-domain (French prose) |
+|---|---|---|---|
+| **8M BDH (ours)** | **8.0M** | **0.904** | 2.876 |
+| BLOOM-560m | 560M | 0.974 | **1.266** |
+| SmolLM2-135M | 135M | 1.245 | 1.696 |
+| GPT-2 | 124M | 1.693 | 2.168 |
 
-<sup>bits per byte, lower is better; ~20,300 scored bytes per model, within 1% of each other because
-the windows are cut on character boundaries and the denominator is the same span for everyone</sup>
+<sup>bits per byte, lower is better; ~29,400 and ~30,600 scored bytes per model, agreeing within
+0.2% across models because the windows are cut on character boundaries and the scored span is
+mapped through each tokenizer's own offsets</sup>
 
-![Bits per byte against parameters, our 8M model far to the left](docs/media/efficiency-frontier.png)
+![Bits per byte against parameters. Each model is one vertical line; its length is the generalisation gap](docs/media/efficiency-frontier.png)
 
-**We lose this one, by a lot, and that is the informative half.** Out of domain — French prose from
-a different century and genre, with no `<F:en>` tags — our 8M model reads at **3.08 bits/byte**
-while a 560M multilingual model reads at 1.22. It is a specialist: trained on Europarl in one exact
-format for 50 minutes, and it does not generalise past that. Against its **0.967 bits/byte** on the
-distribution it was trained for, the specialisation gap is **3.2×**, and naming that gap is what
-makes the in-domain number honest rather than impressive.
+**In domain we are first, at one seventieth of the parameters of the model behind us.** Our 8M
+byte-level BDH reads held-out Europarl at **0.904 bits/byte** against BLOOM-560m's 0.974, GPT-2's
+1.693 and SmolLM2-135M's 1.245 — a model trained for about 50 minutes on one A100, with no
+tokenizer, ahead of one 70× its size.
 
-Two normalisations are applied to the out-of-domain text and disclosed in the script: typographic
-quotes and dashes are folded to ASCII, and Gutenberg's 70-column wrapping is unwrapped into
-paragraphs. Without them most of the penalty would be our model meeting `U+2019` for the first
-time, which measures character set rather than genre. (An earlier run anchored on the first
-"CHAPITRE" and scored the **table of contents** at 10.04 bits/byte — worse than uniform. If a
-byte-level number comes out above 8, look at the text before believing it.)
+**Out of domain we are last, and by a lot.** On French prose from a different century and genre,
+with no `<F:en>` tags, we read 2.876 against BLOOM's 1.266. That vertical line on the chart is the
+whole story: **a 3.2× specialisation gap**, the largest of the four models by a wide margin. It is
+what a 50-minute specialist buys and what it costs, and it is why the in-domain win is quoted with
+the second column beside it rather than alone. Without that column the first one is not evidence,
+it is a setup.
 
-**The in-domain half of this table is not filled in yet**, because it needs the model's actual
-held-out split and Europarl v7 downloads from statmt.org at about 1.5 MB/min. The script rebuilds
-it with the notebook's own 95/5 cut of the byte stream, so the evaluation text is the same data the
-0.670 nats/byte was measured on:
+**A finding that came out of getting this wrong, and it matters for anyone reproducing us.**
+The first run measured our model in fp32 and the public models in fp16, which is not a comparison.
+Fixing it surfaced something real: **this checkpoint scores 10% better in bf16 than in fp32** —
+0.671 against 0.748 nats/byte on the identical data, far too large for rounding. BDH's attention
+scores are unnormalised (`Q·Qᵀ`, no softmax, magnitudes in the hundreds), and the model was trained
+under bf16 autocast, so it has adapted to that arithmetic. The bf16 figure reproduces the training
+run's logged 0.6703 to **0.0007 nats**. Every row above is therefore bf16, for every model.
 
-```bash
-python research/compare_quality.py        # fetches the corpus on first run, then measures all four
-```
+Two more things the script does that are easy to get wrong, both disclosed in its docstring: the
+out-of-domain text has typographic quotes folded to ASCII and Gutenberg's 70-column wrapping
+unwrapped, because otherwise most of the penalty is our model meeting `U+2019` for the first time,
+which measures character set rather than genre; and in-domain windows are drawn from 20 scattered
+offsets across the whole 34.5 MB split but **never span two of them**, since a window straddling a
+seam carries context from an unrelated part of the corpus into its scored half. That flaw was worth
+0.083 bits/byte while it was in. (An earlier run also scored the **table of contents** at 10.04
+bits/byte, worse than uniform over 256 bytes. If a byte-level number comes out above 8, look at
+your text before believing your model.)
 
 ### 4. How long a fixed state holds a binding
 

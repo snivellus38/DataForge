@@ -51,6 +51,7 @@ USAGE
     python research/compare_quality.py --skip-hf             # our model only, no downloads
 """
 import argparse
+import contextlib
 import json
 import math
 import os
@@ -76,15 +77,28 @@ BASELINES = [
 OOD_URL = "https://www.gutenberg.org/cache/epub/4650/pg4650.txt"   # Candide, French, public domain
 
 
-def load_indomain(path, n_chars):
-    """Held-out Europarl, rebuilt by the notebook's own 95/5 split of the byte stream."""
+def load_indomain(path, n_chars, seed=0, blocks=20):
+    """Held-out Europarl, rebuilt by the notebook's own 95/5 split of the byte stream.
+
+    Sampled from offsets spread across the WHOLE split, not one contiguous chunk. The first
+    version read the first 60 KB and got 1.13 bits/byte where the training run's own validation
+    reports 0.967 -- a single region of a parliamentary corpus is not representative of it, and
+    that gap was sampling, not the model. Each block starts at a record boundary.
+    """
     if not os.path.exists(path):
         return None
     raw = np.memmap(path, dtype=np.uint8, mode="r")
-    # Start at a record boundary so the first window does not begin mid-sentence.
-    head = bytes(raw[: 4 * n_chars])
-    i = head.find(b"<F:en>")
-    return head[i if i >= 0 else 0:].decode("utf-8", errors="ignore")[:n_chars]
+    rng = np.random.default_rng(seed)
+    per = n_chars // blocks
+    starts = rng.integers(0, max(len(raw) - 4 * per, 1), size=blocks)
+    out = []
+    for st in sorted(starts):
+        chunk = bytes(raw[st: st + 4 * per])
+        i = chunk.find(b"<F:en>")           # never begin mid-record
+        if i < 0:
+            continue
+        out.append(chunk[i:].decode("utf-8", errors="ignore")[:per])
+    return out
 
 
 def load_ood(cache, n_chars):
@@ -119,26 +133,44 @@ def load_ood(cache, n_chars):
     return " ".join(p for p in paras if p)[:n_chars]
 
 
-def windows(text, win_chars):
-    """Cut on character boundaries into (context, scored) halves."""
+def windows(blocks, win_chars):
+    """Cut on character boundaries into (context, scored) halves.
+
+    `blocks` is a list of independent passages, and windows NEVER span two of them. The in-domain
+    set is sampled from scattered offsets, so a window straddling a seam would carry context from
+    an unrelated part of the corpus into its scored half -- genuinely harder, and an artifact of
+    the sampling rather than a property of the model. That flaw cost 0.06 bits/byte when it was in.
+    """
+    if isinstance(blocks, str):
+        blocks = [blocks]
     out = []
-    for i in range(0, len(text) - win_chars + 1, win_chars):
-        w = text[i:i + win_chars]
-        out.append((w[: win_chars // 2], w[win_chars // 2:]))
+    for text in blocks:
+        for i in range(0, len(text) - win_chars + 1, win_chars):
+            w = text[i:i + win_chars]
+            out.append((w[: win_chars // 2], w[win_chars // 2:]))
     return out
 
 
+def autocast_ctx(device, precision):
+    """One numerical regime for every model in the table. See PRECISION in the module docstring."""
+    if precision == "fp32" or device != "cuda":
+        return contextlib.nullcontext()
+    return torch.autocast("cuda", dtype=torch.bfloat16 if precision == "bf16" else torch.float16)
+
+
 @torch.no_grad()
-def bpb_bdh(model, wins, device):
+def bpb_bdh(model, wins, device, precision="bf16"):
     """Our byte model: NLL over the scored half, divided by that half's byte count."""
     nats = 0.0
     nbytes = 0
+    amp = autocast_ctx(device, precision)
     for ctx, scored in wins:
         ids = list((ctx + scored).encode("utf-8"))
         lo = len(ctx.encode("utf-8"))
         if len(ids) > 512 or lo < 1:
             continue
-        logits, _ = model(torch.tensor([ids], dtype=torch.long, device=device))
+        with amp:
+            logits, _ = model(torch.tensor([ids], dtype=torch.long, device=device))
         lp = F.log_softmax(logits[0].float(), -1)
         tgt = torch.tensor(ids[lo:], device=device)
         nats += float(-lp[lo - 1:len(ids) - 1].gather(1, tgt.unsqueeze(1)).sum())
@@ -147,12 +179,15 @@ def bpb_bdh(model, wins, device):
 
 
 @torch.no_grad()
-def bpb_hf(name, wins, device):
-    """A tokenizer model, scored on exactly the same span of text and divided by the same bytes."""
+def bpb_hf(name, wins, device, precision="bf16"):
+    """A tokenizer model, scored on exactly the same span of text and divided by the same bytes.
+
+    Weights load in fp32 and the forward runs under the SAME autocast as ours, so precision is not
+    a free variable between rows of the table."""
     from transformers import AutoModelForCausalLM, AutoTokenizer
     tok = AutoTokenizer.from_pretrained(name)
-    lm = AutoModelForCausalLM.from_pretrained(
-        name, torch_dtype=torch.float16 if device == "cuda" else torch.float32).to(device).eval()
+    lm = AutoModelForCausalLM.from_pretrained(name, dtype=torch.float32).to(device).eval()
+    amp = autocast_ctx(device, precision)
     nats = 0.0
     nbytes = 0
     for ctx, scored in wins:
@@ -166,7 +201,9 @@ def bpb_hf(name, wins, device):
         start = next((i for i, (a, _) in enumerate(offs) if a >= len(ctx)), None)
         if start is None or start < 1 or start >= ids.shape[1]:
             continue
-        lp = F.log_softmax(lm(ids).logits[0].float(), -1)
+        with amp:
+            out_logits = lm(ids).logits
+        lp = F.log_softmax(out_logits[0].float(), -1)
         tgt = ids[0, start:]
         nats += float(-lp[start - 1:-1].gather(1, tgt.unsqueeze(1)).sum())
         # The scored region is the text those tokens actually cover, so the denominator matches.
@@ -186,13 +223,16 @@ def main():
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--chars", type=int, default=60000, help="characters sampled per evaluation set")
     ap.add_argument("--win", type=int, default=480, help="window in characters; half is scored")
+    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--precision", default="bf16", choices=["bf16", "fp16", "fp32"],
+                    help="one autocast regime applied to every model in the table")
     ap.add_argument("--skip-hf", action="store_true")
     ap.add_argument("--out", default=os.path.join(ROOT, "research/runs/quality.json"))
     ap.add_argument("--png", default=os.path.join(ROOT, "docs/media/efficiency-frontier.png"))
     args = ap.parse_args()
 
     sets = {}
-    ind = load_indomain(args.val, args.chars)
+    ind = load_indomain(args.val, args.chars, seed=args.seed)
     if ind:
         sets["in-domain (held-out Europarl)"] = windows(ind, args.win)
     else:
@@ -209,7 +249,7 @@ def main():
     ours = "8M BDH (ours)"
     rows[ours] = {"params": int(sum(p.numel() for p in model.parameters())), "bpb": {}}
     for sname, wins in sets.items():
-        b, nb = bpb_bdh(model, wins, args.device)
+        b, nb = bpb_bdh(model, wins, args.device, args.precision)
         rows[ours]["bpb"][sname] = round(b, 4)
         rows[ours].setdefault("scored_bytes", {})[sname] = nb
         print("  %-28s %-32s %.4f bits/byte  (%s bytes)" % (ours, sname, b, f"{nb:,}"))
@@ -222,7 +262,7 @@ def main():
             rows[name] = {"why_in_the_set": why, "bpb": {}}
             for sname, wins in sets.items():
                 try:
-                    b, nb, params = bpb_hf(name, wins, args.device)
+                    b, nb, params = bpb_hf(name, wins, args.device, args.precision)
                 except Exception as e:
                     print("  %-28s FAILED: %s" % (name, e))
                     break
@@ -232,6 +272,7 @@ def main():
                 print("  %-28s %-32s %.4f bits/byte  (%s bytes)" % (name, sname, b, f"{nb:,}"))
 
     out = {
+        "precision": args.precision,
         "window_chars": args.win,
         "sets": list(sets.keys()),
         "not_a_controlled_comparison": (
@@ -246,39 +287,55 @@ def main():
     print("\n  wrote", os.path.relpath(args.out, ROOT))
 
     try:
-        plot(rows, list(sets.keys()), args.png)
+        plot(rows, list(sets.keys()), args.png, args.precision)
         print("  wrote", os.path.relpath(args.png, ROOT))
     except Exception as e:
         print("  (no figure: %s)" % e)
     return 0
 
 
-def plot(rows, sets, path):
+def plot(rows, sets, path, precision="bf16"):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(7.6, 4.4))
-    for sname, marker in zip(sets, ("o", "s")):
-        xs, ys, ls = [], [], []
-        for name, r in rows.items():
-            if sname in r.get("bpb", {}) and r.get("params"):
-                xs.append(r["params"]); ys.append(r["bpb"][sname]); ls.append(name)
-        ax.plot(xs, ys, marker, ms=8, label=sname)
-        for x, y, l in zip(xs, ys, ls):
-            ax.annotate(l.split("/")[-1], (x, y), fontsize=7, xytext=(4, 4),
-                        textcoords="offset points")
-    ax.set_xscale("log")
-    # Point labels are drawn to the right of their marker, so the frame needs room at both ends or
-    # the smallest and largest models lose their names to the edge.
+    fig, ax = plt.subplots(figsize=(7.8, 4.6))
+    ind, ood = sets[0], (sets[1] if len(sets) > 1 else None)
+
+    # One vertical connector per model. Its LENGTH is the generalisation gap, which is the whole
+    # point of running two sets, and it also stops the two series from needing two labels each.
+    for name, r in rows.items():
+        b = r.get("bpb", {})
+        if ood and ind in b and ood in b and r.get("params"):
+            ax.plot([r["params"], r["params"]], [b[ind], b[ood]], "-", lw=1.2, color="0.72",
+                    zorder=1)
+
+    for sname, marker, colour in zip(sets, ("o", "s"), ("#2b6ca8", "#d98032")):
+        xs = [r["params"] for r in rows.values() if sname in r.get("bpb", {}) and r.get("params")]
+        ys = [r["bpb"][sname] for r in rows.values() if sname in r.get("bpb", {}) and r.get("params")]
+        ax.plot(xs, ys, marker, ms=9, color=colour, label=sname, zorder=3)
+
+    for name, r in rows.items():
+        b = r.get("bpb", {})
+        if ind in b and r.get("params"):
+            ax.annotate(name.split("/")[-1], (r["params"], b[ind]), fontsize=8,
+                        xytext=(7, -3), textcoords="offset points", zorder=4)
+
+    ours = rows.get("8M BDH (ours)", {})
+    ob = ours.get("bpb", {})
+    if ood and ind in ob and ood in ob:
+        ax.annotate("specialisation gap", (ours["params"], (ob[ind] + ob[ood]) / 2),
+                    fontsize=8, color="0.4", xytext=(10, 0), textcoords="offset points",
+                    va="center")
+
     xs_all = [r["params"] for r in rows.values() if r.get("params")]
-    ax.set_xlim(min(xs_all) / 2.2, max(xs_all) * 3.2)
+    ax.set_xscale("log")
+    ax.set_xlim(min(xs_all) / 2.4, max(xs_all) * 4.0)
     ax.set_xlabel("parameters")
     ax.set_ylabel("bits per byte (lower is better)")
-    ax.set_title("Same bytes, same windows, one script — our 8M against public models",
-                 fontsize=11)
+    ax.set_title("Same bytes, same windows, same %s regime, one script" % precision, fontsize=11)
     ax.grid(alpha=0.25, which="both", lw=0.5)
-    ax.legend(frameon=False, fontsize=9)
+    ax.legend(frameon=False, fontsize=9, loc="upper center")
     fig.text(0.5, -0.04, "Not a controlled comparison: different data, different scales, different "
                          "tokenizers. Context for our number, not evidence about architectures.",
              ha="center", fontsize=7.5, color="0.35")

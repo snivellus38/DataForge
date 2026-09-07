@@ -1,6 +1,8 @@
 {
+  "precision": "bf16",
   "window_chars": 480,
   "sets": [
+    "in-domain (held-out Europarl)",
     "out-of-domain (French prose)"
   ],
   "not_a_controlled_comparison": "Public models trained by other people on other data at other scales. This gives context for our number, not evidence about architectures. Two confounds run in opposite directions: our model is a specialist on the in-domain set, and Europarl v7 is old and public so it may be inside their pretraining data.",
@@ -8,40 +10,48 @@
     "8M BDH (ours)": {
       "params": 7962624,
       "bpb": {
-        "out-of-domain (French prose)": 3.0832
+        "in-domain (held-out Europarl)": 0.9036,
+        "out-of-domain (French prose)": 2.876
       },
       "scored_bytes": {
-        "out-of-domain (French prose)": 20434
+        "in-domain (held-out Europarl)": 29406,
+        "out-of-domain (French prose)": 30772
       }
     },
     "gpt2": {
       "why_in_the_set": "the canonical reference point",
       "bpb": {
-        "out-of-domain (French prose)": 2.1452
+        "in-domain (held-out Europarl)": 1.6931,
+        "out-of-domain (French prose)": 2.1681
       },
       "params": 124439808,
       "scored_bytes": {
-        "out-of-domain (French prose)": 20311
+        "in-domain (held-out Europarl)": 29439,
+        "out-of-domain (French prose)": 30608
       }
     },
     "HuggingFaceTB/SmolLM2-135M": {
       "why_in_the_set": "a modern small model, so the frontier is not all 2019",
       "bpb": {
-        "out-of-domain (French prose)": 1.686
+        "in-domain (held-out Europarl)": 1.2447,
+        "out-of-domain (French prose)": 1.6961
       },
       "params": 134515008,
       "scored_bytes": {
-        "out-of-domain (French prose)": 20305
+        "in-domain (held-out Europarl)": 29441,
+        "out-of-domain (French prose)": 30600
       }
     },
     "bigscience/bloom-560m": {
       "why_in_the_set": "multilingual, genuinely trained on French",
       "bpb": {
-        "out-of-domain (French prose)": 1.2155
+        "in-domain (held-out Europarl)": 0.9737,
+        "out-of-domain (French prose)": 1.2662
       },
       "params": 559214592,
       "scored_bytes": {
-        "out-of-domain (French prose)": 20242
+        "in-domain (held-out Europarl)": 29390,
+        "out-of-domain (French prose)": 30505
       }
     }
   }
