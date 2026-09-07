@@ -1,7 +1,7 @@
 {
  "what": "G* = decoder_x[h]^T @ encoder[h]^T, the standing neuron->neuron synapse matrix",
  "source_ckpt": "french_best.pt",
- "provenance": "trained by the author for an earlier Pathway hackathon; disclosed as prior work",
+ "provenance": "8M BDH trained on Europarl v7 en-fr; recipe in models/README.md",
  "config": {
   "n_layer": 6,
   "n_embd": 192,

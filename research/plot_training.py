@@ -24,7 +24,7 @@ The gate y = ReLU(D_y a) * x tracks the same shape one order of magnitude lower,
 WHY IT IS WORTH PLOTTING HERE
 -----------------------------
 The endpoint corroborates a number this repo measures independently. The training probe lands at
-5.09% on three sentences through the prior run's own instrumentation; our export pipeline, a
+5.09% on three sentences through the training run's own instrumentation; our export pipeline, a
 different code path on a 7-sentence corpus and 55,959,552 neuron-token slots, lands at 5.129%
 (web/public/big/traces.json, which is where the reference line on the figure is read from -- it is
 not typed in). Two measurements, two codebases, one number.

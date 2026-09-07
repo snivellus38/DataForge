@@ -50,7 +50,7 @@ from bdh_big import load_big
 
 # The analysis corpus from the training notebook: grouped so that concept structure is probeable
 # (currency / country / institution), plus a deliberate repetition sentence for the Hebbian trace
-# and two short ones. Kept verbatim so the numbers line up with the prior run's telemetry.
+# and two short ones. Kept verbatim so the numbers line up with the training run's telemetry.
 CORPUS = [
     "<F:en>The price was fifty euros and thirty pounds<T:fr>Le prix etait de cinquante euros et trente livres",
     "<F:en>The dollar strengthened against the yen today<T:fr>Le dollar s'est renforce face au yen aujourd'hui",

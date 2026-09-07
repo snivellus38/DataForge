@@ -57,7 +57,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--ckpt", default="models/checkpoints/french_best.pt")
 ap.add_argument("--out", default="web/public/big/field")
 ap.add_argument("--percentile", type=float, default=99.0,
-                help="edge threshold on |G*|; 99.0 reproduces the prior run's 94,373 edges")
+                help="edge threshold on |G*|; 99.0 reproduces the notebook's 94,373 edges")
 ap.add_argument("--edges-per-head", type=int, default=6000, help="strongest edges shipped per head")
 ap.add_argument("--tsne-iter", type=int, default=750)
 ap.add_argument("--fr-iter", type=int, default=200)
@@ -155,7 +155,7 @@ for h in want:
     comms = sorted(comms, key=len, reverse=True)
     mod = nx.community.modularity(UG, comms, weight="weight")
     # 39% of neurons have no edge at the p99 threshold, so Louvain returns each of them as its own
-    # singleton community. The prior run reported "12 clusters" only because it built its graph
+    # singleton community. The notebook reported "12 clusters" only because it built its graph
     # from edges alone and never added the isolated nodes. Both counts are reported here; the
     # singleton count IS the heavy tail and belongs on the page, not swept under a threshold.
     real = [c for c in comms if len(c) > 1]
@@ -337,7 +337,7 @@ open(a.out + ".bin", "wb").write(bytes(blob))
 json.dump({
     "what": "G* = decoder_x[h]^T @ encoder[h]^T, the standing neuron->neuron synapse matrix",
     "source_ckpt": os.path.basename(a.ckpt),
-    "provenance": "trained by the author for an earlier Pathway hackathon; disclosed as prior work",
+    "provenance": "8M BDH trained on Europarl v7 en-fr; recipe in models/README.md",
     "config": cfg, "N_per_head": N, "n_neurons_total": H * N,
     "iteration": ck.get("iteration"), "val_loss": ck.get("losses", {}).get("val"),
     "percentile": a.percentile, "edges_per_head": a.edges_per_head, "seed": a.seed,

@@ -19,7 +19,7 @@ out -- degraded but coherent. They call it "human-like degradation".
 
 WHAT WE HAVE, AND HOW IT DIFFERS
 --------------------------------
-The author's prior hackathon run trained French (50k iters) and Portuguese (40k iters)
+The training run produced French (50k iters) and Portuguese (40k iters)
 INDEPENDENTLY, from scratch -- see notebook Cells 6 and 7, two separate train() calls with no
 cloning. Its merge (Cell 8) then reported a loss of 3276 and generated "iiiiiiii".
 
@@ -85,7 +85,7 @@ def merge(sd_a, sd_b, cfg, rope_mode):
 
     if rope_mode == "concat":            # what the paper says to do
         m["rope_freqs"] = torch.cat([sd_a["rope_freqs"], sd_b["rope_freqs"]], dim=-1)
-    elif rope_mode == "copy":            # what the prior run did
+    elif rope_mode == "copy":            # what the notebook did
         m["rope_freqs"] = sd_a["rope_freqs"]
     elif rope_mode == "rebuild":         # let the model derive a fresh schedule at the new N
         pass
@@ -169,7 +169,7 @@ def main():
     samples = {}
     VARIANTS = (
         ("concat", False, "merged - paper recipe (RoPE concatenated)"),
-        ("copy", False, "merged - RoPE copied from A (prior run)"),
+        ("copy", False, "merged - RoPE copied from A (notebook version)"),
         ("rebuild", False, "merged - RoPE rebuilt at the new n"),
         ("concat", True, "control - paper recipe, E scaled by 1/2"),
     )

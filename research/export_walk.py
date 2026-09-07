@@ -379,7 +379,7 @@ if os.path.exists(a.out + ".bin"):
 json.dump({
     "what": "full per-stage pipeline tensors for the walkthrough (web/loop.html)",
     "source_ckpt": os.path.basename(a.ckpt),
-    "provenance": "trained by the author for an earlier Pathway hackathon; disclosed as prior work",
+    "provenance": "8M BDH trained on Europarl v7 en-fr; recipe in models/README.md",
     "deviations_from_reference_bdh": [
         "adds a learned pos_emb (4096 x D) on top of RoPE",
         "has no decay term",

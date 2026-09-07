@@ -1,7 +1,7 @@
 """
 Which neurons respond to which KIND of word -- tested against a null, not just asserted.
 
-WHY THIS SCRIPT EXISTS RATHER THAN SHIPPING THE PRIOR RUN'S FILE
+WHY THIS SCRIPT EXISTS RATHER THAN SHIPPING THE NOTEBOOK'S FILE
 ----------------------------------------------------------------
 `models/telemetry/monosemanticity/precomputed.json` reports 200 neurons
 with `selectivity: 1.0`, at mean activations around 0.0027, over 15 sentences. Selectivity of 1.0
@@ -186,7 +186,7 @@ out = {
               "activations held fixed, so it preserves that neuron's own firing rate and "
               "burstiness. A neuron counts as selective only if it beats its own 95th "
               "percentile; the headline count additionally survives Benjamini-Hochberg at 5% FDR.",
-    "why": "the prior run reported selectivity 1.0 for 200 neurons with no null at all. A rarely "
+    "why": "the notebook's analysis reported selectivity 1.0 for 200 neurons with no null at all. A rarely "
            "firing neuron is trivially selective by chance, so an uncontrolled count is not "
            "evidence of monosemanticity.",
     "caveats": [

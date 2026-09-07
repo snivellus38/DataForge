@@ -129,7 +129,7 @@ Worth volunteering — it demonstrates the evidence discipline the track scores.
 - **ConceptARC is in the training mixture** (§4.2) and then used as evaluation (59.38%). The paper
   admits its control does not rule out training exposure.
 - **A published selectivity claim does not survive a null.** `monosemanticity/precomputed.json` in
-  the prior run reports 200 neurons at selectivity 1.0 with no control; a neuron firing on 5 bytes
+  the notebook's analysis reports 200 neurons at selectivity 1.0 with no control; a neuron firing on 5 bytes
   is trivially 100% selective. With a per-neuron permutation null, 2,692 beat their own p95 against
   ~352 expected by chance, and 1,836 survive Benjamini–Hochberg at 5% FDR. We ship ours.
 
@@ -158,6 +158,5 @@ Volunteering these is stronger than being caught by them.
   `V = LN(v)`, no softmax, strict-causal `tril(-1)`, RoPE inside attention).
 - "Never fires" is measured over **7 sentences**. A wider corpus may wake some neurons.
 - "Isolated" depends on the **p99 threshold**. Move the threshold, move the count.
-- The 8M model is **reused prior work** by one of us, disclosed in the README.
 - σ is dense; we draw Δσ, differences and row energy rather than pretending otherwise.
 - No BDH-CQ result here is reproduced. It cannot be run.
