@@ -940,21 +940,15 @@ everywhere else), and [Neuronpedia](https://www.neuronpedia.org/) (browsing indi
   every categorical pair is checked for contrast under both themes and under simulated colour
   vision deficiency. That check is why heads are *not* colour-coded and only the top three Louvain
   communities get a hue, because only three categorical hues clear all pairs on the field surface.
+- **Claude Code (Opus 5)** for the code, the analysis and the drafting, worked against the primary
+  sources rather than from memory. Direction, review and every design decision are the team's, as
+  is the 8M model. Thanks are owed for the heavy lifting; if the next one of these gets written
+  with BDH instead, we will call that progress.
 
-### On building this
-
-**Claude (Opus 5), via Claude Code, was used throughout**: to read and extract the BDH and BDH-CQ
-primary sources into the dossier, to design and write the training, analysis and export code, to
-write the browser port of BDH, the three pages and the test suite, and to draft this README and
-the concept summary. Understanding BDH well enough to build an explanation of it was itself much
-of the work, and that reading was done with Claude against the papers rather than from memory.
-
-Direction, review and every design decision are the team's, as is the 8M model. The
-discipline that matters here is not who typed what: **every empirical claim in this repo is
-produced by a script in this repo**, and the team can trace and defend each one.
-[`docs/defense.md`](docs/defense.md) is the working aid for exactly that. No number appears
-anywhere in the artifact that is not either produced by a script here or quoted from a primary
-source with a locator.
+**Every empirical claim in this repo is produced by a script in this repo**, and the team can trace
+and defend each one; [`docs/defense.md`](docs/defense.md) is the working aid for exactly that. No
+number appears anywhere in the artifact that is not either produced by a script here or quoted from
+a primary source with a locator.
 
 ## Attribution and licenses
 
