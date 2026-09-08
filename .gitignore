@@ -44,3 +44,9 @@ research/__mobile_profile/
 # 95/5 split the training notebook used) and one public-domain French text. Both are
 # downloads, not sources -- research/compare_quality.py fetches them on demand.
 data/
+
+# The one-pager's build. docs/concept-summary.tex is the source and the PDF is committed;
+# generated-numbers.tex is written from research/runs/*.json on every build, so committing it
+# would create a second place for a measured number to live.
+docs/build/
+docs/generated-numbers.tex

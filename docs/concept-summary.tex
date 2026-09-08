@@ -1,0 +1,199 @@
+% One-page concept summary. Build with `npm run summary` (docs/build_summary.py), which
+% regenerates generated-numbers.tex from research/runs/*.json, builds this file, and then checks
+% the page count, the word budget, the register and the honesty disclosures.
+%
+% Numbers written as \commands come from the runs and must never be typed here. Numbers written
+% literally are the ones with no committed JSON yet; each carries a comment naming its script.
+%
+% The fit is tight. One extra line of prose spills to a second page, and the budget is rendered
+% lines rather than words: a four-column table costs far more than its word count. Build the
+% committed version first, then you know the delta you are working against.
+\documentclass[a4paper,9pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage{libertinus}
+\usepackage{inter}
+\renewcommand{\familydefault}{\rmdefault}   % inter.sty makes itself the default; body stays serif
+\usepackage[a4paper,left=11mm,right=11mm,top=10mm,bottom=7mm]{geometry}
+\usepackage{amsmath,multicol,booktabs,array,microtype}
+\usepackage[table]{xcolor}
+
+\definecolor{accent}{HTML}{A8641A}
+\definecolor{ink}{HTML}{16161A}
+\definecolor{mid}{HTML}{5E5E66}
+\definecolor{rule}{HTML}{C9C9CE}
+\definecolor{linkblue}{HTML}{2A5D8F}
+\definecolor{winbg}{HTML}{F5EEE3}
+
+\usepackage[colorlinks=true,urlcolor=linkblue,citecolor=linkblue,linkcolor=linkblue]{hyperref}
+
+\color{ink}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.4ex}
+\setlength{\columnsep}{6mm}
+\setlength{\columnseprule}{0.2pt}
+\renewcommand{\columnseprulecolor}{\color{rule}}
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.05}
+\newcommand{\rw}{\addlinespace[1.7pt]}   % rows whose cells wrap need a gap to read as rows
+\pagestyle{empty}
+\hyphenpenalty=700
+
+\newcommand{\sect}[1]{\vspace{0.65ex}{\sffamily\bfseries\fontsize{7.2}{7.8}\selectfont\color{accent}\MakeUppercase{#1}}\par\vspace{0.15ex}}
+\newcommand{\num}[1]{\textbf{#1}}
+\newcommand{\hd}[1]{{\sffamily\bfseries\fontsize{6.8}{8}\selectfont #1}}
+\newcommand{\arx}[1]{\href{https://arxiv.org/abs/#1}{arXiv:#1}}
+\newcommand{\win}[1]{\cellcolor{winbg}\textbf{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\input{generated-numbers}
+
+\begin{document}
+\fontsize{8.6}{10.15}\selectfont
+
+% ================================================================== MASTHEAD
+{\sffamily\bfseries\fontsize{16.5}{18}\selectfont Demonstrations are weights you write at inference time\par}
+\vspace{0.9ex}
+{\fontsize{9.2}{11.4}\selectfont A frozen model adapts to an unseen task by adding rank-one updates
+to a fixed-size associative state, so changing only the demonstrations changes the answer. The
+non-negativity that makes that state readable is the same property that caps what it can hold, at a
+rate of $1/\pi$. The first half is reproducible in under a minute; the second is measured.\par}
+\vspace{1.0ex}
+{\sffamily\fontsize{6.6}{8}\selectfont\color{mid} Test-time adaptation: optimization versus
+context~~$\cdot$~~\href{https://demonstrations-are-weights.vercel.app}{demonstrations-are-weights.vercel.app}~~$\cdot$~~\href{https://github.com/snivellus38/DataForge}{github.com/snivellus38/DataForge}~~$\cdot$~~
+a 131K-parameter BDH runs live in the browser, the 8M-parameter one was trained here, and BDH-CQ
+figures are replayed from \arx{2608.09888}.\par}
+\vspace{0.5ex}
+{\color{rule}\hrule height 0.7pt}
+\vspace{0.3ex}
+
+\begin{multicols}{2}
+
+\sect{Design pressure}
+A model meeting an unseen task has two routes. It can \emph{optimize}: turn the demonstrations into
+training samples and take a backward pass first. HRM (\arx{2506.21734}) and TRM (\arx{2510.04871})
+do this on ARC, giving each augmented puzzle a learned identity embedding and voting over
+augmentations, so a hidden task cannot be scored until parameters move, at ARC Prize's \$1.48 and
+\$1.76 per task. Or it can \emph{adapt in state}, writing them into a
+recurrent memory and answering with every parameter untouched, which needs a memory that does not
+grow with what it has read.
+
+\sect{Mechanism}
+Attention without a softmax and with $Q=K$ reassociates exactly into a recurrence over a state of
+fixed size:
+\vspace{-1.4ex}
+\begin{gather*}
+\sigma_t = \sigma_{t-1} + \mathrm{rope}(K)_t \otimes V_t\\[-0.4ex]
+\mathrm{out}_t = \sigma_t^{\mathsf T}\,\mathrm{rope}(Q)_t
+\end{gather*}
+\vspace{-2.6ex}
+
+Each token adds a rank-one outer product to a matrix later tokens read through, so a demonstration
+is literally a weight. The reassociation is exact: the reference implementation
+(\href{https://github.com/pathwaycom/bdh}{pathwaycom/bdh}, MIT) run both ways agrees to
+$\mathbf{2.8\times10^{-14}}$ in float64, % research/verify_equivalence.py
+and our 8M model's recurrent decode matches its parallel forward to $\recurRel\times10^{-7}$.
+
+Of BDH's three unusual choices only one buys that fixed state. A softmax breaks the
+equivalence ($1.2\times10^{2}$); $Q\neq K$ ($1.7\times10^{-5}$) and dropping the ReLU
+($1.6\times10^{-5}$) do not. % research/verify_equivalence.py
+Softmax-freeness buys constant memory; $Q=K$ and the ReLU buy readability.
+
+\sect{What non-negativity buys}
+Sparse, positive, monosemantic structure is the Dragon Hatchling paper's claim (\arx{2509.26507});
+the price below is ours. On our 8M model \num{\bdhActive\%} of units clear 1\% of their peak and only
+\num{\yActive\%} survive the gate $y=\mathrm{ReLU}(D_y a)\odot x$ into the residual stream.
+
+BDH is weight-tied, one neuron population and the same matrices at every iteration, so
+$G^{*}=D_x^{\mathsf T}E^{\mathsf T}$ is a standing synapse graph computed from the weights alone.
+Isolation in it predicts which neurons never fire on real French, at Matthews correlation
+\num{+\mccGstar} ($+1$ perfect, $0$ chance), against $\mccNull$ for a degree-shuffled null over
+\nullDraws{} draws and $+\mccPt$ on an independently trained Portuguese sibling.
+
+\sect{What it costs}
+Write $k$ rank-one bindings into a fixed $N\times D$ state and read them back: 100\% at $k=8$, 94\%
+at $k=32$, 48\% at $k=128$. % research/sigma_capacity.py, seeded run
+A counterfactual isolates the cause: with \emph{signed} keys the same state holds 384 bindings at
+99\%, past its rank. Mean pairwise cosine is $\mathbf{+0.319}$ for rectified keys against
+$-0.000$ for signed, and $+0.319$ is analytic: $\mathbf{1/\pi}$ for rectified Gaussians. Non-negative
+vectors cannot be near-orthogonal, so they interfere: readability is paid for here. The ceiling
+belongs to the additive write rather than to BDH: DeltaNet (\arx{2406.06484})
+replaces ``the additive update in linear transformers'' with a delta rule and reports it better at
+associative recall; TTT layers (\arx{2407.04620}) recast it as self-supervised learning.
+
+\end{multicols}
+
+% ================================================================== TABLE
+\vspace{-0.6ex}
+{\fontsize{6.9}{8.1}\selectfont
+\begin{tabular}{@{}L{24mm} L{45mm} L{61mm} L{47mm}@{}}
+\toprule
+& \hd{Decoder-only Transformer} & \hd{BDH, 8M, trained and run here} & \hd{BDH-CQ (replayed, not run)}\\
+\midrule
+\hd{Memory per token} & \kvPerToken{}\,B, unbounded & \win{\sigmaMB\,MB, flat}; cheaper past $T^{*}=N_{\text{total}}/2=\crossover$\,B & constant, dimensions undisclosed\\\rw
+\hd{Interpretability} & attention maps, data-dependent & \win{\bdhActive\% units active; $G^{*}$ predicts silence, MCC $+\mccGstar$ against a $\mccNull$ null} & none published\\\rw
+\hd{Accuracy in domain, bits/byte} & \bpbBloomIn{} (BLOOM-560m), \bpbSmolIn{} (SmolLM2-135M), \bpbGptIn{} (GPT-2) & \win{\bpbOursIn{} at \paramsOurs M parameters} & 29.5\% pass@2 on ARC-AGI-1, developer-reported\\\rw
+\hd{Deployability} & weights public & \win{weights, code, exports and 236 checks, MIT} & no weights, no API, access on request\\
+\midrule
+\hd{Inference cost} & \textbf{\kvAtTrained\,MB} of cache at its 512\,B context & \sigmaMB\,MB of state, \textbf{\sigmaPremium$\times$ larger} & $\approx$0.85 H200 GPU-s/task, computed not billed\\\rw
+\hd{Accuracy out of domain} & \textbf{\bpbBloomOod{}} (BLOOM-560m) & \bpbOursOod{}, a \gapOurs$\times$ gap where the others sit at \gapOthersLo--\gapOthersHi$\times$ & not reported\\
+\bottomrule
+\end{tabular}\par
+\vspace{0.35ex}
+{\fontsize{6.2}{7.3}\selectfont\color{mid} Above the second rule BDH wins; below it, it loses. The
+public models are reference points and not controls: other people, other data. Bits
+per byte is tokenizer-agnostic cross-entropy over identical text.\par}}
+\vspace{0.5ex}
+
+\begin{multicols}{2}
+
+\sect{BDH and BDH-CQ}
+BDH is the substrate: MIT-licensed, runnable, and what every figure above was measured on. BDH-CQ is
+evidence only: no public weights, no public API, and dimensions and update rules that ``remain
+proprietary'' (\arx{2608.09888}, \S3.3). The bridge needs no access. BDH-CQ's
+memory update is Eq.~(1), $S_t = U_\theta(S_{t-1}, D_t)$, and \S3.2 names the special case
+$S_t = S_{t-1} + U_\theta(D_t)$, ``linear attention being the conceptually simplest standalone
+realization'', which is what the public BDH code computes. Additive accumulation is therefore a named
+special case, not BDH-CQ's rule, and presenting it as the mechanism is an error.
+
+Two replayed results. In Table~3, one demonstration added at the target complexity moves length-8
+ordering from 0/24 to 13/24 exact outputs, test inputs byte-identical; in \S6.3 a colour permutation
+defined only through demonstrations is applied to 96/96 held-out outputs.
+
+\sect{Evidence and maturity}
+The grounding evaluation is ARC-AGI-1: 29.5\% pass@2, 118 of 400 public tasks with two attempts
+allowed, at about 0.85 H200 GPU-seconds per task (Table~1). Five qualifications from the report.
+It is a pipeline score: input transformations, candidate construction and ranking included. The
+\$0.00070 per task is computed at an assumed \$3 per H200-hour, not billed, and \S6.6 reports the
+same 118 of 400 at \num{\$0.00265246}, 3.8$\times$ higher and unreconciled, at which
+``57$\times$ cheaper'' becomes 15$\times$. The Wilson interval [25.24, 34.15] overlaps GPT-5.6
+Luna Low's higher 34.2\%. The audit reproducing 29.5\% was run by co-authors:
+developer-reported, and not an external reproduction. ConceptARC sits in the training mixture
+(\S4.2) before being evaluated at 59.38\%.
+
+Maturity, as facts rather than a score: the architecture is public and reproducible under MIT, the
+system is not; there is no external reproduction and no ARC Prize leaderboard entry;
+Transformer-like scaling from 1B to 600B parameters is two sentences in \S9.2 with no supporting
+data; and the public ecosystem is one third-party reimplementation with no weights.
+
+\sect{The open question}
+The $1/\pi$ ceiling is a property of the additive write. BDH-CQ's rule is the general $U_\theta$ and
+is proprietary, and DeltaNet shows a non-additive update recalls better, so whether BDH-CQ escapes
+the ceiling its own named special case obeys cannot be checked from outside Pathway. That is the
+missing evidence. Ours sits beside it: no parameter-matched Transformer was trained as a control, and
+this 8M model shows no gain on repeated random spans, so demonstrations are weights in a model
+trained to use them that way.
+
+\end{multicols}
+
+% FOOTER
+\vspace{-0.2ex}
+{\color{rule}\hrule height 0.7pt}
+\vspace{0.4ex}
+{\fontsize{6.6}{8}\selectfont\color{mid}\textbf{Where to continue.} \arx{2509.26507} for the
+architecture; \arx{2608.09888}, \S3.2 with Tables 1, 3 and 9, for the system and its evidence;
+\arx{2406.06484} for the delta-rule alternative;
+\href{https://demonstrations-are-weights.vercel.app}{the artifact} to reproduce the claim.
+\href{https://github.com/snivellus38/DataForge}{github.com/snivellus38/DataForge}, MIT;
+\texttt{docs/defense.md} maps each number to its script.\par}
+
+\end{document}

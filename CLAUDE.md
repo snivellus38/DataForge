@@ -1268,3 +1268,92 @@ outright with `unexpected EOF while looking for matching '`.
    purpose-built); the honest framing is per-parameter, and the result ships either way.
 3. The two `web/` provenance rewordings and their gate, from the session-6 handoff above.
 4. Item 17 still stands: nobody has opened the pages in a real, non-headless browser.
+
+### 2026-09-08 -- Session 8 (Opus 5) -- the one-pager becomes LaTeX, and a briefing
+
+The user's verdict on `docs/concept-summary.pdf`: weak, and reading as AI slop rather than as the
+briefing the track asks for. Correct on four counts, and the diagnosis matters more than the fix.
+
+**73. THE ONE-PAGER IS SCORED ON NINE NAMED DIMENSIONS AND TWO OF THEM WERE ABSENT.** PS line 188
+lists them: technical correctness, self-containment, architectural comparison, evidence
+classification, strengths-and-limitations, competitive context, **maturity assessment**, primary
+sourcing, and treatment of BDH and BDH-CQ. The old draft had no maturity assessment at all and
+nothing grounding the discussion in an evaluation with the evidence labelled the way the PS's own
+bullet demands. It also compared two systems where the brief asks for "two or three", on three of
+the seven dimensions it names. `docs/concept-summary.tex` now carries a coverage map in its own
+build script, and a future session that rewrites the prose must not silently drop a dimension.
+The register was the other half: headings like "the part everyone guesses wrong", the "X, not Y"
+inversion three separate times, bold on roughly one phrase per sentence, and 15 em dashes.
+
+**74. THE COMPARISON TABLE IS NOW THREE SYSTEMS x SIX DIMENSIONS, WIN-WEIGHTED WITH TWO HONEST
+LOSSES BELOW A RULE.** Transformer / BDH (ours) / BDH-CQ, covering adaptability, memory,
+interpretability, accuracy in and out of domain, inference cost and deployability. The BDH-CQ
+column reading "none published", "dimensions undisclosed", "no weights, no API" makes the evidence
+point visually instead of in prose. The two losses are the 3.2x out-of-domain gap and the 12.0x
+sigma premium at the 512-byte context this model was trained on. **Latency stays out of the table
+on purpose**: our measurement of it is a null (item 65) and a null in a table gets read as a win.
+
+**75. THE PDF'S NUMBERS ARE GENERATED FROM `research/runs/*.json`, BECAUSE THE OLD ONE HAD ALREADY
+DRIFTED.** It quoted MCC +0.944 from the walk export while `structure.json`, the run that also
+carries the shuffled null it quoted in the same sentence, says **+0.940**. `docs/build_summary.py`
+now emits `docs/generated-numbers.tex` (31 `\newcommand`s) and the `.tex` inputs it; the handful
+with no committed JSON (the equivalence residuals, the 1/pi capacity curve) stay literal with a
+`%` comment naming their script. Cross-checking also found a real error in the README: GPT-2's
+isolated share is **0.05%** (`isolated_share_mean` 0.0005), not the 0.1% it said in three places.
+Fixed.
+
+**76. THE BUILD LINTS THE HONESTY LAYER, AND IT DISCRIMINATES.** `npm run summary` fails on: more
+than one page (read from the PDF, because latexmk exits 0 on a two-page document), a word count
+outside 500-950, any em dash or non-ASCII character, a banned slop word, a forbidden claim
+(`state-space model`, `ARC-AGI-2`, `ARC Prize verified`, `independent audit`, `SageMaker`,
+`HyperPod`, any expansion of "CQ"), a missing required disclosure (`0.00265246`, `co-authors`,
+`ConceptARC`, `training mixture`, `remain proprietary`, `special case`, `replayed`), fewer than six
+in-window arXiv ids or fewer than four of them **before the footer**, fewer than six section or
+table locators, and any overfull hbox past 3pt. Verified by poisoning the source: inserting one em
+dash, "state-space model in the Mamba sense", "independent audit" and deleting "co-authors" fails
+it with exactly those five findings.
+
+**77. `SageMaker`/`HyperPod` ARE ON THE FORBIDDEN LIST DELIBERATELY.** The PS mentions BDH-CQ
+deployment integration with Amazon SageMaker HyperPod. We hold no primary source: it is nowhere in
+`research/bdh-cq-dossier.md` and nowhere in arXiv:2608.09888. It stays out, and the lint stops a
+future session adding it on the brief's word alone.
+
+**78. THE WORD BUDGET IS 950 AND THE FIRST DRAFT CAME IN AT 1,137.** Two facts worth keeping. The
+counter must resolve `\href{url}{label}` to its label first, or URLs inflate the count by about a
+fifth. And the page budget is rendered lines, not words: at 1,010 words the content still ran onto
+a second page, and the fix was the grid (11mm margins, body 8.6/10.15, table 6.9/8.1,
+`arraystretch` 1.05) rather than more cutting. Final: **945 words, one page**.
+- **`inter.sty` makes itself `\familydefault`** even without the `sfdefault` option, so the whole
+  body rendered sans until `\renewcommand{\familydefault}{\rmdefault}` went in after it.
+  Libertinus serif body, Inter for headings and the table.
+- **`multicol`, not the `twocolumn` class option**: a `table*` float in a `twocolumn` document
+  defers to the top of the *next* page, which is fatal for a one-pager. Ending and restarting
+  `multicols` puts the full-width table exactly where it is written.
+- Rows whose cells wrap to two lines run together and read as one block; `\addlinespace[1.7pt]`
+  between them is what makes the table scannable.
+- A one-word widow at a column break is fixed by shortening the paragraph, never by
+  `\columnbreak`, which cannot help when the column is already full.
+
+**79. THE SUMMARY NOW ENDS ON A QUESTION, BECAUSE THE BRIEF SAYS IT SHOULD.** The PS: the summary
+succeeds if a reader can "ask an informed follow-up question". So it hands them one. Our 1/pi
+ceiling is a property of the **additive** write; BDH-CQ's rule is the general `U_theta` and is
+proprietary; DeltaNet shows a non-additive update recalls better. Whether BDH-CQ already escapes
+the ceiling its own named special case obeys cannot be checked from outside Pathway, and that is
+the missing evidence. One sentence tying the mechanism, capacity, BDH-CQ and evidence sections
+together.
+
+**Citation discipline, since it is scored separately from having sources.** No reference list. Six
+arXiv ids, all 2024-2026, each inside the sentence making the claim it supports, plus
+`pathwaycom/bdh` beside the equivalence measurement. Every BDH-CQ figure carries a section or table
+locator so a reader can check it in one lookup. The footer is a reading path with a reason per
+item, not a bibliography, and everything in it has already appeared beside a claim above.
+
+**Retired:** `docs/concept-summary.md` and `docs/concept-summary.html`. The `.tex` is the single
+source; two sources for one document is how a number drifts. `docs/build/` and
+`docs/generated-numbers.tex` are gitignored. `npm test` is unchanged at 12 gates / 236 checks, and
+the LaTeX build stays outside it for the same reason `test:mobile` does.
+
+**Still open, in priority order:**
+1. Items 1-2 of session 7 are **done** (the in-domain bits/byte column and chrF are in the README).
+2. The two `web/` provenance rewordings and their gate, from the session-6 handoff.
+3. Item 17 still stands: nobody has opened the pages in a real, non-headless browser.

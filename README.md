@@ -38,7 +38,7 @@ Both halves are falsifiable inside the artifact. The first takes about a minute:
 | | |
 |---|---|
 | **Artifact** | **https://demonstrations-are-weights.vercel.app**, opens without sign-in |
-| **One-page summary** | [`docs/concept-summary.pdf`](docs/concept-summary.pdf) |
+| **One-page summary** | [`docs/concept-summary.pdf`](docs/concept-summary.pdf), built from [`docs/concept-summary.tex`](docs/concept-summary.tex) |
 | **Defense sheet** | [`docs/defense.md`](docs/defense.md): every on-screen number mapped to the script that makes it |
 | **Run locally** | `npm run dev` → http://localhost:8080 |
 | **Tests** | `npm test`: 12 gates, 236 checks, no GPU and no network |
@@ -310,7 +310,7 @@ and not about one run.
 
 It is also the one picture a Transformer does not offer. The nearest analogue,
 `W_out[l] @ W_in[l+1]`, is a map between *two different* neuron populations rather than one shared
-one, and at the same p99 threshold only **0.1%** of GPT-2's MLP neurons are isolated in it, so
+one, and at the same p99 threshold only **0.05%** of GPT-2's MLP neurons are isolated in it, so
 there is almost nothing for isolation to predict. `G*` exists because BDH is weight-tied and its
 attention is a bilinear form over a single neuron basis. That is why THE FIELD is laid out on `G*`
 rather than on an embedding projection, and it is why the hero image has a dark region: that is the
@@ -552,12 +552,12 @@ predicts which neurons never fire on real French.
 |---|---|---|
 | **BDH**, `G*` isolation against silence | **+0.940** | 38.7% |
 | the same prediction with degrees shuffled, 200 draws | **−0.001** (p95 +0.013) | |
-| GPT-2, `W_out[l] @ W_in[l+1]` isolation against silence | −0.004 | **0.1%** |
+| GPT-2, `W_out[l] @ W_in[l+1]` isolation against silence | −0.004 | **0.05%** |
 
 The shuffled null is what turns +0.940 into a fact about `G*` rather than a fact about base rates,
 and it needs no baseline to draw.
 
-The GPT-2 row is not a scoreboard, and the number to read in it is 0.1%, not −0.004. At the same
+The GPT-2 row is not a scoreboard, and the number to read in it is 0.05%, not −0.004. At the same
 threshold almost none of its MLP neurons are disconnected, so isolation has nothing to predict.
 That difference is structural. `G*` exists because BDH is **weight-tied**: one neuron population,
 the same three matrices at every iteration, and an attention that is a bilinear form over that
@@ -821,7 +821,7 @@ npm run dev             # serve the artifact at http://localhost:8080
 | `npm run test:mobile` | narrow-viewport measurement at 390 / 360 / 320 px | Edge or Chrome + `websocket-client` |
 | `npm run figures` | rebuilds every static figure in this README | python + matplotlib |
 | `python research/plot_comparison.py` | just the sparsity grid and the replication chart, straight from `research/runs/*.json` | python + matplotlib, no torch and no checkpoints |
-| `npm run summary` | rebuilds `docs/concept-summary.{html,pdf}` | python + Edge/Chrome |
+| `npm run summary` | rebuilds `docs/concept-summary.pdf` from its LaTeX source, then checks the page count, the word budget and the disclosures it has to carry | python + a TeX distribution |
 | `npm run media` | re-encodes the screen captures from `docs/media/_originals/` | ffmpeg |
 | `npm run train` | retrains the 131K model (~65 min) | python + torch + GPU |
 | `npm run export` | weights, fixture and verified presets | python + torch |
